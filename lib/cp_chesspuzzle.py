@@ -1,0 +1,70 @@
+# Copyright (C) 2019-2020 Pychess
+# Copyright (C) 2021 ecrucru
+# https://github.com/ecrucru/chess-dl
+# GPL version 3
+
+from lib.const import CAT_HTML
+from lib.cp_interface import InternetGameInterface
+
+import re
+from html.parser import HTMLParser
+
+
+# ChessPuzzle.net
+class InternetGameChesspuzzle(InternetGameInterface):
+    def get_identity(self):
+        return 'ChessPuzzle.net', CAT_HTML
+
+    def assign_game(self, url):
+        rxp = re.compile(r'^https?:\/\/(\S+\.)?chesspuzzle\.net\/(Puzzle|Solution)\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
+        m = rxp.match(url)
+        if m is not None:
+            gid = str(m.group(3))
+            if gid.isdigit() and gid != '0':
+                self.id = gid
+                return True
+        return False
+
+    def download_game(self):
+        # Check
+        if self.id is None:
+            return None
+
+        # Download the puzzle
+        page = self.download('https://chesspuzzle.net/Solution/%s' % self.id, userAgent=True)  # Else 403 Forbidden
+        if page is None:
+            return None
+
+        # Definition of the parser
+        class chesspuzzleparser(HTMLParser):
+            def __init__(self):
+                HTMLParser.__init__(self)
+                self.last_tag = None
+                self.pgn = None
+
+            def handle_starttag(self, tag, attrs):
+                self.last_tag = tag.lower()
+
+            def handle_data(self, data):
+                if self.pgn is None and self.last_tag == 'script':
+                    lines = data.split("\n")
+                    for line in lines:
+                        pos1 = line.find('pgn_text')
+                        if pos1 != -1:
+                            pos1 = line.find("'", pos1 + 1)
+                            pos2 = line.find("'", pos1 + 1)
+                            if pos1 != -1 and pos2 > pos1:
+                                self.pgn = line[pos1 + 1:pos2].replace(']  ', "]\n\n").replace('] ', "]\n").strip()
+                                break
+
+        # Get the puzzle
+        parser = chesspuzzleparser()
+        parser.feed(page)
+        return parser.pgn
+
+    def get_test_links(self):
+        return [('https://chesspuzzle.net/Puzzle/23476', True),                 # Puzzle from the quiz
+                ('https://CHESSPUZZLE.net/Solution/32881', True),               # Puzzle from the solution
+                ('https://chesspuzzle.net/Puzzle', False),                      # Not a puzzle (random link)
+                ('https://chesspuzzle.net/Puzzle/123456789', False),            # Not a puzzle (wrong ID)
+                ('https://chesspuzzle.net', False)]                             # Not a puzzle (homepage)
