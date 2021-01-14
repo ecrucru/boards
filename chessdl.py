@@ -37,6 +37,7 @@ from lib.cp_ficsgames import InternetGameFicsgames
 from lib.cp_gameknot import InternetGameGameknot
 from lib.cp_iccf import InternetGameIccf
 from lib.cp_ideachess import InternetGameIdeachess
+from lib.cp_lidraughts import InternetGameLidraughts
 from lib.cp_playok import InternetGamePlayok
 from lib.cp_pychess import InternetGamePychess
 from lib.cp_redhotpawn import InternetGameRedhotpawn
@@ -121,10 +122,17 @@ async def main():
         [print(cp) for cp in list]
 
     elif parser.command == 'download':
+        # SSL
         if parser.unverified_ssl:
             import ssl
             ssl._create_default_https_context = ssl._create_unverified_context
-        print(await download(parser.url))
+
+        # Download
+        data = await download(parser.url)
+        if data is not None:
+            print(data)
+        else:
+            logging.error('No game found.')
 
     elif parser.command == 'test':
         for cp in chess_providers:

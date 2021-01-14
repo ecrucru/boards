@@ -251,11 +251,6 @@ class InternetGameInterface:
             if len(pgn) == lc:
                 break
 
-        # Extract the first game
-        pos = pgn.find("\n\n[")  # TODO Support in-memory database to load several games at once
-        if pos != -1:
-            pgn = pgn[:pos]
-
         # Variants
         pgn = pgn.replace('[Variant "Chess"]\n', '')
 
