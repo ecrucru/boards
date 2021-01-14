@@ -106,7 +106,7 @@ class InternetGameChessCom(InternetGameInterface):
                 return None
 
             # Get the game directly if available
-            pgn = self.json_field('puzzle', 'pgn')
+            pgn = self.json_field(puzzle, 'pgn')
             if pgn != '':
                 pgn = pgn.replace('\\n', '\n')
                 pgn = pgn.replace('\\"', '"')
@@ -118,11 +118,11 @@ class InternetGameChessCom(InternetGameInterface):
             # Rebuild the puzzle
             game = {}
             game['_url'] = url
-            refid = self.json_field('puzzle', 'gameLiveId')
+            refid = self.json_field(puzzle, 'gameLiveId')
             if refid not in [None, 0, '']:
                 game['_url'] = 'https://www.chess.com/live/game/%d' % refid
             else:
-                refid = self.json_field('puzzle', 'gameId')
+                refid = self.json_field(puzzle, 'gameId')
                 if refid not in [None, 0, '']:
                     game['_url'] = 'https://www.chess.com/daily/game/%d' % refid
             rating = self.json_field(puzzle, 'rating')
@@ -137,36 +137,18 @@ class InternetGameChessCom(InternetGameInterface):
             game['X_Rating'] = rating
             game['X_Attempts'] = self.json_field(puzzle, 'attemptCount')
             game['X_PassRate'] = self.json_field(puzzle, 'passRate')
-            buffer = self.json_field(puzzle, 'internalNote').strip()
-            if buffer == '':
+            buffer = '{%s}' % self.json_field(puzzle, 'internalNote').strip()
+            if buffer == '{}':
                 buffer = '{The first move is not provided}'
             game['_moves'] = buffer
 
         # Games
         else:
-            if self.url_type == 'live':
-                # API since October 2020
-                url = 'https://www.chess.com/callback/live/game/%s' % self.id
-                bourne = self.send_xhr(url, {}, userAgent=True)
-                if bourne is None:
-                    return None
-            else:
-                # Fetch the page
-                url = 'https://www.chess.com/%s/game/%s' % (self.url_type, self.id)
-                page = self.download(url, userAgent=True)
-                if page is None:
-                    return None
-
-                # Extract the JSON
-                bourne = ''
-                pos1 = page.find('window.chesscom.dailyGame')
-                if pos1 != -1:
-                    pos1 = page.find('(', pos1)
-                    pos2 = page.find(')', pos1 + 1)
-                    if pos2 > pos1:
-                        bourne = page[pos1 + 2:pos2 - 1].replace('\\\\\\/', '/').replace('\\"', '"')
-                if bourne == '':
-                    return None
+            # API since October 2020
+            url = 'https://www.chess.com/callback/%s/game/%s' % (self.url_type, self.id)
+            bourne = self.send_xhr(url, {}, userAgent=True)
+            if bourne is None:
+                return None
 
             # Read the JSON
             chessgame = self.json_loads(bourne)
