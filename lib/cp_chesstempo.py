@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_WS, TYPE_GAME, TYPE_PUZZLE
+from lib.const import BOARD_CHESS, METHOD_WS, TYPE_GAME, TYPE_PUZZLE
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -14,7 +14,7 @@ from base64 import b64decode
 # ChessTempo.com
 class InternetGameChesstempo(InternetGameInterface):
     def get_identity(self):
-        return 'ChessTempo.com', CAT_WS
+        return 'ChessTempo.com', BOARD_CHESS, METHOD_WS
 
     def assign_game(self, url):
         # Puzzles

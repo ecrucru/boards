@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_DL
+from lib.const import BOARD_CHESS, METHOD_DL
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -12,7 +12,7 @@ import re
 # TheChessWorld.com
 class InternetGameThechessworld(InternetGameInterface):
     def get_identity(self):
-        return 'TheChessWorld.com', CAT_DL
+        return 'TheChessWorld.com', BOARD_CHESS, METHOD_DL
 
     def assign_game(self, url):
         return self.reacts_to(url, 'thechessworld.com')

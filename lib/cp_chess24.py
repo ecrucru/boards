@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_HTML, CHESS960
+from lib.const import BOARD_CHESS, METHOD_HTML, CHESS960
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -13,7 +13,7 @@ import chess
 # Chess24.com
 class InternetGameChess24(InternetGameInterface):
     def get_identity(self):
-        return 'Chess24.com', CAT_HTML
+        return 'Chess24.com', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/chess24\.com\/[a-z]+\/(analysis|game|download-game)\/([a-z0-9\-_]+)[\/\?\#]?', re.IGNORECASE)

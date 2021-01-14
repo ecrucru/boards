@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_HTML
+from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -12,7 +12,7 @@ import re
 # ChessPro.ru
 class InternetGameChesspro(InternetGameInterface):
     def get_identity(self):
-        return 'ChessPro.ru', CAT_HTML
+        return 'ChessPro.ru', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
         return self.reacts_to(url, 'chesspro.ru')

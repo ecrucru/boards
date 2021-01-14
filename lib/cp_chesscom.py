@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_MISC, CHESS960, TYPE_FEN
+from lib.const import BOARD_CHESS, METHOD_MISC, CHESS960, TYPE_FEN
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -15,7 +15,7 @@ import chess
 # Chess.com
 class InternetGameChessCom(InternetGameInterface):
     def get_identity(self):
-        return 'Chess.com', CAT_MISC
+        return 'Chess.com', BOARD_CHESS, METHOD_MISC
 
     def assign_game(self, url):
         # Positions

@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_HTML
+from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -15,7 +15,7 @@ import chess
 # SchachArena.de
 class InternetGameSchacharena(InternetGameInterface):
     def get_identity(self):
-        return 'SchachArena.de', CAT_HTML
+        return 'SchachArena.de', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
         # Verify the URL

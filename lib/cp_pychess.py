@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_WS
+from lib.const import BOARD_CHESS, METHOD_WS
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -13,7 +13,7 @@ import websockets
 # Pychess.org
 class InternetGamePychess(InternetGameInterface):
     def get_identity(self):
-        return 'Pychess.org', CAT_WS
+        return 'Pychess.org', BOARD_CHESS, METHOD_WS
 
     def assign_game(self, url):
         # Retrieve the ID of the game

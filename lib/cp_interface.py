@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
 import logging
@@ -10,7 +10,7 @@ from urllib.request import Request, urlopen
 from urllib.parse import urlparse, urlencode
 
 from lib.ua import InternetUserAgent
-from lib.const import ANNOTATOR, CAT_WS, CHESS960, FEN_START, FEN_START_960, REGEX_FEN, REGEX_STRIP_HTML
+from lib.const import ANNOTATOR, METHOD_WS, CHESS960, FEN_START, FEN_START_960, REGEX_FEN, REGEX_STRIP_HTML
 
 
 # Abstract class to download a game from the Internet
@@ -40,7 +40,7 @@ class InternetGameInterface:
         return self.get_identity()[0]
 
     def is_async(self):
-        return self.get_identity()[1] == CAT_WS
+        return self.get_identity()[2] == METHOD_WS
 
     def get_game_id(self):
         ''' Return the unique identifier of the game that was detected after a successful call to assign_game().
@@ -283,4 +283,4 @@ class InternetGameInterface:
 
     def get_test_links(self):
         ''' (Abstract) Get the links to verify the effectiveness of the download. '''
-        return []
+        pass

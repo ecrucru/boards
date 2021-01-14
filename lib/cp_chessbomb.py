@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_HTML
+from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.cp_interface import InternetGameInterface
 
 import json
@@ -14,7 +14,7 @@ from base64 import b64decode
 # ChessBomb.com
 class InternetGameChessbomb(InternetGameInterface):
     def get_identity(self):
-        return 'ChessBomb.com', CAT_HTML
+        return 'ChessBomb.com', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
         return self.reacts_to(url, 'chessbomb.com')

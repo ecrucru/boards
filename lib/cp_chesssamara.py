@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_DL
+from lib.const import BOARD_CHESS, METHOD_DL
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -12,7 +12,7 @@ import re
 # Chess-Samara.ru
 class InternetGameChesssamara(InternetGameInterface):
     def get_identity(self):
-        return 'Chess-Samara.ru', CAT_DL
+        return 'Chess-Samara.ru', BOARD_CHESS, METHOD_DL
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/(\S+\.)?chess-samara\.ru\/(\d+)\-', re.IGNORECASE)

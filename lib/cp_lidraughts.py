@@ -1,8 +1,8 @@
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_DL, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY
+from lib.const import BOARD_DRAUGHTS, METHOD_DL, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -18,7 +18,7 @@ class InternetGameLidraughts(InternetGameInterface):
                         'study': re.compile(r'^https?:\/\/lidraughts\.org\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)}
 
     def get_identity(self):
-        return 'Lidraughts.org', CAT_DL
+        return 'Lidraughts.org', BOARD_DRAUGHTS, METHOD_DL
 
     def assign_game(self, url):
         # Retrieve the ID of the broadcast

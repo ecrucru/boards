@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_HTML
+from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -13,7 +13,7 @@ from urllib.parse import urlparse, parse_qs
 # 365chess.com
 class InternetGame365chess(InternetGameInterface):
     def get_identity(self):
-        return '365chess.com', CAT_HTML
+        return '365chess.com', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
         # Verify the URL

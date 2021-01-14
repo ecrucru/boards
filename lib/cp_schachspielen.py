@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_HTML, CHESS960
+from lib.const import BOARD_CHESS, METHOD_HTML, CHESS960
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -13,7 +13,7 @@ from html.parser import HTMLParser
 # Schach-Spielen.eu
 class InternetGameSchachspielen(InternetGameInterface):
     def get_identity(self):
-        return 'Schach-Spielen.eu', CAT_HTML
+        return 'Schach-Spielen.eu', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/(www\.)?schach-spielen\.eu\/(game|analyse)\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)

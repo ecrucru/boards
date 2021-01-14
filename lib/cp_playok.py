@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_DL
+from lib.const import BOARD_CHESS, METHOD_DL
 from lib.cp_interface import InternetGameInterface
 
 from urllib.parse import urlparse, parse_qs
@@ -12,7 +12,7 @@ from urllib.parse import urlparse, parse_qs
 # PlayOK.com
 class InternetGamePlayok(InternetGameInterface):
     def get_identity(self):
-        return 'PlayOK.com', CAT_DL
+        return 'PlayOK.com', BOARD_CHESS, METHOD_DL
 
     def assign_game(self, url):
         # Verify the hostname

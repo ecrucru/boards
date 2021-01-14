@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_HTML, TYPE_GAME, TYPE_PUZZLE
+from lib.const import BOARD_CHESS, METHOD_HTML, TYPE_GAME, TYPE_PUZZLE
 from lib.cp_interface import InternetGameInterface
 
 from urllib.parse import urlparse, parse_qs, unquote
@@ -13,7 +13,7 @@ import chess
 # GameKnot.com
 class InternetGameGameknot(InternetGameInterface):
     def get_identity(self):
-        return 'GameKnot.com', CAT_HTML
+        return 'GameKnot.com', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
         # Verify the hostname

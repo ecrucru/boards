@@ -1,20 +1,20 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
 from urllib.request import Request, urlopen
 from urllib.parse import urlparse
 from html.parser import HTMLParser
 
-from lib.const import CAT_MISC
+from lib.const import BOARD_CHESS, METHOD_MISC
 from lib.cp_interface import InternetGameInterface
 
 
 # Generic
-class InternetGameGeneric(InternetGameInterface):
+class InternetGameGenericChess(InternetGameInterface):
     def get_identity(self):
-        return 'Generic', CAT_MISC
+        return 'Generic for chess', BOARD_CHESS, METHOD_MISC
 
     def assign_game(self, url):
         # Any page is valid

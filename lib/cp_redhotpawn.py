@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_HTML, TYPE_GAME, TYPE_PUZZLE
+from lib.const import BOARD_CHESS, METHOD_HTML, TYPE_GAME, TYPE_PUZZLE
 from lib.cp_interface import InternetGameInterface
 
 from urllib.parse import urlparse, parse_qs
@@ -13,7 +13,7 @@ from html.parser import HTMLParser
 # RedHotPawn.com
 class InternetGameRedhotpawn(InternetGameInterface):
     def get_identity(self):
-        return 'RedHotPawn.com', CAT_HTML
+        return 'RedHotPawn.com', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
         # Verify the URL

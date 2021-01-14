@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_DL, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY
+from lib.const import BOARD_CHESS, METHOD_DL, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -17,7 +17,7 @@ class InternetGameLichess(InternetGameInterface):
         self.url_tld = 'org'
 
     def get_identity(self):
-        return 'Lichess.org', CAT_DL
+        return 'Lichess.org', BOARD_CHESS, METHOD_DL
 
     def assign_game(self, url):
         # Retrieve the ID of the broadcast

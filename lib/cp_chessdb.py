@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_HTML
+from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -14,7 +14,7 @@ from html.parser import HTMLParser
 # Chess-DB.com
 class InternetGameChessdb(InternetGameInterface):
     def get_identity(self):
-        return 'Chess-DB.com', CAT_HTML
+        return 'Chess-DB.com', BOARD_CHESS, METHOD_HTML
 
     def is_enabled(self):
         return False  # Server down

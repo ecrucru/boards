@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_WS, CHESS960
+from lib.const import BOARD_CHESS, METHOD_WS, CHESS960
 from lib.cp_interface import InternetGameInterface
 
 import logging
@@ -17,7 +17,7 @@ import chess
 # Chess.org
 class InternetGameChessOrg(InternetGameInterface):
     def get_identity(self):
-        return 'Chess.org', CAT_WS
+        return 'Chess.org', BOARD_CHESS, METHOD_WS
 
     def assign_game(self, url):
         rxp = re.compile(r'^https?:\/\/chess\.org\/play\/([a-f0-9\-]+)[\/\?\#]?', re.IGNORECASE)

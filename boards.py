@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
 
@@ -12,11 +12,13 @@ import re
 from urllib.parse import urlparse
 from random import choice
 
-# Highest priority
+from lib.const import BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO
+
+# Popular chess
 from lib.cp_lichess import InternetGameLichess
 from lib.cp_chesscom import InternetGameChessCom
 from lib.cp_chess24 import InternetGameChess24
-# Normal priority
+# Normal chess
 from lib.cp_interface import InternetGameInterface
 from lib.cp_2700chess import InternetGame2700chess
 from lib.cp_365chess import InternetGame365chess
@@ -37,15 +39,16 @@ from lib.cp_ficsgames import InternetGameFicsgames
 from lib.cp_gameknot import InternetGameGameknot
 from lib.cp_iccf import InternetGameIccf
 from lib.cp_ideachess import InternetGameIdeachess
-from lib.cp_lidraughts import InternetGameLidraughts
 from lib.cp_playok import InternetGamePlayok
 from lib.cp_pychess import InternetGamePychess
 from lib.cp_redhotpawn import InternetGameRedhotpawn
 from lib.cp_schacharena import InternetGameSchacharena
 from lib.cp_schachspielen import InternetGameSchachspielen
 from lib.cp_thechessworld import InternetGameThechessworld
+# Draughts
+from lib.cp_lidraughts import InternetGameLidraughts
 # Lowest priority
-from lib.cp_generic import InternetGameGeneric
+from lib.cp_generic_chess import InternetGameGenericChess
 
 chess_providers = []
 
@@ -103,8 +106,8 @@ async def main():
         chess_providers.append(cls())
 
     # Command line
-    parser = argparse.ArgumentParser(prog='python chessdl.py', description='chess-dl is a download helper for the chess games')
-    subparser = parser.add_subparsers(dest='command')
+    cmdline = argparse.ArgumentParser(prog='python boards.py', description='Boards is a download helper for the online board games (chess, draughts, go...)')
+    subparser = cmdline.add_subparsers(dest='command')
 
     subparser.add_parser('show', help='Show the supported chess providers')
 
@@ -115,9 +118,16 @@ async def main():
     subparser.add_parser('test', help='Run the quality test')
 
     # Execute
-    parser = parser.parse_args()
+    parser = cmdline.parse_args()
     if parser.command == 'show':
-        list = [cp.get_description() for cp in chess_providers if cp.is_enabled()]
+        method_desc = {BOARD_CHESS: 'Chess',
+                       BOARD_DRAUGHTS: 'Draughts',
+                       BOARD_GO: 'Go'}
+        list = []
+        for cp in chess_providers:
+            if cp.is_enabled():
+                site, board, method = cp.get_identity()
+                list.append('%s - %s' % (method_desc[board], site))
         list.sort()
         [print(cp) for cp in list]
 
@@ -174,7 +184,7 @@ async def main():
                 logging.error('- Test in error')
 
     else:
-        assert(False)
+        cmdline.print_help()
 
 
 asyncio.run(main())

@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2020 Pychess
 # Copyright (C) 2021 ecrucru
-# https://github.com/ecrucru/chess-dl
+# https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import CAT_API
+from lib.const import BOARD_CHESS, METHOD_API
 from lib.cp_interface import InternetGameInterface
 
 import re
@@ -13,7 +13,7 @@ from base64 import b64decode
 # IdeaChess.com
 class InternetGameIdeachess(InternetGameInterface):
     def get_identity(self):
-        return 'IdeaChess.com', CAT_API
+        return 'IdeaChess.com', BOARD_CHESS, METHOD_API
 
     def assign_game(self, url):
         # Game ID
