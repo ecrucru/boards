@@ -1,0 +1,12 @@
+language: python
+python:
+  - '3.8'
+
+install:
+  - sudo apt-get update -q
+  - sudo pip3 install flake8 python-chess
+
+script:
+  - flake8 boards.py --ignore=F401,E501
+  - flake8 lib/ --ignore=E501
+  - python boards.py test

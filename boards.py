@@ -8,6 +8,7 @@
 import argparse
 import asyncio
 import logging
+import sys
 import re
 from urllib.parse import urlparse
 from random import choice
@@ -147,23 +148,26 @@ async def main():
             logging.error('No game found.')
 
     elif parser.command == 'test':
+        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+        errors = 0
         for bp in board_providers:
             # Check
             if bp is None:
                 continue
-            logging.info("\n%s" % bp.get_description())
+            logging.info('================')
+            logging.info('Site: %s' % bp.get_description())
             links = bp.get_test_links()
             if len(links) == 0:
-                logging.info('- No available test link')
+                logging.info('No available test link')
                 continue
             if not bp.is_enabled():
-                logging.info('- Disabled module')
+                logging.info('Disabled module')
                 continue
 
             # Pick one link only to not overload the remote server
             url, expected = choice(links)
-            logging.info('- Target link: %s' % url)
-            logging.info('- Expecting data: %s' % expected)
+            logging.info('Target link: %s' % url)
+            logging.info('Expecting data: %s' % expected)
 
             # Download link
             bp.reset()
@@ -179,11 +183,15 @@ async def main():
 
             # Result
             ok = data is not None
-            logging.info('- Fetched data: %s' % ok)
+            logging.info('Fetched data: %s' % ok)
             if ok:
                 logging.info(data)
             if ok != expected:
-                logging.error('- Test in error')
+                logging.error('Test in error')
+                errors += 1
+
+        if errors > 0:
+            logging.error('The unit test failed %d times' % errors)
 
     else:
         cmdline.print_help()
