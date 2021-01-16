@@ -15,42 +15,42 @@ from random import choice
 from lib.const import BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO
 
 # Popular chess
-from lib.cp_lichess import InternetGameLichess
-from lib.cp_chesscom import InternetGameChessCom
-from lib.cp_chess24 import InternetGameChess24
+from lib.bp_lichess import InternetGameLichess
+from lib.bp_chesscom import InternetGameChessCom
+from lib.bp_chess24 import InternetGameChess24
 # Normal chess
-from lib.cp_interface import InternetGameInterface
-from lib.cp_2700chess import InternetGame2700chess
-from lib.cp_365chess import InternetGame365chess
-from lib.cp_chessbase import InternetGameChessbase
-from lib.cp_chessbomb import InternetGameChessbomb
-from lib.cp_chessdb import InternetGameChessdb
-from lib.cp_chessgames import InternetGameChessgames
-from lib.cp_chessking import InternetGameChessking
-from lib.cp_chessorg import InternetGameChessOrg
-from lib.cp_chesspastebin import InternetGameChesspastebin
-from lib.cp_chesspro import InternetGameChesspro
-from lib.cp_chesspuzzle import InternetGameChesspuzzle
-from lib.cp_chesssamara import InternetGameChesssamara
-from lib.cp_chesstempo import InternetGameChesstempo
-from lib.cp_europeechecs import InternetGameEuropeechecs
-from lib.cp_ficgs import InternetGameFicgs
-from lib.cp_ficsgames import InternetGameFicsgames
-from lib.cp_gameknot import InternetGameGameknot
-from lib.cp_iccf import InternetGameIccf
-from lib.cp_ideachess import InternetGameIdeachess
-from lib.cp_playok import InternetGamePlayok
-from lib.cp_pychess import InternetGamePychess
-from lib.cp_redhotpawn import InternetGameRedhotpawn
-from lib.cp_schacharena import InternetGameSchacharena
-from lib.cp_schachspielen import InternetGameSchachspielen
-from lib.cp_thechessworld import InternetGameThechessworld
+from lib.bp_interface import InternetGameInterface
+from lib.bp_2700chess import InternetGame2700chess
+from lib.bp_365chess import InternetGame365chess
+from lib.bp_chessbase import InternetGameChessbase
+from lib.bp_chessbomb import InternetGameChessbomb
+from lib.bp_chessdb import InternetGameChessdb
+from lib.bp_chessgames import InternetGameChessgames
+from lib.bp_chessking import InternetGameChessking
+from lib.bp_chessorg import InternetGameChessOrg
+from lib.bp_chesspastebin import InternetGameChesspastebin
+from lib.bp_chesspro import InternetGameChesspro
+from lib.bp_chesspuzzle import InternetGameChesspuzzle
+from lib.bp_chesssamara import InternetGameChesssamara
+from lib.bp_chesstempo import InternetGameChesstempo
+from lib.bp_europeechecs import InternetGameEuropeechecs
+from lib.bp_ficgs import InternetGameFicgs
+from lib.bp_ficsgames import InternetGameFicsgames
+from lib.bp_gameknot import InternetGameGameknot
+from lib.bp_iccf import InternetGameIccf
+from lib.bp_ideachess import InternetGameIdeachess
+from lib.bp_playok import InternetGamePlayok
+from lib.bp_pychess import InternetGamePychess
+from lib.bp_redhotpawn import InternetGameRedhotpawn
+from lib.bp_schacharena import InternetGameSchacharena
+from lib.bp_schachspielen import InternetGameSchachspielen
+from lib.bp_thechessworld import InternetGameThechessworld
 # Draughts
-from lib.cp_lidraughts import InternetGameLidraughts
+from lib.bp_lidraughts import InternetGameLidraughts
 # Lowest priority
-from lib.cp_generic_chess import InternetGameGenericChess
+from lib.bp_generic_chess import InternetGameGenericChess
 
-chess_providers = []
+board_providers = []
 
 
 # Retrieve a game from a URL
@@ -71,14 +71,14 @@ async def download(url):
         return None
     logging.debug('URL to retrieve: %s' % url)
 
-    # Call the chess providers
-    for prov in chess_providers:
+    # Call the board providers
+    for prov in board_providers:
         if not prov.is_enabled():
             continue
         prov.reset()
         if prov.assign_game(url):
             # Download
-            logging.debug('Responding chess provider: %s' % prov.get_description())
+            logging.debug('Responding board provider: %s' % prov.get_description())
             try:
                 if prov.is_async():
                     pgn = await prov.download_game()
@@ -100,19 +100,19 @@ async def download(url):
 
 # Start of the program
 async def main():
-    # Load the chess providers from the imported classes
-    global chess_providers
+    # Load the board providers from the imported classes
+    global board_providers
     for cls in InternetGameInterface.__subclasses__():
-        chess_providers.append(cls())
+        board_providers.append(cls())
 
     # Command line
     cmdline = argparse.ArgumentParser(prog='python boards.py', description='Boards is a download helper for the online board games (chess, draughts, go...)')
     subparser = cmdline.add_subparsers(dest='command')
 
-    subparser.add_parser('show', help='Show the supported chess providers')
+    subparser.add_parser('show', help='Show the supported board providers')
 
     group = subparser.add_parser('download', help='Download a game')
-    group.add_argument('url', default='', help='URL of the chess game')
+    group.add_argument('url', default='', help='URL of the board game')
     group.add_argument('--unverified-ssl', action='store_true', help='Use an unverified SSL context to avoid some errors with SSL')
 
     subparser.add_parser('test', help='Run the quality test')
@@ -124,12 +124,12 @@ async def main():
                        BOARD_DRAUGHTS: 'Draughts',
                        BOARD_GO: 'Go'}
         list = []
-        for cp in chess_providers:
-            if cp.is_enabled():
-                site, board, method = cp.get_identity()
+        for bp in board_providers:
+            if bp.is_enabled():
+                site, board, method = bp.get_identity()
                 list.append('%s - %s' % (method_desc[board], site))
         list.sort()
-        [print(cp) for cp in list]
+        [print(bp) for bp in list]
 
     elif parser.command == 'download':
         # SSL
@@ -145,16 +145,16 @@ async def main():
             logging.error('No game found.')
 
     elif parser.command == 'test':
-        for cp in chess_providers:
+        for bp in board_providers:
             # Check
-            if cp is None:
+            if bp is None:
                 continue
-            logging.info("\n%s" % cp.get_description())
-            links = cp.get_test_links()
+            logging.info("\n%s" % bp.get_description())
+            links = bp.get_test_links()
             if len(links) == 0:
                 logging.info('- No available test link')
                 continue
-            if not cp.is_enabled():
+            if not bp.is_enabled():
                 logging.info('- Disabled module')
                 continue
 
@@ -164,13 +164,13 @@ async def main():
             logging.info('- Expecting data: %s' % expected)
 
             # Download link
-            cp.reset()
-            if not cp.assign_game(url):
+            bp.reset()
+            if not bp.assign_game(url):
                 data = None
             else:
                 try:
-                    data = cp.download_game()
-                    data = cp.sanitize(data)
+                    data = bp.download_game()
+                    data = bp.sanitize(data)
                 except Exception:
                     logging.debug(str(Exception))
                     data = None

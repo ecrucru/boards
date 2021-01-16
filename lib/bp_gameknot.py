@@ -4,7 +4,7 @@
 # GPL version 3
 
 from lib.const import BOARD_CHESS, METHOD_HTML, TYPE_GAME, TYPE_PUZZLE
-from lib.cp_interface import InternetGameInterface
+from lib.bp_interface import InternetGameInterface
 
 from urllib.parse import urlparse, parse_qs, unquote
 import chess

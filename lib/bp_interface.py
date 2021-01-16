@@ -10,7 +10,8 @@ from urllib.request import Request, urlopen
 from urllib.parse import urlparse, urlencode
 
 from lib.ua import InternetUserAgent
-from lib.const import ANNOTATOR, METHOD_WS, CHESS960, FEN_START, FEN_START_960, REGEX_FEN, REGEX_STRIP_HTML
+from lib.const import ANNOTATOR, METHOD_WS, BOARD_CHESS, BOARD_DRAUGHTS, \
+    CHESS960, FEN_START, FEN_START_960, REGEX_FEN, REGEX_STRIP_HTML
 
 
 # Abstract class to download a game from the Internet
@@ -36,7 +37,7 @@ class InternetGameInterface:
         return True
 
     def get_description(self):
-        ''' Return the description of the chess provider. '''
+        ''' Return the description of the board provider. '''
         return self.get_identity()[0]
 
     def is_async(self):
@@ -233,29 +234,30 @@ class InternetGameInterface:
             pgn += '%s ' % game['Result']
         return pgn.strip()
 
-    def sanitize(self, pgn):
-        ''' Modify the PGN output to comply with the expected format '''
+    def sanitize(self, data):
+        ''' Modify the output to comply with the expected format '''
         # Check
-        if pgn in [None, '']:
+        if data in [None, '']:
             return None
 
-        # Verify that it starts with the correct magic character (ex.: "<" denotes an HTML content, "[" a chess game, etc...)
-        pgn = pgn.replace('\r', '').strip()
-        if not pgn.startswith('['):
-            return None
-
-        # Reorganize the spaces to bypass Scoutfish's limitation
+        # Reorganize the spaces
+        data = data.replace('\r', '').strip()
         while (True):
-            lc = len(pgn)
-            pgn = pgn.replace("\n\n\n", "\n\n")
-            if len(pgn) == lc:
+            lc = len(data)
+            data = data.replace("\n\n\n", "\n\n")
+            if len(data) == lc:
                 break
 
-        # Variants
-        pgn = pgn.replace('[Variant "Chess"]\n', '')
+        # Game specific rules
+        type = self.get_identity()[1]
+        if type == BOARD_CHESS:
+            data = data.replace('[Variant "Chess"]\n', '')
+        if type in [BOARD_CHESS, BOARD_DRAUGHTS]:
+            if not data.startswith('['):
+                return None
 
         # Return the PGN with the local crlf
-        return pgn.replace("\n", os.linesep)
+        return data.replace("\n", os.linesep)
 
     def strip_html(self, input):
         ''' Remove any HTML mark from the input parameter. '''
@@ -270,7 +272,7 @@ class InternetGameInterface:
 
     # External
     def get_identity(self):
-        ''' (Abstract) Name and technique of the chess provider. '''
+        ''' (Abstract) Name and technique of the board provider. '''
         pass
 
     def assign_game(self, url):

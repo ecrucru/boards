@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 from html.parser import HTMLParser
 
 from lib.const import BOARD_CHESS, METHOD_MISC
-from lib.cp_interface import InternetGameInterface
+from lib.bp_interface import InternetGameInterface
 
 
 # Generic

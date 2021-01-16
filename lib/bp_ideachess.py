@@ -4,7 +4,7 @@
 # GPL version 3
 
 from lib.const import BOARD_CHESS, METHOD_API
-from lib.cp_interface import InternetGameInterface
+from lib.bp_interface import InternetGameInterface
 
 import re
 from base64 import b64decode
