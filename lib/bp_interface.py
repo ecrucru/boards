@@ -10,7 +10,7 @@ from urllib.request import Request, urlopen
 from urllib.parse import urlparse, urlencode
 
 from lib.ua import InternetUserAgent
-from lib.const import ANNOTATOR, METHOD_WS, BOARD_CHESS, BOARD_DRAUGHTS, \
+from lib.const import ANNOTATOR, METHOD_WS, BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, \
     CHESS960, FEN_START, FEN_START_960, REGEX_FEN, REGEX_STRIP_HTML
 
 
@@ -255,8 +255,11 @@ class InternetGameInterface:
         if type in [BOARD_CHESS, BOARD_DRAUGHTS]:
             if not data.startswith('['):
                 return None
+        if type == BOARD_GO:
+            if not data.startswith('('):
+                return None
 
-        # Return the PGN with the local crlf
+        # Return the data with the local crlf
         return data.replace("\n", os.linesep)
 
     def strip_html(self, input):

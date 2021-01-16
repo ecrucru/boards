@@ -139,7 +139,7 @@ class InternetGameLidraughts(InternetGameInterface):
                 puzzle = puzzle[0]
             game['_moves'] += '}'
 
-            # Rebuild the PGN game
+            # Rebuild the PDN game with the PGN technique
             return self.rebuild_pgn(game)
 
     def get_test_links(self):
