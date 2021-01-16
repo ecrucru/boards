@@ -14,6 +14,11 @@ import chess
 
 # Chess.com
 class InternetGameChessCom(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'game': re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(live|daily)\/([a-z\/]+)?([0-9]+)[\/\?\#]?', re.IGNORECASE),
+                             'puzzle': re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(puzzles)\/problem\/([0-9]+)[\/\?\#]?', re.IGNORECASE)})
+
     def get_identity(self):
         return 'Chess.com', BOARD_CHESS, METHOD_MISC
 
@@ -30,8 +35,7 @@ class InternetGameChessCom(InternetGameInterface):
                     return True
 
         # Puzzles
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(puzzles)\/problem\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['puzzle'].match(url)
         if m is not None:
             self.url_type = m.group(3).lower()
             self.id = m.group(4)
@@ -39,8 +43,7 @@ class InternetGameChessCom(InternetGameInterface):
 
         # Games
         url = url.replace('/live#g=', '/live/game/').replace('/daily#g=', '/daily/game/')
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(live|daily)\/([a-z\/]+)?([0-9]+)[\/\?\#]?', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['game'].match(url)
         if m is not None:
             self.url_type = m.group(3).lower()
             self.id = m.group(5)

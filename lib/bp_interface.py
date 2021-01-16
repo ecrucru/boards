@@ -5,13 +5,14 @@
 
 import logging
 import os
+import re
 import json
 from urllib.request import Request, urlopen
 from urllib.parse import urlparse, urlencode
 
 from lib.ua import InternetUserAgent
 from lib.const import ANNOTATOR, METHOD_WS, BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, \
-    CHESS960, FEN_START, FEN_START_960, REGEX_FEN, REGEX_STRIP_HTML
+    CHESS960, FEN_START, FEN_START_960
 
 
 # Abstract class to download a game from the Internet
@@ -25,6 +26,8 @@ class InternetGameInterface:
         self.userAgent = self.ua.generate(fake=self.allow_extra)
         self.use_an = True  # To rebuild a readable PGN where possible
         self.allow_octet_stream = False
+        self.regexes = {'fen': re.compile(r'^[kqbnrp1-8\/]+\s[w|b]\s[kq-]+\s[a-h-][1-8]?(\s[0-9]+)?(\s[0-9]+)?$', re.IGNORECASE),
+                        'strip_html': re.compile(r'<\/?[^>]+>', re.IGNORECASE)}
 
     def reset(self):
         ''' Clear the internal variables used to fetch the games. '''
@@ -264,12 +267,12 @@ class InternetGameInterface:
 
     def strip_html(self, input):
         ''' Remove any HTML mark from the input parameter. '''
-        return REGEX_STRIP_HTML.sub('', input)
+        return self.regexes['strip_html'].sub('', input)
 
     def is_fen(self, fen):
         ''' Test if the argument is a FEN position. '''
         try:
-            return REGEX_FEN.match(fen) is not None
+            return self.regexes['fen'].match(fen) is not None
         except TypeError:
             return False
 

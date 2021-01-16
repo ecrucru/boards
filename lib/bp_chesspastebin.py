@@ -12,6 +12,10 @@ from html.parser import HTMLParser
 
 # ChessPastebin.com
 class InternetGameChesspastebin(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'widget': re.compile(r'.*?\<div id=\"([0-9]+)_board\"\>\<\/div\>.*?', re.IGNORECASE)})
+
     def get_identity(self):
         return 'ChessPastebin.com', BOARD_CHESS, METHOD_HTML
 
@@ -27,8 +31,7 @@ class InternetGameChesspastebin(InternetGameInterface):
             return None
 
         # Extract the game ID
-        rxp = re.compile(r'.*?\<div id=\"([0-9]+)_board\"\>\<\/div\>.*?', flags=re.IGNORECASE)
-        m = rxp.match(page.replace("\n", ''))
+        m = self.regexes['widget'].match(page.replace("\n", ''))
         if m is None:
             return None
         gid = m.group(1)

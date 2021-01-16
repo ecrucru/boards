@@ -11,6 +11,10 @@ import re
 
 # Europe-Echecs.com
 class InternetGameEuropeechecs(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'widget': re.compile(r".*class=\"cbwidget\"\s+id=\"([0-9a-f]+)_container\".*", re.IGNORECASE)})
+
     def get_identity(self):
         return 'Europe-Echecs.com', BOARD_CHESS, METHOD_DL
 
@@ -33,10 +37,9 @@ class InternetGameEuropeechecs(InternetGameInterface):
                 return None
 
             # Find the chess widgets
-            rxp = re.compile(r".*class=\"cbwidget\"\s+id=\"([0-9a-f]+)_container\".*", re.IGNORECASE)
             lines = page.split("\n")
             for line in lines:
-                m = rxp.match(line)
+                m = self.regexes['widget'].match(line)
                 if m is not None:
                     links.append('https://www.europe-echecs.com/embed/doc_%s.pgn' % m.group(1))
 

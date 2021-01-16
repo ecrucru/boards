@@ -12,13 +12,16 @@ import websockets
 
 # Pychess.org
 class InternetGamePychess(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'url': re.compile(r'https?:\/\/(www\.)?pychess(-variants\.herokuapp\.com|\.org)\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)})
+
     def get_identity(self):
         return 'Pychess.org', BOARD_CHESS, METHOD_WS
 
     def assign_game(self, url):
         # Retrieve the ID of the game
-        rxp = re.compile(r'https?:\/\/(www\.)?pychess(-variants\.herokuapp\.com|\.org)\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['url'].match(url)
         if m is not None:
             gid = m.group(3)
             if len(gid) == 8:

@@ -13,11 +13,15 @@ from html.parser import HTMLParser
 
 # Chess-DB.com
 class InternetGameChessdb(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'format': re.compile(r'^[0-9\.]+$', re.IGNORECASE)})
+
     def get_identity(self):
         return 'Chess-DB.com', BOARD_CHESS, METHOD_HTML
 
     def is_enabled(self):
-        return False  # Server down
+        return False  # Server down for a long time
 
     def assign_game(self, url):
         # Verify the URL
@@ -29,8 +33,7 @@ class InternetGameChessdb(InternetGameInterface):
         args = parse_qs(parsed.query)
         if 'id' in args:
             gid = args['id'][0]
-            rxp = re.compile(r'^[0-9\.]+$', re.IGNORECASE)
-            if rxp.match(gid) is not None:
+            if self.regexes['format'].match(gid) is not None:
                 self.id = gid
                 return True
         return False

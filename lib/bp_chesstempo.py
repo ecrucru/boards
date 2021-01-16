@@ -13,13 +13,17 @@ from base64 import b64decode
 
 # ChessTempo.com
 class InternetGameChesstempo(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'game': re.compile(r'^https?:\/\/(\S+\.)?chesstempo\.com\/gamedb\/game\/(\d+)', re.IGNORECASE),
+                             'puzzle': re.compile(r'^https?:\/\/(\S+\.)?chesstempo\.com\/chess-tactics\/(\d+)', re.IGNORECASE)})
+
     def get_identity(self):
         return 'ChessTempo.com', BOARD_CHESS, METHOD_WS
 
     def assign_game(self, url):
         # Puzzles
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?chesstempo\.com\/chess-tactics\/(\d+)', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['puzzle'].match(url)
         if m is not None:
             gid = str(m.group(2))
             if gid.isdigit() and gid != '0':
@@ -28,8 +32,7 @@ class InternetGameChesstempo(InternetGameInterface):
                 return True
 
         # Games
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?chesstempo\.com\/gamedb\/game\/(\d+)', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['game'].match(url)
         if m is not None:
             gid = str(m.group(2))
             if gid.isdigit() and gid != '0':

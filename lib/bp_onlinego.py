@@ -10,11 +10,15 @@ import re
 
 # Online-go.com
 class InternetGameOnlinego(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'url': re.compile(r'^https?:\/\/online-go\.com\/(api\/v1\/)?games?\/([0-9]+)[\/\?\#]?', re.IGNORECASE)})
+
     def get_identity(self):
         return 'Online-go.com', BOARD_GO, METHOD_DL
 
     def assign_game(self, url):
-        m = re.compile(r'^https?:\/\/online-go\.com\/(api\/v1\/)?games?\/([0-9]+)[\/\?\#]?', re.IGNORECASE).match(url)
+        m = self.regexes['url'].match(url)
         if m is not None:
             gid = m.group(2)
             if gid.isdigit() and gid != '0':

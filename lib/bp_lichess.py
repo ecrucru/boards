@@ -12,6 +12,14 @@ from urllib.request import Request, urlopen
 
 # Lichess.org
 class InternetGameLichess(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'broadcast': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/broadcast\/[a-z0-9\-]+\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE),
+                             'game': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/(game\/export\/|embed\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE),
+                             'practice': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/practice\/[\w\-\/]+\/([a-z0-9]+\/[a-z0-9]+)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE),
+                             'puzzle': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/training\/([0-9]+|daily)[\/\?\#]?', re.IGNORECASE),
+                             'study': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)})
+
     def reset(self):
         InternetGameInterface.reset(self)
         self.url_tld = 'org'
@@ -21,8 +29,7 @@ class InternetGameLichess(InternetGameInterface):
 
     def assign_game(self, url):
         # Retrieve the ID of the broadcast
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/broadcast\/[a-z0-9\-]+\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['broadcast'].match(url)
         if m is not None:
             gid = m.group(3)
             if len(gid) == 8:
@@ -32,8 +39,7 @@ class InternetGameLichess(InternetGameInterface):
                 return True
 
         # Retrieve the ID of the practice
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/practice\/[\w\-\/]+\/([a-z0-9]+\/[a-z0-9]+)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['practice'].match(url)
         if m is not None:
             gid = m.group(3)
             if len(gid) == 17:
@@ -43,8 +49,7 @@ class InternetGameLichess(InternetGameInterface):
                 return True
 
         # Retrieve the ID of the study
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['study'].match(url)
         if m is not None:
             gid = m.group(3)
             if len(gid) in [8, 17]:
@@ -54,8 +59,7 @@ class InternetGameLichess(InternetGameInterface):
                 return True
 
         # Retrieve the ID of the puzzle
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/training\/([0-9]+|daily)[\/\?\#]?', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['puzzle'].match(url)
         if m is not None:
             gid = m.group(3)
             if (gid.isdigit() and gid != '0') or gid == 'daily':
@@ -65,8 +69,7 @@ class InternetGameLichess(InternetGameInterface):
                 return True
 
         # Retrieve the ID of the game
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/(game\/export\/|embed\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE)  # More permissive
-        m = rxp.match(url)
+        m = self.regexes['game'].match(url)
         if m is not None:
             gid = m.group(4)
             if len(gid) == 8:

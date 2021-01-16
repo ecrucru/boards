@@ -11,12 +11,15 @@ import re
 
 # Chess-Samara.ru
 class InternetGameChesssamara(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'url': re.compile(r'^https?:\/\/(\S+\.)?chess-samara\.ru\/(\d+)\-', re.IGNORECASE)})
+
     def get_identity(self):
         return 'Chess-Samara.ru', BOARD_CHESS, METHOD_DL
 
     def assign_game(self, url):
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?chess-samara\.ru\/(\d+)\-', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['url'].match(url)
         if m is not None:
             gid = str(m.group(2))
             if gid.isdigit() and gid != '0':

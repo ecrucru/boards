@@ -11,6 +11,10 @@ import re
 
 # ChessPro.ru
 class InternetGameChesspro(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'widget': re.compile(r'.*OpenGame\(\s*"g[0-9]+\"\s*,"(.*)"\s*\)\s*;.*', re.IGNORECASE)})
+
     def get_identity(self):
         return 'ChessPro.ru', BOARD_CHESS, METHOD_HTML
 
@@ -28,10 +32,9 @@ class InternetGameChesspro(InternetGameInterface):
             return None
 
         # Find the chess widget
-        rxp = re.compile(r'.*OpenGame\(\s*"g[0-9]+\"\s*,"(.*)"\s*\)\s*;.*', re.IGNORECASE)
         lines = page.split("\n")
         for line in lines:
-            m = rxp.match(line)
+            m = self.regexes['widget'].match(line)
             if m is not None:
                 return '[Annotator "ChessPro.ru"]\n%s' % m.group(1)
         return None

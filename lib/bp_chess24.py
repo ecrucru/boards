@@ -12,12 +12,15 @@ import chess
 
 # Chess24.com
 class InternetGameChess24(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'url': re.compile(r'^https?:\/\/chess24\.com\/[a-z]+\/(analysis|game|download-game)\/([a-z0-9\-_]+)[\/\?\#]?', re.IGNORECASE)})
+
     def get_identity(self):
         return 'Chess24.com', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
-        rxp = re.compile(r'^https?:\/\/chess24\.com\/[a-z]+\/(analysis|game|download-game)\/([a-z0-9\-_]+)[\/\?\#]?', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['url'].match(url)
         if m is not None:
             gid = str(m.group(2))
             if len(gid) == 22:

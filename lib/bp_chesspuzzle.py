@@ -12,12 +12,15 @@ from html.parser import HTMLParser
 
 # ChessPuzzle.net
 class InternetGameChesspuzzle(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'url': re.compile(r'^https?:\/\/(\S+\.)?chesspuzzle\.net\/(Puzzle|Solution)\/([0-9]+)[\/\?\#]?', re.IGNORECASE)})
+
     def get_identity(self):
         return 'ChessPuzzle.net', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?chesspuzzle\.net\/(Puzzle|Solution)\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['url'].match(url)
         if m is not None:
             gid = str(m.group(3))
             if gid.isdigit() and gid != '0':

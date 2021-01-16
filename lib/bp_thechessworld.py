@@ -11,6 +11,10 @@ import re
 
 # TheChessWorld.com
 class InternetGameThechessworld(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'url': re.compile(r".*pgn_uri:.*'([^']+)'.*", re.IGNORECASE)})
+
     def get_identity(self):
         return 'TheChessWorld.com', BOARD_CHESS, METHOD_DL
 
@@ -33,10 +37,9 @@ class InternetGameThechessworld(InternetGameInterface):
                 return None
 
             # Finds the games
-            rxp = re.compile(r".*pgn_uri:.*'([^']+)'.*", re.IGNORECASE)
             lines = data.split("\n")
             for line in lines:
-                m = rxp.match(line)
+                m = self.regexes['url'].match(line)
                 if m is not None:
                     links.append('https://www.thechessworld.com' + m.group(1))
 

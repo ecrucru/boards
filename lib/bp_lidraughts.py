@@ -12,10 +12,10 @@ import re
 class InternetGameLidraughts(InternetGameInterface):
     def __init__(self):
         InternetGameInterface.__init__(self)
-        self.regexes = {'broadcast': re.compile(r'^https?:\/\/lidraughts\.org\/broadcast\/[a-z0-9\-]+\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE),
-                        'game': re.compile(r'^https?:\/\/lidraughts\.org\/(game\/export\/|embed\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE),
-                        'puzzle': re.compile(r'^https?:\/\/lidraughts\.org\/training\/([0-9]+|daily)[\/\?\#]?', re.IGNORECASE),
-                        'study': re.compile(r'^https?:\/\/lidraughts\.org\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)}
+        self.regexes.update({'broadcast': re.compile(r'^https?:\/\/lidraughts\.org\/broadcast\/[a-z0-9\-]+\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE),
+                             'game': re.compile(r'^https?:\/\/lidraughts\.org\/(game\/export\/|embed\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE),
+                             'puzzle': re.compile(r'^https?:\/\/lidraughts\.org\/training\/([0-9]+|daily)[\/\?\#]?', re.IGNORECASE),
+                             'study': re.compile(r'^https?:\/\/lidraughts\.org\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)})
 
     def get_identity(self):
         return 'Lidraughts.org', BOARD_DRAUGHTS, METHOD_DL

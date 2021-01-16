@@ -16,12 +16,15 @@ import chess
 
 # Chess.org
 class InternetGameChessOrg(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'url': re.compile(r'^https?:\/\/chess\.org\/play\/([a-f0-9\-]+)[\/\?\#]?', re.IGNORECASE)})
+
     def get_identity(self):
         return 'Chess.org', BOARD_CHESS, METHOD_WS
 
     def assign_game(self, url):
-        rxp = re.compile(r'^https?:\/\/chess\.org\/play\/([a-f0-9\-]+)[\/\?\#]?', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['url'].match(url)
         if m is not None:
             id = str(m.group(1))
             if len(id) == 36:

@@ -11,12 +11,15 @@ import re
 
 # ChessKing.com
 class InternetGameChessking(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'url': re.compile(r'^https?:\/\/(\S+\.)?chessking\.com\/games\/(ff\/)?([0-9]+)[\/\?\#]?', re.IGNORECASE)})
+
     def get_identity(self):
         return 'ChessKing.com', BOARD_CHESS, METHOD_DL
 
     def assign_game(self, url):
-        rxp = re.compile(r'^https?:\/\/(\S+\.)?chessking\.com\/games\/(ff\/)?([0-9]+)[\/\?\#]?', re.IGNORECASE)
-        m = rxp.match(url)
+        m = self.regexes['url'].match(url)
         if m is not None:
             gid = str(m.group(3))
             if gid.isdigit() and gid != '0' and len(gid) <= 9:

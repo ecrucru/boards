@@ -14,6 +14,12 @@ import chess
 
 # SchachArena.de
 class InternetGameSchacharena(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'player': re.compile(r'.*spielerstatistik.*name=(\w+).*\[([0-9]+)\].*', re.IGNORECASE),
+                             'move': re.compile(r'.*<span.*onMouseOut.*fan\(([0-9]+)\).*', re.IGNORECASE),
+                             'result': re.compile(r'.*>(1\-0|0\-1|1\/2\-1\/2)\s([^\<]+)<.*', re.IGNORECASE)})
+
     def get_identity(self):
         return 'SchachArena.de', BOARD_CHESS, METHOD_HTML
 
@@ -42,23 +48,18 @@ class InternetGameSchacharena(InternetGameInterface):
         if page is None:
             return None
 
-        # Init
-        rxp_player = re.compile(r'.*spielerstatistik.*name=(\w+).*\[([0-9]+)\].*', re.IGNORECASE)
-        rxp_move = re.compile(r'.*<span.*onMouseOut.*fan\(([0-9]+)\).*', re.IGNORECASE)
-        rxp_result = re.compile(r'.*>(1\-0|0\-1|1\/2\-1\/2)\s([^\<]+)<.*', re.IGNORECASE)
-        player_count = 0
-        board = chess.Board()
-
         # Parse
+        player_count = 0
         game = {}
         game['Result'] = '*'
         reason = ''
         game['_moves'] = ''
         game['_url'] = 'https://www.schacharena.de/new/verlauf_to_pgn_n.php?brett=%s' % self.id  # If one want to get the full PGN
+        board = chess.Board()
         lines = page.split("\n")
         for line in lines:
             # Player
-            m = rxp_player.match(line)
+            m = self.regexes['player'].match(line)
             if m is not None:
                 player_count += 1
                 if player_count == 1:
@@ -72,7 +73,7 @@ class InternetGameSchacharena(InternetGameInterface):
                 continue
 
             # Move
-            m = rxp_move.match(line)
+            m = self.regexes['move'].match(line)
             if m is not None:
                 move = m.group(1)
                 move = '_abcdefgh'[int(move[0])] + move[1] + '_abcdefgh'[int(move[2])] + move[3]
@@ -84,7 +85,7 @@ class InternetGameSchacharena(InternetGameInterface):
                 continue
 
             # Result
-            m = rxp_result.match(line)
+            m = self.regexes['result'].match(line)
             if m is not None:
                 game['Result'] = m.group(1)
                 reason = unescape(m.group(2))

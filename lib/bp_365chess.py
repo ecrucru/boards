@@ -12,6 +12,10 @@ from urllib.parse import urlparse, parse_qs
 
 # 365chess.com
 class InternetGame365chess(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.regexes.update({'players': re.compile(r'^([\w\-,\s]+)(\(([0-9]+)\))? vs\. ([\w\-,\s]+)(\(([0-9]+)\))?$', re.IGNORECASE)})
+
     def get_identity(self):
         return '365chess.com', BOARD_CHESS, METHOD_HTML
 
@@ -64,7 +68,6 @@ class InternetGame365chess(InternetGameInterface):
         # Header
         game['_url'] = url
         lines = page.replace("<td", "\n<td").split("\n")
-        rxp = re.compile(r'^([\w\-,\s]+)(\(([0-9]+)\))? vs\. ([\w\-,\s]+)(\(([0-9]+)\))?$', re.IGNORECASE)
         game['White'] = 'Unknown'
         game['Black'] = 'Unknown'
         for line in lines:
@@ -84,7 +87,7 @@ class InternetGame365chess(InternetGameInterface):
 
             # Players
             line = self.strip_html(line).strip()
-            m = rxp.match(line)
+            m = self.regexes['players'].match(line)
             if m is not None:
                 game['White'] = str(m.group(1)).strip()
                 if m.group(3) is not None:
