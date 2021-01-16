@@ -144,7 +144,15 @@ class InternetGameLidraughts(InternetGameInterface):
 
     def get_test_links(self):
         return [('https://lidraughts.org/broadcast/the-big-christmas-show-round-4/JnWAfmOk', True),     # Broadcast
-                ('https://lidraughts.org/study/3VwAd32E#tag', True),                                    # Study
-                ('https://lidraughts.org/study/F88mhTPe/A9uIwROn?fake', True),                          # Chapter of study
-                ('https://lidraughts.org/RicO2oy8/black', True),                                        # Game
-                ('https://lidraughts.org/training/3620', True)]                                         # Puzzle
+                ('https://lidraughts.org/broadcast/unknown/ABCD1234', False),                           # Broadcast (unknown)
+                ('https://LIDRAUGHTS.org/study/3VwAd32E#tag', True),                                    # Study
+                ('https://lidraughts.org/study/ABCD1234', False),                                       # Study (unknown)
+                ('https://lidraughts.org/study/F88mhTPe/A9uIwROn?arg', True),                           # Chapter of study
+                ('https://lidraughts.org/study/F88mhTPe/ABCD1234?arg', True),                           # Chapter of study (unknown but the main study is found)
+                ('https://lidraughts.org/study/ABCD1234/abcd1234?arg', False),                          # Chapter of study (both unknown)
+                ('https://lidraughts.ORG/RicO2oy8?arg', True),                                          # Game (white side)
+                ('https://lidraughts.ORG/RicO2oy8/black', True),                                        # Game (black side)
+                ('https://lidraughts.org/training/3620', True),                                         # Puzzle
+                ('https://lidraughts.org/training/123456789', True),                                    # Puzzle (unknown)
+                ('https://lidraughts.org/about', False),                                                # Not a game (about page)
+                ('https://lidraughts.org', False)]                                                      # Not a game (homepage)
