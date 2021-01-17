@@ -40,6 +40,7 @@ from lib.bp_ficsgames import InternetGameFicsgames
 from lib.bp_gameknot import InternetGameGameknot
 from lib.bp_iccf import InternetGameIccf
 from lib.bp_ideachess import InternetGameIdeachess
+from lib.bp_mskchess import InternetGameMskchess
 from lib.bp_playok import InternetGamePlayok
 from lib.bp_pychess import InternetGamePychess
 from lib.bp_redhotpawn import InternetGameRedhotpawn

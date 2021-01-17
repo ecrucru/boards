@@ -115,7 +115,7 @@ class InternetGameInterface:
                 try:
                     data = bytes.decode('latin-1')
                 except Exception:
-                    logging.debug('Error in the decoding of the data')
+                    logging.error('Error in the decoding of the data')
                     return None
 
         # Result
