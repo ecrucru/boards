@@ -51,6 +51,7 @@ from lib.bp_thechessworld import InternetGameThechessworld
 from lib.bp_lidraughts import InternetGameLidraughts
 # Go
 from lib.bp_dragongoserver import InternetGameDragongoserver
+from lib.bp_gokgs import InternetGameGokgs
 from lib.bp_onlinego import InternetGameOnlinego
 # Lowest priority
 from lib.bp_generic_chess import InternetGameGenericChess
