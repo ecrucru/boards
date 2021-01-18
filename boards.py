@@ -53,6 +53,7 @@ from lib.bp_lidraughts import InternetGameLidraughts
 from lib.bp_dragongoserver import InternetGameDragongoserver
 from lib.bp_gokgs import InternetGameGokgs
 from lib.bp_goshrine import InternetGameGoshrine
+from lib.bp_ingoweb import InternetGameIngoweb
 from lib.bp_onlinego import InternetGameOnlinego
 # Lowest priority
 from lib.bp_generic_chess import InternetGameGenericChess
