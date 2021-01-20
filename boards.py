@@ -41,7 +41,7 @@ from lib.bp_gameknot import InternetGameGameknot
 from lib.bp_iccf import InternetGameIccf
 from lib.bp_ideachess import InternetGameIdeachess
 from lib.bp_mskchess import InternetGameMskchess
-from lib.bp_playok import InternetGamePlayok
+from lib.bp_playok import InternetGamePlayokChess
 from lib.bp_pychess import InternetGamePychess
 from lib.bp_redhotpawn import InternetGameRedhotpawn
 from lib.bp_schacharena import InternetGameSchacharena
@@ -55,6 +55,7 @@ from lib.bp_gokgs import InternetGameGokgs
 from lib.bp_goshrine import InternetGameGoshrine
 from lib.bp_ingoweb import InternetGameIngoweb
 from lib.bp_onlinego import InternetGameOnlinego
+from lib.bp_playok import InternetGamePlayokGo
 # Lowest priority
 from lib.bp_generic_chess import InternetGameGenericChess
 
@@ -111,7 +112,11 @@ async def main():
     # Load the board providers from the imported classes
     global board_providers
     for cls in InternetGameInterface.__subclasses__():
-        board_providers.append(cls())
+        if len(cls.__subclasses__()) == 0:
+            board_providers.append(cls())
+        else:
+            for cls2 in cls.__subclasses__():
+                board_providers.append(cls2())
 
     # Command line
     cmdline = argparse.ArgumentParser(prog='python boards.py', description='Boards is a download helper for the online board games (chess, draughts, go...)')

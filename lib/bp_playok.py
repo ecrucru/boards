@@ -3,16 +3,16 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import BOARD_CHESS, METHOD_DL
+from lib.const import BOARD_CHESS, BOARD_GO, METHOD_DL
 from lib.bp_interface import InternetGameInterface
 
 from urllib.parse import urlparse, parse_qs
 
 
 # PlayOK.com
-class InternetGamePlayok(InternetGameInterface):
+class InternetGamePlayokInterface(InternetGameInterface):
     def get_identity(self):
-        return 'PlayOK.com', BOARD_CHESS, METHOD_DL
+        return 'PlayOK.com', self.boardType, METHOD_DL
 
     def assign_game(self, url):
         # Verify the hostname
@@ -24,7 +24,7 @@ class InternetGamePlayok(InternetGameInterface):
         args = parse_qs(parsed.query)
         if 'g' in args:
             gid = args['g'][0]
-            if gid[:2] == 'ch':
+            if gid[:2] == self.parameter:
                 gid = gid[2:].replace('.txt', '')
                 if gid.isdigit() and gid != '0':
                     self.id = gid
@@ -33,13 +33,37 @@ class InternetGamePlayok(InternetGameInterface):
 
     def download_game(self):
         if self.id is not None:
-            pgn = self.download('https://www.playok.com/p/?g=ch%s.txt' % self.id)
+            pgn = self.download('https://www.playok.com/p/?g=%s%s.txt' % (self.parameter, self.id))
             if len(pgn) > 16:
                 return pgn
         return None
 
+
+# PlayOK.com for chess
+class InternetGamePlayokChess(InternetGamePlayokInterface):
+    def __init__(self):
+        InternetGamePlayokInterface.__init__(self)
+        self.boardType = BOARD_CHESS
+        self.parameter = 'ch'
+
     def get_test_links(self):
         return [('http://www.playok.com/p/?g=ch484680868', True),       # Game
                 ('https://PLAYOK.com/p/?g=ch484680868.txt', True),      # Game (direct link)
-                ('https://PLAYOK.com/p/?g=ch999999999#tag', False),     # Game (wrong ID)
+                ('https://PLAYOK.com/p/?g=ch999999999#tag', False),     # Not a game (wrong ID)
+                ('http://www.playok.com/p/?g=go15733322#165', False),   # Not a game (go)
+                ('http://www.playok.com', False)]                       # Not a game (homepage)
+
+
+# PlayOK.com for go
+class InternetGamePlayokGo(InternetGamePlayokInterface):
+    def __init__(self):
+        InternetGamePlayokInterface.__init__(self)
+        self.boardType = BOARD_GO
+        self.parameter = 'go'
+
+    def get_test_links(self):
+        return [('http://www.playok.com/p/?g=go15733322#165', True),    # Game
+                ('https://PLAYOK.com/p/?g=go15733322.txt', True),       # Game (direct link)
+                ('https://PLAYOK.com/p/?g=go999999999#tag', False),     # Not a game (wrong ID)
+                ('http://www.playok.com/p/?g=ch484680868', False),      # Not a game (chess)
                 ('http://www.playok.com', False)]                       # Not a game (homepage)
