@@ -8,6 +8,7 @@ from lib.bp_interface import InternetGameInterface
 
 import re
 from urllib.request import Request, urlopen
+import chess
 
 
 # Lichess.org
@@ -17,7 +18,7 @@ class InternetGameLichess(InternetGameInterface):
         self.regexes.update({'broadcast': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/broadcast\/[a-z0-9\-]+\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE),
                              'game': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/(game\/export\/|embed\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE),
                              'practice': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/practice\/[\w\-\/]+\/([a-z0-9]+\/[a-z0-9]+)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE),
-                             'puzzle': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/training\/([0-9]+|daily)[\/\?\#]?', re.IGNORECASE),
+                             'puzzle': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/training\/([a-z0-9]+|daily)[\/\?\#]?', re.IGNORECASE),
                              'study': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)})
 
     def reset(self):
@@ -61,12 +62,10 @@ class InternetGameLichess(InternetGameInterface):
         # Retrieve the ID of the puzzle
         m = self.regexes['puzzle'].match(url)
         if m is not None:
-            gid = m.group(3)
-            if (gid.isdigit() and gid != '0') or gid == 'daily':
-                self.url_type = TYPE_PUZZLE
-                self.id = gid
-                self.url_tld = m.group(2)
-                return True
+            self.url_type = TYPE_PUZZLE
+            self.id = m.group(3)
+            self.url_tld = m.group(2)
+            return True
 
         # Retrieve the ID of the game
         m = self.regexes['game'].match(url)
@@ -132,9 +131,6 @@ class InternetGameLichess(InternetGameInterface):
 
         # Logic for the puzzles
         elif self.url_type == TYPE_PUZZLE:
-            # The API doesn't provide the history of the moves
-            # chessgame = self.query_api('/training/%s/load' % self.id)
-
             # Fetch the puzzle
             url = 'https://lichess.%s/training/%s' % (self.url_tld, self.id)
             page = self.download(url)
@@ -143,7 +139,7 @@ class InternetGameLichess(InternetGameInterface):
 
             # Extract the JSON
             page = page.replace("\n", '')
-            pos1 = page.find("lichess.puzzle =")
+            pos1 = page.find("LichessPuzzle(")
             if pos1 == -1:
                 return None
             pos1 = page.find('"game"', pos1 + 1)
@@ -169,16 +165,13 @@ class InternetGameLichess(InternetGameInterface):
             if puzzle == '':
                 return None
             game = {}
-            game['_url'] = 'https://lichess.%s/%s#%s' % (self.url_tld, self.json_field(puzzle, 'gameId'), self.json_field(puzzle, 'initialPly'))
+            game['_url'] = 'https://lichess.%s/%s' % (self.url_tld, self.json_field(chessgame, 'game/id'))
             game['Site'] = 'lichess.%s' % self.url_tld
             rating = self.json_field(puzzle, 'rating')
-            game['Event'] = 'Puzzle %d, rated %s' % (self.json_field(puzzle, 'id'), rating)
+            game['Event'] = 'Puzzle %s, rated %d' % (self.json_field(puzzle, 'id'), rating)
             game['Result'] = '*'
-            game['X_ID'] = self.json_field(puzzle, 'id')
             game['X_TimeControl'] = self.json_field(chessgame, 'game/clock')
             game['X_Rating'] = rating
-            game['X_Attempts'] = self.json_field(puzzle, 'attempts')
-            game['X_Vote'] = self.json_field(puzzle, 'vote')
 
             # Players
             players = self.json_field(chessgame, 'game/players')
@@ -198,27 +191,21 @@ class InternetGameLichess(InternetGameInterface):
                     game[t] = p['name'][:pos1]
                     game[t + 'Elo'] = p['name'][pos1 + 2:-1]
 
-            # Moves
-            moves = self.json_field(chessgame, 'game/treeParts')
-            if not isinstance(moves, list):
-                return None
-            game['_moves'] = ''
-            for m in moves:
-                if m['ply'] in [0, '0']:
-                    game['SetUp'] = '1'
-                    game['FEN'] = m['fen']
-                else:
-                    game['_moves'] += '%s ' % m['san']
+            # Current position
+            board = chess.Board()
+            game['_moves'] = self.json_field(chessgame, 'game/pgn')
+            moves = game['_moves'].split(' ')
+            for move in moves:
+                board.push_san(move)
+            game['_url'] += '#%d' % len(moves)
 
-            # Solution
+            # Moves
             game['_moves'] += ' {Solution: '
-            puzzle = self.json_field(puzzle, 'branch')
-            while True:
-                game['_moves'] += '%s ' % self.json_field(puzzle, 'san')
-                puzzle = self.json_field(puzzle, 'children')
-                if len(puzzle) == 0:
-                    break
-                puzzle = puzzle[0]
+            moves = self.json_field(puzzle, 'solution')
+            for move in moves:
+                kmove = chess.Move.from_uci(move)
+                game['_moves'] += board.san(kmove) + ' '
+                board.push(kmove)
             game['_moves'] += '}'
 
             # Rebuild the PGN game
@@ -241,8 +228,9 @@ class InternetGameLichess(InternetGameInterface):
                 ('https://lichess.org/study/hr4H7sOB/fvtzEXvi.pgn#32', True),                       # Chapter of a study with anchor
                 ('https://lichess.org/STUDY/hr4H7sOB.pgn', True),                                   # Study of one game
                 ('https://lichess.org/training/daily', True),                                       # Daily puzzle
-                ('https://lichess.org/training/84969', True),                                       # Puzzle
-                ('https://lichess.org/training/1281301832', False),                                 # Not a puzzle (wrong ID)
+                ('https://lichess.org/training/lfSgX', True),                                       # Puzzle
+                ('https://lichess.org/training/84969', False),                                      # Not a puzzle (old ID)
+                ('https://lichess.org/training/1281301832', False),                                 # Not a puzzle (wrong old ID)
                 ('https://lichess.org/broadcast/2019-gct-zagreb-round-4/jQ1dbbX9', True),           # Broadcast
                 ('https://lichess.org/broadcast/2019-pychess-round-1/pychess1', False),             # Not a broadcast (wrong ID)
                 ('https://lichess.ORG/practice/basic-tactics/the-pin/9ogFv8Ac/BRmScz9t#t', True),   # Practice
