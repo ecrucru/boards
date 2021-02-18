@@ -114,10 +114,7 @@ class InternetGameGameknot(InternetGameInterface):
                     if len(item) == 4:
                         break
                     nextid = item[7]
-                    if self.use_an:
-                        move = item[4]
-                    else:
-                        move = item[5]
+                    move = item[4]  # No AN is 5
                     game['_moves'] += ' %s' % move
                 game['_moves'] += '}'
 
@@ -151,12 +148,9 @@ class InternetGameGameknot(InternetGameInterface):
                 if move == '':
                     break
                 try:
-                    if self.use_an:
-                        kmove = chess.Move.from_uci(move)
-                        game['_moves'] += board.san(kmove) + ' '
-                        board.push(kmove)
-                    else:
-                        game['_moves'] += move + ' '
+                    kmove = chess.Move.from_uci(move)
+                    game['_moves'] += board.san(kmove) + ' '
+                    board.push(kmove)
                 except Exception:
                     return None
 

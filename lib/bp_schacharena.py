@@ -77,11 +77,9 @@ class InternetGameSchacharena(InternetGameInterface):
             if m is not None:
                 move = m.group(1)
                 move = '_abcdefgh'[int(move[0])] + move[1] + '_abcdefgh'[int(move[2])] + move[3]
-                if self.use_an:
-                    kmove = chess.Move.from_uci(move)
-                    move = board.san(kmove)
-                    board.push(kmove)
-                game['_moves'] += '%s ' % move
+                kmove = chess.Move.from_uci(move)
+                game['_moves'] += '%s ' % board.san(kmove)
+                board.push(kmove)
                 continue
 
             # Result

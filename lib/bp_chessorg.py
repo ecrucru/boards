@@ -167,12 +167,9 @@ class InternetGameChessOrg(InternetGameInterface):
         moves = moves.split(' ')
         for move in moves:
             try:
-                if self.use_an:
-                    move = chess.Move.from_uci(move)
-                    game['_moves'] += board.san(move) + ' '
-                    board.push(move)
-                else:
-                    game['_moves'] += move + ' '
+                move = chess.Move.from_uci(move)
+                game['_moves'] += board.san(move) + ' '
+                board.push(move)
             except Exception:  # ValueError
                 return None
 

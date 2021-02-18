@@ -98,12 +98,9 @@ class InternetGameChess24(InternetGameInterface):
                     if kmove == '':
                         break
                     try:
-                        if self.use_an:
-                            kmove = chess.Move.from_uci(kmove)
-                            game['_moves'] += board.san(kmove) + ' '
-                            board.push(kmove)
-                        else:
-                            game['_moves'] += kmove + ' '
+                        kmove = chess.Move.from_uci(kmove)
+                        game['_moves'] += board.san(kmove) + ' '
+                        board.push(kmove)
                     except Exception:
                         return None
 

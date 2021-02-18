@@ -24,7 +24,6 @@ class InternetGameInterface:
         self.ua = InternetUserAgent()
         self.allow_extra = False
         self.userAgent = self.ua.generate(fake=self.allow_extra)
-        self.use_an = True  # To rebuild a readable PGN where possible
         self.allow_octet_stream = False
         self.regexes = {'fen': re.compile(r'^[kqbnrp1-8\/]+\s[w|b]\s[kq-]+\s[a-h-][1-8]?(\s[0-9]+)?(\s[0-9]+)?$', re.IGNORECASE),
                         'strip_html': re.compile(r'<\/?[^>]+>', re.IGNORECASE)}

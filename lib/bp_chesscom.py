@@ -186,12 +186,9 @@ class InternetGameChessCom(InternetGameInterface):
                 move = self.decode_move(moves[:2])
                 moves = moves[2:]
                 try:
-                    if self.use_an:
-                        kmove = chess.Move.from_uci(move)
-                        game['_moves'] += board.san(kmove) + ' '
-                        board.push(kmove)
-                    else:
-                        game['_moves'] += move + ' '
+                    kmove = chess.Move.from_uci(move)
+                    game['_moves'] += board.san(kmove) + ' '
+                    board.push(kmove)
                 except Exception:
                     return None
 
