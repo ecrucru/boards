@@ -7,8 +7,7 @@ from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
 
 import re
-from urllib.parse import urlparse, parse_qs
-from html import unescape
+from urllib.parse import unquote
 import chess
 
 
@@ -16,27 +15,15 @@ import chess
 class InternetGameSchacharena(InternetGameInterface):
     def __init__(self):
         InternetGameInterface.__init__(self)
-        self.regexes.update({'player': re.compile(r'.*spielerstatistik.*name=(\w+).*\[([0-9]+)\].*', re.IGNORECASE),
+        self.regexes.update({'player': re.compile(r'.*spielerstatistik.*name=([%\w]+).*\[([0-9]+)\].*', re.IGNORECASE),
                              'move': re.compile(r'.*<span.*onMouseOut.*fan\(([0-9]+)\).*', re.IGNORECASE),
-                             'result': re.compile(r'.*>(1\-0|0\-1|1\/2\-1\/2)\s([^\<]+)<.*', re.IGNORECASE)})
+                             'result': re.compile(r'.*<strong>(1:0|0:1|&frac12;)<\/strong>.*', re.IGNORECASE)})
 
     def get_identity(self):
         return 'SchachArena.de', BOARD_CHESS, METHOD_HTML
 
     def assign_game(self, url):
-        # Verify the URL
-        parsed = urlparse(url)
-        if parsed.netloc.lower() not in ['www.schacharena.de', 'schacharena.de'] or 'verlauf' not in parsed.path.lower():
-            return False
-
-        # Read the arguments
-        args = parse_qs(parsed.query)
-        if 'brett' in args:
-            gid = args['brett'][0]
-            if gid.isdigit() and gid != '0':
-                self.id = gid
-                return True
-        return False
+        return self.reacts_to(url, 'schacharena.de')
 
     def download_game(self):
         # Check
@@ -44,7 +31,7 @@ class InternetGameSchacharena(InternetGameInterface):
             return None
 
         # Download page
-        page = self.download('https://www.schacharena.de/new/verlauf.php?brett=%s' % self.id)
+        page = self.download(self.id)
         if page is None:
             return None
 
@@ -52,9 +39,8 @@ class InternetGameSchacharena(InternetGameInterface):
         player_count = 0
         game = {}
         game['Result'] = '*'
-        reason = ''
         game['_moves'] = ''
-        game['_url'] = 'https://www.schacharena.de/new/verlauf_to_pgn_n.php?brett=%s' % self.id  # If one want to get the full PGN
+        game['_url'] = self.id
         board = chess.Board()
         lines = page.split("\n")
         for line in lines:
@@ -68,7 +54,7 @@ class InternetGameSchacharena(InternetGameInterface):
                     tag = 'Black'
                 else:
                     return None
-                game[tag] = m.group(1)
+                game[tag] = unquote(m.group(1), encoding='latin-1')
                 game[tag + 'Elo'] = m.group(2)
                 continue
 
@@ -85,11 +71,16 @@ class InternetGameSchacharena(InternetGameInterface):
             # Result
             m = self.regexes['result'].match(line)
             if m is not None:
-                game['Result'] = m.group(1)
-                reason = unescape(m.group(2))
+                game['Result'] = m.group(1).replace(':', '-').replace('&frac12;', '1/2-1/2')
                 continue
 
         # Final PGN
-        if reason != '':
-            game['_moves'] += ' {%s}' % reason
         return self.rebuild_pgn(game)
+
+    def get_test_links(self):
+        return [('https://www.schacharena.de/new/verlauf_db_new.php?name=Lolle2008&gedreht=0&nr=6578', True),       # Game (1-0)
+                ('https://www.schacharena.de/new/verlauf_db_new.php?name=Lolle2008&gedreht=1&nr=6572', True),       # Game (0-1)
+                ('https://www.schacharena.de/new/verlauf_db_new.php?name=lutz53&gedreht=0&nr=23489', True),         # Game (1/2)
+                ('https://www.schacharena.de/new/verlauf_db_new.php?name=k%F6nig123456&gedreht=0&nr=41440', True),  # Game (special caracter)
+                ('https://www.schacharena.de/new/spielerstatistik.php?name=Umex', False),                           # Not a game (user page)
+                ('https://www.schacharena.de', False)]                                                              # Not a game (home page)
