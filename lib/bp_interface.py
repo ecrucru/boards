@@ -4,7 +4,6 @@
 # GPL version 3
 
 import logging
-import os
 import re
 import json
 from urllib.request import Request, urlopen
@@ -181,16 +180,18 @@ class InternetGameInterface:
             The USERAGENT is requested by some websites to make sure that you are not a bot.
             The value None is returned in case of error. '''
         # Check
-        if url in [None, ''] or postData in [None, '']:
+        if url in [None, '']:
             return None
 
         # Call data
+        if postData is not None:
+            postData = urlencode(postData).encode()
         try:
             logging.debug('Calling API: %s' % url)
             if userAgent:
-                req = Request(url, urlencode(postData).encode(), headers={'User-Agent': self.userAgent})
+                req = Request(url, postData, headers={'User-Agent': self.userAgent})
             else:
-                req = Request(url, urlencode(postData).encode())
+                req = Request(url, postData)
             response = urlopen(req)
             return self.read_data(response)
         except Exception as exception:
@@ -226,14 +227,15 @@ class InternetGameInterface:
         pgn += "\n"
 
         # Body
-        if '_url' in game:
-            pgn += "{%s}\n" % game['_url']
-        if '_moves' in game:
-            pgn += '%s ' % game['_moves']
-        if '_reason' in game:
-            pgn += '{%s} ' % game['_reason']
-        if 'Result' in game:
-            pgn += '%s ' % game['Result']
+        def _inline_tag(key, mask):
+            nonlocal pgn
+            if key in game and (game[key].strip() != ''):
+                pgn += mask % game[key].strip()
+
+        _inline_tag('_url', "{%s}\n")
+        _inline_tag('_moves', '%s ')
+        _inline_tag('_reason', '{%s} ')
+        _inline_tag('Result', '%s ')
         return pgn.strip()
 
     def sanitize(self, data):
@@ -261,8 +263,8 @@ class InternetGameInterface:
             if not data.startswith('('):
                 return None
 
-        # Return the data with the local crlf
-        return data.replace("\n", os.linesep)
+        # Return the data
+        return data
 
     def strip_html(self, input):
         ''' Remove any HTML mark from the input parameter. '''
