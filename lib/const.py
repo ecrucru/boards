@@ -4,7 +4,7 @@
 # GPL version 3
 
 # Constants
-ANNOTATOR = 'Boards 1.0'
+ANNOTATOR = 'ecrucru/boards@github 1.0'
 BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO = range(3)
 TYPE_GAME, TYPE_STUDY, TYPE_PUZZLE, TYPE_EVENT, TYPE_FEN = range(5)
 

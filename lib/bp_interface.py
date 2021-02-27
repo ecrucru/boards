@@ -10,7 +10,7 @@ from urllib.request import Request, urlopen
 from urllib.parse import urlparse, urlencode
 
 from lib.ua import InternetUserAgent
-from lib.const import ANNOTATOR, METHOD_WS, BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, \
+from lib.const import METHOD_WS, BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, \
     CHESS960, FEN_START, FEN_START_960
 
 
@@ -219,11 +219,12 @@ class InternetGameInterface:
 
         # Header
         pgn = ''
+        roster = ['Event', 'Site', 'Date', 'Round', 'White', 'Black', 'Result']
+        for tag in roster:
+            pgn += '[%s "%s"]\n' % (tag, game.get(tag, '?'))
         for e in game:
-            if e[:1] != '_' and game[e] not in [None, '']:
+            if e not in roster and e[:1] != '_' and game[e] not in [None, '']:
                 pgn += '[%s "%s"]\n' % (e, game[e])
-        if pgn == '':
-            pgn = '[Annotator "%s"]\n' % ANNOTATOR
         pgn += "\n"
 
         # Body
