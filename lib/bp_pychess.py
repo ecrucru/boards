@@ -32,13 +32,9 @@ class InternetGamePychess(InternetGameInterface):
         return False
 
     async def download_game(self):
-        # Check
-        if self.id is None:
-            return None
-
-        # Open a websocket to retrieve the game
-        async def coro():
-            result = None
+        result = None
+        if self.id is not None:
+            # Open a websocket to retrieve the game
             ws = await websockets.connect('wss://www.pychess.org/wsr', origin="https://www.pychess.org", ping_interval=None)
             try:
                 await ws.send('{"type":"board","gameId":"%s"}' % self.id)
@@ -50,19 +46,17 @@ class InternetGamePychess(InternetGameInterface):
                         break
             finally:
                 await ws.close()
-            return result
-
-        data = await coro()
-        return data
+        return result
 
     def get_test_links(self):
         return [('http://pychess.org/DGN5Ps2k#tag', True),                  # Crazyhouse
                 ('http://pychess-variants.herokuapp.com/uWbgRNfw', True),   # Chess
                 ('http://PYCHESS.org/4XTiOuKB', True),                      # Chess960
                 ('http://pychess.ORG/b8aZwvoJ', True),                      # Placement
-                ('https://pychess.org/drtDbEhd#tag', False),                # Shogi (unsupported)
+                ('https://pychess.org/drtDbEhd#tag', True),                 # Shogi
                 ('https://pychess.ORG/tALxtipo', True),                     # Makruk
                 ('https://pychess.org/2CKjayxv?param', True),               # Cambodian
                 ('https://PYCHESS.ORG/4x0kQ8kY', True),                     # Sittuyin
                 ('https://pychess.org/7cqV5j2N', True),                     # Seirawan
+                ('https://pychess.org/bEh4x0XT', False),                    # Not a game (invalid identifier)
                 ('http://pychess.org', False)]                              # Not a game (homepage)
