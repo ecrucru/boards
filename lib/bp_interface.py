@@ -22,7 +22,7 @@ class InternetGameInterface:
         self.reset()
         self.ua = InternetUserAgent()
         self.allow_extra = False
-        self.userAgent = self.ua.generate(fake=self.allow_extra)
+        self.user_agent = self.ua.generate(fake=self.allow_extra)
         self.allow_octet_stream = False
         self.regexes = {'fen': re.compile(r'^[kqbnrp1-8\/]+\s[w|b]\s[kq-]+\s[a-h-][1-8]?(\s[0-9]+)?(\s[0-9]+)?$', re.IGNORECASE),
                         'strip_html': re.compile(r'<\/?[^>]+>', re.IGNORECASE)}
@@ -148,7 +148,7 @@ class InternetGameInterface:
         try:
             logging.debug('Downloading game: %s' % url)
             if userAgent:
-                req = Request(url, headers={'User-Agent': self.userAgent})
+                req = Request(url, headers={'User-Agent': self.user_agent})
                 response = urlopen(req)
             else:
                 response = urlopen(url)
@@ -189,7 +189,7 @@ class InternetGameInterface:
         try:
             logging.debug('Calling API: %s' % url)
             if userAgent:
-                req = Request(url, postData, headers={'User-Agent': self.userAgent})
+                req = Request(url, postData, headers={'User-Agent': self.user_agent})
             else:
                 req = Request(url, postData)
             response = urlopen(req)

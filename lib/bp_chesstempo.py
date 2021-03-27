@@ -5,9 +5,9 @@
 
 from lib.const import BOARD_CHESS, METHOD_WS, TYPE_GAME, TYPE_PUZZLE
 from lib.bp_interface import InternetGameInterface
+from lib.ws import InternetWebsockets
 
 import re
-import websockets
 from base64 import b64decode
 
 
@@ -58,37 +58,31 @@ class InternetGameChesstempo(InternetGameInterface):
         elif self.url_type == TYPE_PUZZLE:
 
             # Open a websocket to retrieve the puzzle
-            async def coro():
-                result = None
-                ws = await websockets.connect('wss://chesstempo.com:443/ws', origin='https://chesstempo.com', extra_headers=[('User-agent', self.userAgent)], ping_interval=None)
-                try:
-                    # Check the welcome message
-                    data = await ws.recv()
-                    data = self.json_loads(data)
-                    if (data['eventName'] == 'connectionStarted') and (data['data'] == 'started'):
+            data = None
+            ws = await InternetWebsockets().connect('wss://chesstempo.com:443/ws', headers=[('User-agent', self.user_agent)])
+            try:
+                # Check the welcome message
+                async for buffer in ws.recv():
+                    buffer = self.json_loads(buffer)
+                if (buffer['eventName'] == 'connectionStarted') and (buffer['data'] == 'started'):
 
-                        # Call the puzzle
-                        await ws.send('{"eventName":"get-problem-session-data","data":{"problemSetId":1,"sessionSize":20}}')
-                        await ws.send('{"eventName":"set-problem-difficulty","data":{"difficulty":"","problemSetId":1}}')
-                        await ws.send('{"eventName":"get-tactic","data":{"problemId":%s,"vo":false}}' % self.id)
+                    # Call the puzzle
+                    await ws.send('{"eventName":"get-problem-session-data","data":{"problemSetId":1,"sessionSize":20}}')
+                    await ws.send('{"eventName":"set-problem-difficulty","data":{"difficulty":"","problemSetId":1}}')
+                    await ws.send('{"eventName":"get-tactic","data":{"problemId":%s,"vo":false}}' % self.id)
 
-                        for i in range(3):
-                            data = await ws.recv()
-                            data = self.json_loads(data)
-                            if data['eventName'] == 'get-tactic-result':
-                                if data['enc']:
-                                    data = ''.join(map(lambda v: v if v < '0' or v > '9' else str((9 + int(v)) % 10), list(data['data'])))
-                                    result = b64decode(data).decode().strip()
-                                else:
-                                    result = data['data'].strip()
-                                if result == '':
-                                    result = None
-                finally:
-                    await ws.close()
-                return result
-
-            data = await coro()
-            if data is None:
+                    for i in range(3):
+                        async for buffer in ws.recv():
+                            buffer = self.json_loads(buffer)
+                        if buffer['eventName'] == 'get-tactic-result':
+                            if buffer['enc']:
+                                buffer = ''.join(map(lambda v: v if v < '0' or v > '9' else str((9 + int(v)) % 10), list(buffer['data'])))
+                                data = b64decode(buffer).decode().strip()
+                            else:
+                                data = buffer['data'].strip()
+            finally:
+                await ws.close()
+            if data in [None, '']:
                 return None
 
             # Rebuild the puzzle

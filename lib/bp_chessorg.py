@@ -5,10 +5,9 @@
 
 from lib.const import BOARD_CHESS, METHOD_WS, CHESS960
 from lib.bp_interface import InternetGameInterface
+from lib.ws import InternetWebsockets
 
-import logging
 import re
-import websockets
 import string
 from random import choice, randint
 import chess
@@ -66,36 +65,30 @@ class InternetGameChessOrg(InternetGameInterface):
         rndS = ''.join(choice(string.ascii_lowercase) for i in range(8))
 
         # Open a websocket to retrieve the chess data
-        async def coro():
-            url = 'wss://chess.org:443/play-sockjs/%d/%s/websocket' % (rndI, rndS)
-            logging.debug('Websocket connecting to %s' % url)
-            ws = await websockets.connect(url, origin='https://chess.org:443', ping_interval=None)
-            try:
-                # Server: Hello
-                data = await ws.recv()
+        ws = await InternetWebsockets().connect('wss://chess.org:443/play-sockjs/%d/%s/websocket' % (rndI, rndS))
+        try:
+            # Server: Hello
+            async for data in ws.recv():
                 if data != 'o':  # Open
                     await ws.close()
                     return None
 
-                # Client: I am XXX, please open the game YYY
-                await ws.send('["%s %s"]' % (name, self.id))
-                data = await ws.recv()
+            # Client: I am XXX, please open the game YYY
+            await ws.send('["%s %s"]' % (name, self.id))
 
-                # Server: some data
+            # Server: some data
+            async for data in ws.recv():
                 if data[:1] != 'a':
                     await ws.close()
                     return None
-                return data[3:-2]
-            finally:
-                await ws.close()
-
-        data = await coro()
+            data = data[3:-2]
+        finally:
+            await ws.close()
         if data in [None, '']:
             return None
 
         # Parses the game
         data = data.replace('\\"', '"')
-        logging.debug('JSON: ' + data)
         chessgame = self.json_loads(data)
         game = {}
         game['_url'] = url

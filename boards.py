@@ -14,13 +14,13 @@ from urllib.parse import urlparse
 from random import choice
 
 from lib.const import BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO
+from lib.bp_interface import InternetGameInterface
 
 # Popular chess
 from lib.bp_lichess import InternetGameLichess
 from lib.bp_chesscom import InternetGameChessCom
 from lib.bp_chess24 import InternetGameChess24
 # Normal chess
-from lib.bp_interface import InternetGameInterface
 from lib.bp_2700chess import InternetGame2700chess
 from lib.bp_365chess import InternetGame365chess
 from lib.bp_chessbase import InternetGameChessbase

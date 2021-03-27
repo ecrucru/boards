@@ -5,9 +5,9 @@
 
 from lib.const import BOARD_CHESS, METHOD_WS
 from lib.bp_interface import InternetGameInterface
+from lib.ws import InternetWebsockets
 
 import re
-import websockets
 
 
 # Pychess.org
@@ -35,12 +35,12 @@ class InternetGamePychess(InternetGameInterface):
         result = None
         if self.id is not None:
             # Open a websocket to retrieve the game
-            ws = await websockets.connect('wss://www.pychess.org/wsr', origin="https://www.pychess.org", ping_interval=None)
+            ws = await InternetWebsockets().connect('wss://www.pychess.org/wsr')
             try:
                 await ws.send('{"type":"board","gameId":"%s"}' % self.id)
                 for i in range(5):
-                    data = await ws.recv()
-                    data = self.json_loads(data)
+                    async for data in ws.recv():
+                        data = self.json_loads(data)
                     if data['type'] == 'board' and data['gameId'] == self.id:
                         result = data['pgn'] if data['pgn'] != '' else None
                         break
