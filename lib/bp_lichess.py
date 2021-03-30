@@ -3,7 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
-from lib.const import BOARD_CHESS, METHOD_DL, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY
+from lib.const import BOARD_CHESS, METHOD_DL, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY, TYPE_SWISS, TYPE_TOURNAMENT
 from lib.bp_interface import InternetGameInterface
 
 import re
@@ -15,11 +15,13 @@ import chess
 class InternetGameLichess(InternetGameInterface):
     def __init__(self):
         InternetGameInterface.__init__(self)
-        self.regexes.update({'broadcast': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/broadcast\/[a-z0-9\-]+\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE),
-                             'game': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/(game\/export\/|embed\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE),
-                             'practice': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/practice\/[\w\-\/]+\/([a-z0-9]+\/[a-z0-9]+)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE),
+        self.regexes.update({'broadcast': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/broadcast\/[a-z0-9\-]+\/([a-z0-9]{8})[\/\?\#]?', re.IGNORECASE),
+                             'game': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/(game\/export\/|embed\/)?([a-z0-9]{8})\/?([\S\/]+)?$', re.IGNORECASE),
+                             'practice': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/practice\/[\w\-\/]+\/([a-z0-9]{8}\/[a-z0-9]{8})(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE),
                              'puzzle': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/training\/([a-z0-9]+|daily)[\/\?\#]?', re.IGNORECASE),
-                             'study': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)})
+                             'study': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/study\/([a-z0-9]{8}(\/[a-z0-9]{8})?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE),
+                             'swiss': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/swiss\/([a-z0-9]{8})[\/\?\#]?', re.IGNORECASE),
+                             'tournament': re.compile(r'^https?:\/\/(\S+\.)?lichess\.(org|dev)\/tournament\/([a-z0-9]{8})[\/\?\#]?', re.IGNORECASE)})
 
     def reset(self):
         InternetGameInterface.reset(self)
@@ -29,55 +31,20 @@ class InternetGameLichess(InternetGameInterface):
         return 'Lichess.org', BOARD_CHESS, METHOD_DL
 
     def assign_game(self, url):
-        # Retrieve the ID of the broadcast
-        m = self.regexes['broadcast'].match(url)
-        if m is not None:
-            gid = m.group(3)
-            if len(gid) == 8:
-                self.url_type = TYPE_STUDY
-                self.id = gid
+        for name, typ, pid in [('broadcast', TYPE_STUDY, 3),
+                               ('practice', TYPE_STUDY, 3),
+                               ('puzzle', TYPE_PUZZLE, 3),
+                               ('study', TYPE_STUDY, 3),
+                               ('swiss', TYPE_SWISS, 3),
+                               ('tournament', TYPE_TOURNAMENT, 3),
+                               ('game', TYPE_GAME, 4),              # Order matters
+                               ]:
+            m = self.regexes[name].match(url)
+            if m is not None:
+                self.url_type = typ
+                self.id = m.group(pid)
                 self.url_tld = m.group(2)
                 return True
-
-        # Retrieve the ID of the practice
-        m = self.regexes['practice'].match(url)
-        if m is not None:
-            gid = m.group(3)
-            if len(gid) == 17:
-                self.url_type = TYPE_STUDY
-                self.id = gid
-                self.url_tld = m.group(2)
-                return True
-
-        # Retrieve the ID of the study
-        m = self.regexes['study'].match(url)
-        if m is not None:
-            gid = m.group(3)
-            if len(gid) in [8, 17]:
-                self.url_type = TYPE_STUDY
-                self.id = gid
-                self.url_tld = m.group(2)
-                return True
-
-        # Retrieve the ID of the puzzle
-        m = self.regexes['puzzle'].match(url)
-        if m is not None:
-            self.url_type = TYPE_PUZZLE
-            self.id = m.group(3)
-            self.url_tld = m.group(2)
-            return True
-
-        # Retrieve the ID of the game
-        m = self.regexes['game'].match(url)
-        if m is not None:
-            gid = m.group(4)
-            if len(gid) == 8:
-                self.url_type = TYPE_GAME
-                self.id = gid
-                self.url_tld = m.group(2)
-                return True
-
-        # Nothing found
         return False
 
     def query_api(self, path):
@@ -90,8 +57,20 @@ class InternetGameLichess(InternetGameInterface):
         if None in [self.id, self.url_tld]:
             return None
 
+        # Logic for the studies
+        if self.url_type == TYPE_STUDY:
+            return self.download('https://lichess.%s/study/%s.pgn' % (self.url_tld, self.id), userAgent=True)
+
+        # Logic for the swiss tournaments
+        elif self.url_type == TYPE_SWISS:
+            return self.download('https://lichess.%s/api/swiss/%s/games' % (self.url_tld, self.id))
+
+        # Logic for the tournaments
+        elif self.url_type == TYPE_TOURNAMENT:
+            return self.download('https://lichess.%s/api/tournament/%s/games' % (self.url_tld, self.id), userAgent=True)
+
         # Logic for the games
-        if self.url_type == TYPE_GAME:
+        elif self.url_type == TYPE_GAME:
             # Download the finished game
             api = self.query_api('/import/master/%s/white' % self.id)
             game = self.json_field(api, 'game')
@@ -123,11 +102,6 @@ class InternetGameLichess(InternetGameInterface):
                 if move['ply'] > 0:
                     game['_moves'] += ' %s' % move['san']
             return self.rebuild_pgn(game)
-
-        # Logic for the studies
-        elif self.url_type == TYPE_STUDY:
-            url = 'https://lichess.%s/study/%s.pgn' % (self.url_tld, self.id)
-            return self.download(url, userAgent=True)
 
         # Logic for the puzzles
         elif self.url_type == TYPE_PUZZLE:
@@ -211,6 +185,9 @@ class InternetGameLichess(InternetGameInterface):
             # Rebuild the PGN game
             return self.rebuild_pgn(game)
 
+        else:
+            assert(False)
+
     def get_test_links(self):
         return [('http://lichess.org/CA4bR2b8/black/analysis#12', True),                            # Game in advanced position
                 ('https://lichess.org/CA4bR2b8', True),                                             # Canonical address
@@ -234,4 +211,8 @@ class InternetGameLichess(InternetGameInterface):
                 ('https://lichess.org/broadcast/2019-gct-zagreb-round-4/jQ1dbbX9', True),           # Broadcast
                 ('https://lichess.org/broadcast/2019-pychess-round-1/pychess1', False),             # Not a broadcast (wrong ID)
                 ('https://lichess.ORG/practice/basic-tactics/the-pin/9ogFv8Ac/BRmScz9t#t', True),   # Practice
-                ('https://lichess.org/practice/py/chess/12345678/abcdEFGH', False)]                 # Not a practice (wrong ID)
+                ('https://lichess.org/practice/py/chess/12345678/abcdEFGH', False),                 # Not a practice (wrong ID)
+                ('https://lichess.org/swiss/vQTjVdJU#tag', True),                                   # Swiss tournament
+                ('https://lichess.org/swiss/VQTJVDJU#tag', False),                                  # Not a swiss tournament (wrong ID)
+                ('https://lichess.org/tournament/OzTsVueX?arg=1', True),                            # Tournament
+                ('https://lichess.org/tournament/OZTSVUEX', False)]                                 # Not a tournament (wrong ID)
