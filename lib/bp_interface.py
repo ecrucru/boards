@@ -104,17 +104,17 @@ class InternetGameInterface:
 
         # Decode
         cs = response.info().get_content_charset()
-        if cs is not None:
-            data = bytes.decode(cs)
-        else:
-            try:
+        try:
+            if cs is not None:
+                data = bytes.decode(cs)
+            else:
                 data = bytes.decode('utf-8')
+        except Exception:
+            try:
+                data = bytes.decode('latin-1')
             except Exception:
-                try:
-                    data = bytes.decode('latin-1')
-                except Exception:
-                    logging.error('Error in the decoding of the data')
-                    return None
+                logging.error('Error in the decoding of the data')
+                return None
 
         # Result
         data = data.replace("\ufeff", '').replace("\r", '').strip()
