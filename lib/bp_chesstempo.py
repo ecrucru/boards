@@ -48,7 +48,7 @@ class InternetGameChesstempo(InternetGameInterface):
 
         # Games
         if self.url_type == TYPE_GAME:
-            pgn = self.download('http://chesstempo.com/requests/download_game_pgn.php?gameids=%s' % self.id, userAgent=True)  # Else a random game is retrieved
+            pgn = self.download('http://old.chesstempo.com/requests/download_game_pgn.php?gameids=%s' % self.id, userAgent=True)  # Else a random game is retrieved
             if pgn is None or len(pgn) <= 128:
                 return None
             else:
@@ -104,5 +104,6 @@ class InternetGameChesstempo(InternetGameInterface):
         return [('https://chesstempo.com/gamedb/game/2046457', True),                       # Game
                 ('https://CHESSTEMPO.com/gamedb/game/2046457/foo/bar/123', True),           # Game with additional path
                 ('https://www.chesstempo.com/gamedb/game/2046457?p=0#tag', True),           # Game with additional parameters
+                ('https://old.chesstempo.com/gamedb/game/2046457', True),                   # Game with archived URL
                 ('https://en.chesstempo.com/chess-tactics/71360', True),                    # Puzzle
                 ('http://chesstempo.com/faq.html', False)]                                  # Not a game
