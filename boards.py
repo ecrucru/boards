@@ -82,19 +82,19 @@ async def download(url):
     logging.debug('URL to retrieve: %s' % url)
 
     # Call the board providers
-    for prov in board_providers:
-        if not prov.is_enabled():
+    for bp in board_providers:
+        if not bp.is_enabled():
             continue
-        prov.reset()
-        if prov.assign_game(url):
+        bp.reset()
+        if bp.assign_game(url):
             # Download
-            logging.debug('Responding board provider: %s' % prov.get_description())
+            logging.debug('Responding board provider: %s' % bp.get_description())
             try:
-                if prov.is_async():
-                    pgn = await prov.download_game()
+                if bp.is_async():
+                    pgn = await bp.download_game()
                 else:
-                    pgn = prov.download_game()
-                pgn = prov.sanitize(pgn)
+                    pgn = bp.download_game()
+                pgn = bp.sanitize(pgn)
             except Exception as e:
                 pgn = None
                 logging.debug(str(e))
@@ -186,10 +186,13 @@ async def main():
                 data = None
             else:
                 try:
-                    data = bp.download_game()
+                    if bp.is_async():
+                        data = await bp.download_game()
+                    else:
+                        data = bp.download_game()
                     data = bp.sanitize(data)
-                except Exception:
-                    logging.debug(str(Exception))
+                except Exception as e:
+                    logging.debug(str(e))
                     data = None
 
             # Result

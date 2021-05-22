@@ -10,6 +10,7 @@ import re
 from urllib.parse import urlparse, parse_qs
 from html.parser import HTMLParser
 import chess
+from chess.variant import CrazyhouseBoard
 
 
 # Chess.com
@@ -177,7 +178,7 @@ class InternetGameChessCom(InternetGameInterface):
                 return None
             game['_moves'] = ''
             if 'Variant' in game and game['Variant'] == 'Crazyhouse':
-                board = chess.variant.CrazyhouseBoard()
+                board = CrazyhouseBoard()
             else:
                 board = chess.Board(chess960=True)
             if 'FEN' in game:
@@ -194,3 +195,21 @@ class InternetGameChessCom(InternetGameInterface):
 
         # Final PGN
         return self.rebuild_pgn(game)
+
+    def get_test_links(self):
+        return [('https://www.CHESS.com/live/game/3638784952#anchor', True),               # Live game
+                ('3638784952', False),                                                     # Short ID (possible via the generic function only)
+                ('https://chess.com/live#g=3638784952', True),                             # Another syntax
+                ('https://chess.com/de/live/game/3635508736?username=rikikits', True),     # Live game Chess960
+                ('https://www.chess.com/live/game/1936591455', True),                      # Live game CrazyHouse
+                ('https://www.chess.com/analysis/game/live/3874372792', True),             # Live analysis
+                ('https://www.chess.com/analysis/game/live/4119932192', True),             # Live game with promotion to Queen
+                ('https://www.chess.com/daily/game/223897998', True),                      # Daily game
+                ('https://www.chess.com/DAILY/game/224478042', True),                      # Daily game
+                ('https://www.chess.com/daily/game/225006782', True),                      # Daily game Chess960
+                ('https://www.chess.com/daily/GAME/205389002', True),                      # Daily game Chess960
+                ('https://chess.com/live/game/13029832074287114', False),                  # Not a game (wrong ID)
+                ('https://www.chess.com', False),                                          # Not a game (homepage)
+                ('https://www.chess.com/puzzles/problem/41839', True),                     # Puzzle
+                ('https://www.chess.com/analysis?fen=invalidfen', False),                  # Position to analyze (no FEN)
+                ('https://www.chess.com/analysis?fen=r1b1k3%2F2p2pr1%2F1pp4p%2F8%2F2p5%2F2N5%2FPPP2PPP%2F3RR1K1+b+-+-+3+17&flip=false', True)]

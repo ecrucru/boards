@@ -155,7 +155,8 @@ class InternetGameGameknot(InternetGameInterface):
                     return None
 
         # Rebuild the PGN game
-        return unquote(self.rebuild_pgn(game))
+        data = self.rebuild_pgn(game)
+        return unquote(data) if data is not None else data
 
     def get_test_links(self):
         return [('https://gameknot.com/analyze-board.pl?bd=22792465#tag', True),        # Game
