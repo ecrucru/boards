@@ -15,7 +15,7 @@ class InternetGameLidraughts(InternetGameInterface):
         self.regexes.update({'broadcast': re.compile(r'^https?:\/\/lidraughts\.org\/broadcast\/[a-z0-9\-]+\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE),
                              'game': re.compile(r'^https?:\/\/lidraughts\.org\/(game\/export\/|embed\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE),
                              'puzzle': re.compile(r'^https?:\/\/lidraughts\.org\/training\/([0-9]+|daily)[\/\?\#]?', re.IGNORECASE),
-                             'study': re.compile(r'^https?:\/\/lidraughts\.org\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)})
+                             'study': re.compile(r'^https?:\/\/lidraughts\.org\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pdn)?\/?([\S\/]+)?$', re.IGNORECASE)})
 
     def get_identity(self):
         return 'Lidraughts.org', BOARD_DRAUGHTS, METHOD_DL
@@ -148,7 +148,7 @@ class InternetGameLidraughts(InternetGameInterface):
                 ('https://LIDRAUGHTS.org/study/3VwAd32E#tag', True),                                    # Study
                 ('https://lidraughts.org/study/ABCD1234', False),                                       # Study (unknown)
                 ('https://lidraughts.org/study/F88mhTPe/A9uIwROn?arg', True),                           # Chapter of study
-                ('https://lidraughts.org/study/F88mhTPe/ABCD1234?arg', True),                           # Chapter of study (unknown but the main study is found)
+                ('https://lidraughts.org/study/F88mhTPe/ABCD1234?arg', False),                          # Chapter of study (unknown chapter)
                 ('https://lidraughts.org/study/ABCD1234/abcd1234?arg', False),                          # Chapter of study (both unknown)
                 ('https://lidraughts.ORG/RicO2oy8?arg', True),                                          # Game (white side)
                 ('https://lidraughts.ORG/RicO2oy8/black', True),                                        # Game (black side)
