@@ -50,15 +50,12 @@ class InternetGameChesspuzzle(InternetGameInterface):
 
             def handle_data(self, data):
                 if self.pgn is None and self.last_tag == 'script':
-                    lines = data.split("\n")
-                    for line in lines:
-                        pos1 = line.find('pgn_text')
-                        if pos1 != -1:
-                            pos1 = line.find("'", pos1 + 1)
-                            pos2 = line.find("'", pos1 + 1)
-                            if pos1 != -1 and pos2 > pos1:
-                                self.pgn = line[pos1 + 1:pos2].replace(']  ', "]\n\n").replace('] ', "]\n").strip()
-                                break
+                    pos1 = data.find('ChessViewer(')
+                    if pos1 != -1:
+                        pos1 = data.find("'", pos1 + 1)
+                        pos2 = data.find("'", pos1 + 1)
+                        if pos1 != -1 and pos2 > pos1:
+                            self.pgn = data[pos1 + 1:pos2].replace(']  ', "]\n\n").replace('] ', "]\n").strip()
 
         # Get the puzzle
         parser = chesspuzzleparser()
