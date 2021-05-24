@@ -2,6 +2,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_GO, METHOD_DL
 from lib.bp_interface import InternetGameInterface
 
@@ -14,10 +15,10 @@ class InternetGameOnlinego(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'url': re.compile(r'^https?:\/\/online-go\.com\/(api\/v1\/)?games?\/([0-9]+)[\/\?\#]?', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Online-go.com', BOARD_GO, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         m = self.regexes['url'].match(url)
         if m is not None:
             gid = m.group(2)
@@ -26,13 +27,13 @@ class InternetGameOnlinego(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         if self.id is not None:
             return self.download('https://online-go.com/api/v1/games/%s/sgf' % self.id, userAgent=True)
         else:
             return None
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://online-go.com/game/30113933#tag', True),               # Game
                 ('http://online-go.com/game/999930113933#tag', False),          # Not a game (invalid id)
                 ('https://ONLINE-GO.com/api/v1/games/30113933/sgf', True),      # Game (direct link)

@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, Any, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_MISC, CHESS960, TYPE_FEN
 from lib.bp_interface import InternetGameInterface
 
@@ -20,10 +21,10 @@ class InternetGameChessCom(InternetGameInterface):
         self.regexes.update({'game': re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(live|daily)\/([a-z\/]+)?([0-9]+)[\/\?\#]?', re.IGNORECASE),
                              'puzzle': re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(puzzles)\/problem\/([0-9]+)[\/\?\#]?', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Chess.com', BOARD_CHESS, METHOD_MISC
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Positions
         parsed = urlparse(url)
         if parsed.netloc.lower() in ['www.chess.com', 'chess.com']:
@@ -70,7 +71,7 @@ class InternetGameChessCom(InternetGameInterface):
         sTo = map[posTo % 8] + str((posTo // 8 + 1))
         return '%s%s%s%s' % (sDrop, sFrom, sTo, sPromo)
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if None in [self.id, self.url_type]:
             return None
@@ -178,7 +179,7 @@ class InternetGameChessCom(InternetGameInterface):
                 return None
             game['_moves'] = ''
             if 'Variant' in game and game['Variant'] == 'Crazyhouse':
-                board = CrazyhouseBoard()
+                board: Any = CrazyhouseBoard()
             else:
                 board = chess.Board(chess960=True)
             if 'FEN' in game:
@@ -196,7 +197,7 @@ class InternetGameChessCom(InternetGameInterface):
         # Final PGN
         return self.rebuild_pgn(game)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.CHESS.com/live/game/3638784952#anchor', True),               # Live game
                 ('3638784952', False),                                                     # Short ID (possible via the generic function only)
                 ('https://chess.com/live#g=3638784952', True),                             # Another syntax

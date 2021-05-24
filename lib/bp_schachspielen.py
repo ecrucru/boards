@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML, CHESS960
 from lib.bp_interface import InternetGameInterface
 
@@ -16,10 +17,10 @@ class InternetGameSchachspielen(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'url': re.compile(r'^https?:\/\/(www\.)?schach-spielen\.eu\/(game|analyse)\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Schach-Spielen.eu', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         m = self.regexes['url'].match(url)
         if m is not None:
             gid = m.group(3)
@@ -28,7 +29,7 @@ class InternetGameSchachspielen(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Download
         if self.id is None:
             return None
@@ -61,7 +62,7 @@ class InternetGameSchachspielen(InternetGameInterface):
             pgn = pgn.replace('[Variant "chess960"]', '[Variant "%s"]' % CHESS960)
         return pgn
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.schach-spielen.eu/analyse/2jcpl1vs/black#test', True),       # Best game ever with anchor
                 ('http://schach-SPIELEN.eu/game/2jcpl1vs?p=1', True),                      # Best game ever with parameter
                 ('https://www.schach-spielen.eu/game/8kcevvdy/white', True),               # Chess960

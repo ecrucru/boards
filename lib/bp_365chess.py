@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
 
@@ -16,10 +17,10 @@ class InternetGame365chess(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'players': re.compile(r'^([\w\-,\s]+)(\(([0-9]+)\))? vs\. ([\w\-,\s]+)(\(([0-9]+)\))?$', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return '365chess.com', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the URL
         parsed = urlparse(url)
         if parsed.netloc.lower() not in ['www.365chess.com', '365chess.com']:
@@ -41,7 +42,7 @@ class InternetGame365chess(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Download
         if self.id is None:
             return None
@@ -99,7 +100,7 @@ class InternetGame365chess(InternetGameInterface):
         # Rebuild the PGN game
         return self.rebuild_pgn(game)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.365chess.com/view_game.php?g=4187437#anchor', True),          # Game 1/2-1/2 for special chars
                 ('https://www.365chess.com/view_game.php?g=1234567890', False),             # Not a game
                 ('https://www.365chess.com/game.php?gid=4230834&p=0', True)]                # Game with additional parameter

@@ -2,6 +2,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, Dict, AsyncIterator
 import aiohttp
 import logging
 
@@ -32,17 +33,17 @@ class InternetWebsockets():
                     await ws.close()
     '''
     def __init__(self):
-        self.acs = None
-        self.ws = None
+        self.acs: Optional[aiohttp.ClientSession] = None
+        self.ws: Optional[aiohttp.client_ws.ClientWebSocketResponse] = None
 
-    async def connect(self, url, headers=None):
+    async def connect(self, url: Optional[str], headers: Optional[Dict] = None) -> 'InternetWebsockets':
         if url is not None:
             logging.debug('Websocket connecting to %s' % url)
             self.acs = aiohttp.ClientSession()
             self.ws = await self.acs.ws_connect(url, headers=headers, heartbeat=None)
         return self
 
-    async def recv(self):
+    async def recv(self) -> AsyncIterator[Optional[str]]:
         result = None
         if self.ws is not None:
             async for msg in self.ws:
@@ -51,11 +52,11 @@ class InternetWebsockets():
                 break
         yield result
 
-    async def send(self, data):
+    async def send(self, data: str) -> None:
         if self.ws is not None:
             await self.ws.send_str(data)
 
-    async def close(self):
+    async def close(self) -> None:
         if self.ws is not None:
             await self.ws.close()
             self.ws = None

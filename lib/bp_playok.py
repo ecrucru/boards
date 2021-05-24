@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, BOARD_GO, METHOD_DL
 from lib.bp_interface import InternetGameInterface
 
@@ -11,10 +12,10 @@ from urllib.parse import urlparse, parse_qs
 
 # PlayOK.com
 class InternetGamePlayokInterface(InternetGameInterface):
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'PlayOK.com', self.boardType, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the hostname
         parsed = urlparse(url)
         if parsed.netloc.lower() not in ['www.playok.com', 'playok.com']:
@@ -31,7 +32,7 @@ class InternetGamePlayokInterface(InternetGameInterface):
                     return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         if self.id is not None:
             pgn = self.download('https://www.playok.com/p/?g=%s%s.txt' % (self.parameter, self.id))
             if len(pgn) > 16:
@@ -46,7 +47,7 @@ class InternetGamePlayokChess(InternetGamePlayokInterface):
         self.boardType = BOARD_CHESS
         self.parameter = 'ch'
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://www.playok.com/p/?g=ch484680868', True),       # Game
                 ('https://PLAYOK.com/p/?g=ch484680868.txt', True),      # Game (direct link)
                 ('https://PLAYOK.com/p/?g=ch999999999#tag', False),     # Not a game (wrong ID)
@@ -61,7 +62,7 @@ class InternetGamePlayokGo(InternetGamePlayokInterface):
         self.boardType = BOARD_GO
         self.parameter = 'go'
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://www.playok.com/p/?g=go15733322#165', True),    # Game
                 ('https://PLAYOK.com/p/?g=go15733322.txt', True),       # Game (direct link)
                 ('https://PLAYOK.com/p/?g=go999999999#tag', False),     # Not a game (wrong ID)

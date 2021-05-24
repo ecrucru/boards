@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_DL
 from lib.bp_interface import InternetGameInterface
 
@@ -15,10 +16,10 @@ class InternetGameChessgames(InternetGameInterface):
         InternetGameInterface.reset(self)
         self.computer = False
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'ChessGames.com', BOARD_CHESS, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the hostname
         parsed = urlparse(url)
         if parsed.netloc.lower() not in ['www.chessgames.com', 'chessgames.com']:
@@ -34,7 +35,7 @@ class InternetGameChessgames(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.id is None:
             return None
@@ -55,8 +56,9 @@ class InternetGameChessgames(InternetGameInterface):
                 return None
             else:
                 return pgn
+        return None
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://www.chessgames.com/perl/chessgame?gid=1075462&comp=1', True),              # With computer analysis
                 ('http://www.chessgames.com/perl/chessgame?gid=1075463', True),                     # Without computer analysis
                 ('http://www.CHESSGAMES.com/perl/chessgame?gid=1075463&comp=1#test', True),         # Without computer analysis but requested in URL

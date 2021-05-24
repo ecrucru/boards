@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_DL
 from lib.bp_interface import InternetGameInterface
 
@@ -15,13 +16,13 @@ class InternetGameThechessworld(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'url': re.compile(r".*pgn_uri:.*'([^']+)'.*", re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'TheChessWorld.com', BOARD_CHESS, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         return self.reacts_to(url, 'thechessworld.com')
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.id is None:
             return None
@@ -46,7 +47,7 @@ class InternetGameThechessworld(InternetGameInterface):
         # Collect the games
         return self.download_list(links)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://thechessworld.com/articles/middle-game/typical-sacrifices-in-the-middlegame-sacrifice-on-e6/', True),     # 3 embedded games
                 ('https://THECHESSWORLD.com/pgngames/middlegames/sacrifice-on-e6/Ivanchuk-Karjakin.pgn', True),                     # Direct link
                 ('https://thechessworld.com/help/about/', False)]                                                                   # Not a game (about page)

@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML, CHESS960
 from lib.bp_interface import InternetGameInterface
 
@@ -16,10 +17,10 @@ class InternetGameChess24(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'url': re.compile(r'^https?:\/\/chess24\.com\/[a-z]+\/(analysis|game|download-game)\/([a-z0-9\-_]+)[\/\?\#]?', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Chess24.com', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         m = self.regexes['url'].match(url)
         if m is not None:
             gid = str(m.group(2))
@@ -28,7 +29,7 @@ class InternetGameChess24(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Download the page
         if self.id is None:
             return None
@@ -108,6 +109,6 @@ class InternetGameChess24(InternetGameInterface):
             return self.rebuild_pgn(game)
         return None
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://chess24.com/en/game/DQhOOrJaQKS31LOiOmrqPg#anchor', True),    # Game with anchor
                 ('https://CHESS24.com', False)]                                         # Not a game (homepage)

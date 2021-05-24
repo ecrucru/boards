@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
 
@@ -11,13 +12,13 @@ from html.parser import HTMLParser
 
 # Chessbase
 class InternetGameChessbase(InternetGameInterface):
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'ChessBase.com', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         return self.reacts_to(url, '*')             # Any website can embed a widget from Chessbase
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Download
         if self.id is None:
             return None
@@ -63,7 +64,7 @@ class InternetGameChessbase(InternetGameInterface):
             parser.links = self.expand_links(parser.links, self.id)
             return self.download_list(parser.links)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://live.chessbase.com/fr/Games?id=Cerrado-GM-16-febrero-2021', True),                            # Games
                 ('https://live.chessbase.com/fr/Replay?id=cerrado-gm-16-febrero-2021&rnd=3&anno=False', True),          # Games for round 3
                 ('https://live.chessbase.com/fr/Watch?id=Cerrado-GM-16-febrero-2021', False),                           # Not a game (old link)

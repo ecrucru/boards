@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_WS, CHESS960
 from lib.bp_interface import InternetGameInterface
 from lib.ws import InternetWebsockets
@@ -19,10 +20,10 @@ class InternetGameChessOrg(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'url': re.compile(r'^https?:\/\/chess\.org\/play\/([a-f0-9\-]+)[\/\?\#]?', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Chess.org', BOARD_CHESS, METHOD_WS
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         m = self.regexes['url'].match(url)
         if m is not None:
             id = str(m.group(1))
@@ -37,7 +38,7 @@ class InternetGameChessOrg(InternetGameInterface):
         list[2] = t[0] + t[2] + t[1] + t[3]
         return ' '.join(list)
 
-    async def download_game(self):
+    async def download_game(self) -> Optional[str]:
         # Check
         if self.id is None:
             return None
@@ -143,7 +144,7 @@ class InternetGameChessOrg(InternetGameInterface):
                        (15, '*', 'Not started')]                 # NOT_STARTED
         state = self.json_field(chessgame, 'state')
         result = '*'
-        reason = 'Unknown reason %d' % state
+        reason = 'Unknown reason ' + str(state)
         for rtID, rtScore, rtMsg in resultTable:
             if rtID == state:
                 result = rtScore
@@ -169,7 +170,7 @@ class InternetGameChessOrg(InternetGameInterface):
         # Rebuild the PGN game
         return self.rebuild_pgn(game)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://chess.org/play/19a8ffe8-b543-4a41-be02-e84e0f4d6f3a', True),      # Classic game
                 ('https://CHESS.org/play/c28f1b76-aee0-4577-b8a5-eeda6a0e14af', True),      # Chess960
                 ('https://chess.org/play/c28fffe8-ae43-4541-b802-eeda6a4d6f3a', False),     # Not a game (unknown ID)

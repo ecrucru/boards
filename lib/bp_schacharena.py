@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
 
@@ -19,13 +20,13 @@ class InternetGameSchacharena(InternetGameInterface):
                              'move': re.compile(r'.*<span.*onMouseOut.*fan\(([0-9]+)\).*', re.IGNORECASE),
                              'result': re.compile(r'.*<strong>(1:0|0:1|&frac12;)<\/strong>.*', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'SchachArena.de', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         return self.reacts_to(url, 'schacharena.de')
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.id is None:
             return None
@@ -77,7 +78,7 @@ class InternetGameSchacharena(InternetGameInterface):
         # Final PGN
         return self.rebuild_pgn(game)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.schacharena.de/new/verlauf_db_new.php?name=Lolle2008&gedreht=0&nr=6578', True),       # Game (1-0)
                 ('https://www.schacharena.de/new/verlauf_db_new.php?name=Lolle2008&gedreht=1&nr=6572', True),       # Game (0-1)
                 ('https://www.schacharena.de/new/verlauf_db_new.php?name=lutz53&gedreht=0&nr=23489', True),         # Game (1/2)

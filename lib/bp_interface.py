@@ -3,11 +3,13 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, Any, Dict, List, Tuple
 import logging
 import re
 import json
 from urllib.request import Request, urlopen
 from urllib.parse import urlparse, urlencode
+from http.client import HTTPResponse
 
 from lib.ua import InternetUserAgent
 from lib.const import METHOD_WS, BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, \
@@ -27,29 +29,29 @@ class InternetGameInterface:
         self.regexes = {'fen': re.compile(r'^[kqbnrp1-8\/]+\s[w|b]\s[kq-]+\s[a-h-][1-8]?(\s[0-9]+)?(\s[0-9]+)?$', re.IGNORECASE),
                         'strip_html': re.compile(r'<\/?[^>]+>', re.IGNORECASE)}
 
-    def reset(self):
+    def reset(self) -> None:
         ''' Clear the internal variables used to fetch the games. '''
-        self.id = None
-        self.url_type = None
-        self.data = None
+        self.id: Optional[str] = None
+        self.url_type: Optional[int] = None
+        self.data: Optional[str] = None
 
-    def is_enabled(self):
+    def is_enabled(self) -> bool:
         ''' Override this method in the sub-class to disable a chess provider temporarily. '''
         return True
 
-    def get_description(self):
+    def get_description(self) -> str:
         ''' Return the description of the board provider. '''
         return self.get_identity()[0]
 
-    def is_async(self):
+    def is_async(self) -> bool:
         return self.get_identity()[2] == METHOD_WS
 
-    def get_game_id(self):
+    def get_game_id(self) -> Optional[str]:
         ''' Return the unique identifier of the game that was detected after a successful call to assign_game().
             The value is None if no game was found earlier. '''
         return self.id
 
-    def reacts_to(self, url, host):
+    def reacts_to(self, url: Optional[str], host: str) -> bool:
         ''' Return True if the URL belongs to the HOST (possibly equal to *). The sub-domains other than "www" are not supported.
             The method is used to accept any URL when a unique identifier cannot be extracted by assign_game(). '''
         # Verify the hostname
@@ -64,23 +66,23 @@ class InternetGameInterface:
         self.id = url
         return True
 
-    def json_loads(self, data):
+    def json_loads(self, data: Optional[str]) -> Optional[Dict]:
         ''' Load a JSON and handle the errors.
             The value None is returned when the data are not relevant or misbuilt. '''
         try:
             if data in [None, '']:
                 return None
-            return json.loads(data)
+            return json.loads(str(data))
         except ValueError:
             return None
 
-    def json_field(self, data, path, default=''):
+    def json_field(self, data: Optional[Dict], path: str, default: str = '') -> str:
         ''' Conveniently read a field from a JSON data. The PATH is a key like "node1/node2/key".
             A blank string is returned in case of error. '''
         if data in [None, '']:
             return ''
         keys = path.split('/')
-        value = data
+        value: Any = data
         for key in keys:
             if key.startswith('[') and key.endswith(']'):
                 try:
@@ -94,7 +96,7 @@ class InternetGameInterface:
                     return ''
         return default if value in [None, ''] else value
 
-    def read_data(self, response):
+    def read_data(self, response: Optional[HTTPResponse]) -> Optional[str]:
         ''' Read the data from an HTTP request and execute the charset conversion.
             The value None is returned in case of error. '''
         # Check
@@ -123,7 +125,7 @@ class InternetGameInterface:
         else:
             return data
 
-    def expand_links(self, links, url):
+    def expand_links(self, links: List[str], url: str) -> List[str]:
         ''' Convert relative paths into full paths. '''
         base = urlparse(url)
         for i, link in enumerate(links):
@@ -136,7 +138,7 @@ class InternetGameInterface:
             links[i] = link
         return list(dict.fromkeys(links))       # Without duplicate entries
 
-    def download(self, url, userAgent=False):
+    def download(self, url: Optional[str], userAgent: bool = False) -> Optional[str]:
         ''' Download the URL from the Internet.
             The USERAGENT is requested by some websites to make sure that you are not a bot.
             The value None is returned in case of error. '''
@@ -148,16 +150,16 @@ class InternetGameInterface:
         try:
             logging.debug('Downloading game: %s' % url)
             if userAgent:
-                req = Request(url, headers={'User-Agent': self.user_agent})
+                req = Request(str(url), headers={'User-Agent': self.user_agent})
                 response = urlopen(req)
             else:
-                response = urlopen(url)
+                response = urlopen(str(url))
             return self.read_data(response)
         except Exception as exception:
             logging.debug('Exception raised: %s' % str(exception))
             return None
 
-    def download_list(self, links, userAgent=False):
+    def download_list(self, links: List[str], userAgent: bool = False) -> Optional[str]:
         ''' Download and concatenate the URL given in the array LINKS.
             The USERAGENT is requested by some websites to make sure that you are not a bot.
             The number of downloads is limited to 10.
@@ -175,7 +177,7 @@ class InternetGameInterface:
         else:
             return pgn
 
-    def send_xhr(self, url, postData, userAgent=False):
+    def send_xhr(self, url: Optional[str], postData: Optional[Dict], userAgent: bool = False) -> Optional[str]:
         ''' Call a target URL by submitting the POSTDATA.
             The USERAGENT is requested by some websites to make sure that you are not a bot.
             The value None is returned in case of error. '''
@@ -185,20 +187,22 @@ class InternetGameInterface:
 
         # Call data
         if postData is not None:
-            postData = urlencode(postData).encode()
+            data: Optional[bytes] = urlencode(postData).encode()
+        else:
+            data = None
         try:
             logging.debug('Calling API: %s' % url)
             if userAgent:
-                req = Request(url, postData, headers={'User-Agent': self.user_agent})
+                req = Request(str(url), data, headers={'User-Agent': self.user_agent})
             else:
-                req = Request(url, postData)
+                req = Request(str(url), data)
             response = urlopen(req)
             return self.read_data(response)
         except Exception as exception:
             logging.debug('Exception raised: %s' % str(exception))
             return None
 
-    def rebuild_pgn(self, game):
+    def rebuild_pgn(self, game: Optional[Dict]) -> Optional[str]:
         ''' Return an object in PGN format.
             The keys starting with "_" are dropped silently.
             The key "_url" becomes the first comment.
@@ -239,14 +243,14 @@ class InternetGameInterface:
         _inline_tag('Result', '%s ')
         return pgn.strip()
 
-    def sanitize(self, data):
+    def sanitize(self, data: Optional[str]) -> Optional[str]:
         ''' Modify the output to comply with the expected format '''
         # Check
         if data in [None, '']:
             return None
 
         # Reorganize the spaces
-        data = data.replace('\r', '').strip()
+        data = str(data).replace('\r', '').strip()
         while (True):
             lc = len(data)
             data = data.replace("\n\n\n", "\n\n")
@@ -267,11 +271,11 @@ class InternetGameInterface:
         # Return the data
         return data
 
-    def strip_html(self, input):
+    def strip_html(self, input: str) -> str:
         ''' Remove any HTML mark from the input parameter. '''
         return self.regexes['strip_html'].sub('', input)
 
-    def is_fen(self, fen):
+    def is_fen(self, fen: Optional[str]) -> bool:
         ''' Test if the argument is a FEN position. '''
         try:
             return self.regexes['fen'].match(fen) is not None
@@ -279,18 +283,18 @@ class InternetGameInterface:
             return False
 
     # External
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         ''' (Abstract) Name and technique of the board provider. '''
         pass
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         ''' (Abstract) Detect the unique identifier of URL. '''
         pass
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         ''' (Abstract) Download the game identified earlier by assign_game(). '''
         pass
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         ''' (Abstract) Get the links to verify the effectiveness of the download. '''
         pass

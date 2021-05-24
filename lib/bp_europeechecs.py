@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_DL
 from lib.bp_interface import InternetGameInterface
 
@@ -15,13 +16,13 @@ class InternetGameEuropeechecs(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'widget': re.compile(r".*class=\"cbwidget\"\s+id=\"([0-9a-f]+)_container\".*", re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Europe-Echecs.com', BOARD_CHESS, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         return self.reacts_to(url, 'europe-echecs.com')
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.id is None:
             return None
@@ -46,7 +47,7 @@ class InternetGameEuropeechecs(InternetGameInterface):
         # Collect the games
         return self.download_list(links)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.europe-echecs.com/art/championnat-d-europe-f-minin-2019-7822.html', True),    # Embedded games
                 ('https://www.EUROPE-ECHECS.com/embed/doc_a2d179a4a201406d4ce6138b0b1c86d7.pgn', True),     # Direct link
                 ('https://www.europe-echecs.com', False)]                                                   # Not a game (homepage)

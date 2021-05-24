@@ -5,6 +5,7 @@
 
 
 # Libraries
+from typing import Optional, List
 import argparse
 import asyncio
 import logging
@@ -60,11 +61,11 @@ from lib.bp_playok import InternetGamePlayokGo
 # Lowest priority
 from lib.bp_generic_chess import InternetGameGenericChess
 
-board_providers = []
+board_providers: List[InternetGameInterface] = []
 
 
 # Retrieve a game from a URL
-async def download(url):
+async def download(url: str) -> Optional[str]:
     # Recognize the most popular identifiers
     if url in [None, '']:
         return None
@@ -109,7 +110,7 @@ async def download(url):
 
 
 # Start of the program
-async def main():
+async def main() -> None:
     # Load the board providers from the imported classes
     global board_providers
     for cls in InternetGameInterface.__subclasses__():
@@ -143,7 +144,8 @@ async def main():
                 site, board, method = bp.get_identity()
                 list.append('%s - %s' % (method_desc[board], site))
         list.sort()
-        [print(bp) for bp in list]
+        for bp in list:
+            print(bp)
 
     elif parser.command == 'download':
         # SSL
@@ -206,6 +208,8 @@ async def main():
 
         if errors > 0:
             logging.error('The unit test failed %d times' % errors)
+        else:
+            logging.info('The unit test is successful')
 
     else:
         cmdline.print_help()

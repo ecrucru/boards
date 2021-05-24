@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional
 from random import choice, randint
 from lib.const import ANNOTATOR
 
@@ -10,9 +11,9 @@ from lib.const import ANNOTATOR
 # Class to generate the user agents
 class InternetUserAgent:
     def __init__(self):
-        self.last_user_agent = None
+        self.last_user_agent: Optional[str] = None
 
-    def generate(self, fake, renew=False):
+    def generate(self, fake: bool, renew: bool = False) -> str:
         if not fake:
             return ANNOTATOR
         else:

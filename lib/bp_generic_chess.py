@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from urllib.request import Request, urlopen
 from urllib.parse import urlparse
 from html.parser import HTMLParser
@@ -13,15 +14,15 @@ from lib.bp_interface import InternetGameInterface
 
 # Generic
 class InternetGameGenericChess(InternetGameInterface):
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Generic for chess', BOARD_CHESS, METHOD_MISC
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Any page is valid
         self.id = url
         return True
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.id is None:
             return None
@@ -62,5 +63,5 @@ class InternetGameGenericChess(InternetGameInterface):
             return self.download_list(parser.links)
         return None
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://thechessworld.com/pgngames/middlegames/sacrifice-on-e6/Ivanchuk-Karjakin.pgn', True)]     # Game with UTF-8 BOM

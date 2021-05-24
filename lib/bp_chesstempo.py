@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_WS, TYPE_GAME, TYPE_PUZZLE
 from lib.bp_interface import InternetGameInterface
 from lib.ws import InternetWebsockets
@@ -18,10 +19,10 @@ class InternetGameChesstempo(InternetGameInterface):
         self.regexes.update({'game': re.compile(r'^https?:\/\/(\S+\.)?chesstempo\.com\/gamedb\/game\/(\d+)', re.IGNORECASE),
                              'puzzle': re.compile(r'^https?:\/\/(\S+\.)?chesstempo\.com\/chess-tactics\/(\d+)', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'ChessTempo.com', BOARD_CHESS, METHOD_WS
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Puzzles
         m = self.regexes['puzzle'].match(url)
         if m is not None:
@@ -41,7 +42,7 @@ class InternetGameChesstempo(InternetGameInterface):
                 return True
         return False
 
-    async def download_game(self):
+    async def download_game(self) -> Optional[str]:
         # Check
         if None in [self.id, self.url_type]:
             return None
@@ -100,7 +101,7 @@ class InternetGameChesstempo(InternetGameInterface):
 
         return None
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://chesstempo.com/gamedb/game/2046457', True),                       # Game
                 ('https://CHESSTEMPO.com/gamedb/game/2046457/foo/bar/123', True),           # Game with additional path
                 ('https://www.chesstempo.com/gamedb/game/2046457?p=0#tag', True),           # Game with additional parameters

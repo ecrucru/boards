@@ -2,6 +2,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_API
 from lib.bp_interface import InternetGameInterface
 
@@ -15,10 +16,10 @@ class InternetGameLivechesscloud(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'id': re.compile(r'^[0-9a-f-]{36}$', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'LiveChessCloud.com', BOARD_CHESS, METHOD_API
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the hostname
         parsed = urlparse(url)
         if parsed.netloc.lower() != 'view.livechesscloud.com':
@@ -32,7 +33,7 @@ class InternetGameLivechesscloud(InternetGameInterface):
         else:
             return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.id is None:
             return None
@@ -53,10 +54,10 @@ class InternetGameLivechesscloud(InternetGameInterface):
                 'Site': ('%s %s' % (self.json_field(data, 'country'), self.json_field(data, 'location'))).strip()}
         variant = self.json_field(data, 'rules')
         if variant != 'STANDARD':
-            game['Variant': variant]
+            game['Variant'] = variant
         nb_rounds = len(self.json_field(data, 'rounds', []))
         if nb_rounds == 0:
-            return False
+            return None
 
         # Fetch the rounds
         for i in range(1, nb_rounds + 1):
@@ -94,6 +95,6 @@ class InternetGameLivechesscloud(InternetGameInterface):
         # Return the games
         return pgn
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://view.livechesscloud.com/52bd7b4f-1dd1-4bbb-a930-6417e3043b24', True),  # Games
                 ('http://view.livechesscloud.com', False)]                                      # Not a game (homepage)

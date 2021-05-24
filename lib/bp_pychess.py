@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_WS
 from lib.bp_interface import InternetGameInterface
 from lib.ws import InternetWebsockets
@@ -16,10 +17,10 @@ class InternetGamePychess(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'url': re.compile(r'https?:\/\/(www\.)?pychess(-variants\.herokuapp\.com|\.org)\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Pychess.org', BOARD_CHESS, METHOD_WS
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Retrieve the ID of the game
         m = self.regexes['url'].match(url)
         if m is not None:
@@ -31,7 +32,7 @@ class InternetGamePychess(InternetGameInterface):
         # Nothing found
         return False
 
-    async def download_game(self):
+    async def download_game(self) -> Optional[str]:
         result = None
         if self.id is not None:
             # Open a websocket to retrieve the game
@@ -48,7 +49,7 @@ class InternetGamePychess(InternetGameInterface):
                 await ws.close()
         return result
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://pychess.org/DGN5Ps2k#tag', True),                  # Crazyhouse
                 ('http://pychess-variants.herokuapp.com/uWbgRNfw', True),   # Chess
                 ('http://PYCHESS.org/4XTiOuKB', True),                      # Chess960

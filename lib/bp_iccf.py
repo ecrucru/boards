@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_DL, TYPE_EVENT, TYPE_GAME
 from lib.bp_interface import InternetGameInterface
 
@@ -11,10 +12,10 @@ from urllib.parse import urlparse, parse_qs
 
 # Iccf.com
 class InternetGameIccf(InternetGameInterface):
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Iccf.com', BOARD_CHESS, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the hostname
         parsed = urlparse(url)
         if parsed.netloc.lower() not in ['www.iccf.com', 'iccf.com']:
@@ -39,7 +40,7 @@ class InternetGameIccf(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.url_type not in [TYPE_GAME, TYPE_EVENT] or self.id is None:
             return None
@@ -55,7 +56,7 @@ class InternetGameIccf(InternetGameInterface):
         else:
             return pgn
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.iccf.COM/game?id=154976&param=foobar', True),     # Game
                 ('https://www.iccf.com/GetPGN.aspx?id=154976', False),          # Game in direct link but handled by the generic extractor
                 ('https://www.iccf.com/game?id=abc123', False),                 # Not a game (wrong ID)

@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML, TYPE_GAME, TYPE_PUZZLE
 from lib.bp_interface import InternetGameInterface
 
@@ -12,10 +13,10 @@ import chess
 
 # GameKnot.com
 class InternetGameGameknot(InternetGameInterface):
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'GameKnot.com', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the hostname
         parsed = urlparse(url.lower())
         if parsed.netloc not in ['www.gameknot.com', 'gameknot.com']:
@@ -41,7 +42,7 @@ class InternetGameGameknot(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.url_type not in [TYPE_GAME, TYPE_PUZZLE] or self.id is None:
             return None
@@ -158,7 +159,7 @@ class InternetGameGameknot(InternetGameInterface):
         data = self.rebuild_pgn(game)
         return unquote(data) if data is not None else data
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://gameknot.com/analyze-board.pl?bd=22792465#tag', True),        # Game
                 ('https://GAMEKNOT.com/chess.pl?bd=22792465&p=1', False),               # Not a game (wrong path)
                 ('https://gameknot.com/analyze-board.pl?bd=1234567890&p=1', False),     # Not a game (unknown ID)

@@ -2,6 +2,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_GO, METHOD_DL
 from lib.bp_interface import InternetGameInterface
 
@@ -10,10 +11,10 @@ from urllib.parse import urlparse, parse_qs
 
 # Dragongoserver.net
 class InternetGameDragongoserver(InternetGameInterface):
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'DragonGoServer.net', BOARD_GO, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the URL
         parsed = urlparse(url)
         if parsed.netloc.lower() in ['www.dragongoserver.net', 'dragongoserver.net']:
@@ -26,13 +27,13 @@ class InternetGameDragongoserver(InternetGameInterface):
                     return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         if self.id is not None:
             return self.download('https://www.dragongoserver.net/sgf.php?gid=%s' % self.id)
         else:
             return None
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://www.dragongoserver.net/game.php?gid=1347414#tag', True),       # Game
                 ('https://www.dragongoserver.net/sgf.php?gid=1347414&arg', True),       # Download link
                 ('http://www.DRAGONGOSERVER.net/gameinfo.php?gid=1347414', True),       # Game info

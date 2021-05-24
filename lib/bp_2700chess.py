@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
 
@@ -11,10 +12,10 @@ from urllib.parse import urlparse, parse_qs
 
 # 2700chess.com
 class InternetGame2700chess(InternetGameInterface):
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return '2700chess.com', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the hostname
         parsed = urlparse(url)
         if parsed.netloc.lower() not in ['www.2700chess.com', '2700chess.com']:
@@ -34,7 +35,7 @@ class InternetGame2700chess(InternetGameInterface):
         else:
             return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Download
         if self.id is None:
             return None
@@ -56,7 +57,7 @@ class InternetGame2700chess(InternetGameInterface):
                             return pgn.replace('\\"', '"').replace('\\/', '/').replace('\\n', "\n").strip()
         return None
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://2700CHESS.com/games/dominguez-perez-yu-yangyi-r19.6-hengshui-chn-2019-05-18', True),                      # Game
                 ('https://2700chess.com/games/download?slug=dominguez-perez-yu-yangyi-r19.6-hengshui-chn-2019-05-18#tag', True),    # Game with direct link
                 ('https://2700chess.COM/games/pychess-r1.1-paris-fra-2019-12-25', False),                                           # Not a game (wrong ID)

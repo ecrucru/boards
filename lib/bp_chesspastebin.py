@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
 
@@ -16,13 +17,13 @@ class InternetGameChesspastebin(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'widget': re.compile(r'.*?\<div id=\"([0-9]+)_board\"\>\<\/div\>.*?', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'ChessPastebin.com', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         return self.reacts_to(url, 'chesspastebin.com')
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Download
         if self.id is None:
             return None
@@ -63,7 +64,7 @@ class InternetGameChesspastebin(InternetGameInterface):
                 pgn = "[Annotator \"ChessPastebin.com\"]\n%s" % pgn
         return pgn
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.chesspastebin.com/2018/12/29/anonymous-anonymous-by-george-2/', True),        # Game quite complete
                 ('https://www.CHESSPASTEBIN.com/2019/04/14/unknown-unknown-by-alekhine-sapladi/', True),    # Game with no header
                 ('https://www.chesspastebin.com/1515/09/13/marignan/', False),                              # Not a game (invalid URL)

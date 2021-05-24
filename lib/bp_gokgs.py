@@ -2,6 +2,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_GO, METHOD_DL
 from lib.bp_interface import InternetGameInterface
 
@@ -14,20 +15,20 @@ class InternetGameGokgs(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'url': re.compile(r'^(https?:\/\/files\.gokgs\.com\/games\/[0-9]+\/[0-9]+\/[0-9]+\/[^\/]+\.sgf)[\/\?\#]?', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'GoKGS.com', BOARD_GO, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         m = self.regexes['url'].match(url)
         if m is not None:
             self.id = m.group(1)
             return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         return self.download(self.id)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://files.gokgs.com/games/2020/3/23/patrickb-yasusaka.sgf', True),     # Game
                 ('http://files.gokgs.com/games/2019/10/20/mutaku-hellsflame.sgf', True),    # Game from tournament
                 ('http://files.gokgs.com/games/1970/01/01/incorrect.sgf', False),           # Not a game (unknown game)

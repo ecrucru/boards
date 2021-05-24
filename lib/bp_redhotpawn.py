@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML, TYPE_GAME, TYPE_PUZZLE
 from lib.bp_interface import InternetGameInterface
 
@@ -12,10 +13,10 @@ from html.parser import HTMLParser
 
 # RedHotPawn.com
 class InternetGameRedhotpawn(InternetGameInterface):
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'RedHotPawn.com', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the URL
         parsed = urlparse(url)
         if parsed.netloc.lower() not in ['www.redhotpawn.com', 'redhotpawn.com']:
@@ -47,7 +48,7 @@ class InternetGameRedhotpawn(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Download
         if self.id is None:
             return None
@@ -110,7 +111,7 @@ class InternetGameRedhotpawn(InternetGameInterface):
 
         return None
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.redhotpawn.com/chess/chess-game-history.php?gameid=13264954', True),                  # Game in progress (at the time of the initial test)
                 ('https://www.redhotpawn.com/chess/chess-game-HISTORY.php?gameid=13261506&arg=0#anchor', True),     # Game draw
                 ('https://www.redhotpawn.com/chess/chess-game-history.php?gameid=13238354', True),                  # Game stalemate

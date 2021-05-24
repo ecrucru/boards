@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_DL
 from lib.bp_interface import InternetGameInterface
 
@@ -11,10 +12,10 @@ from urllib.parse import urlparse, parse_qs
 
 # FicsGames.org
 class InternetGameFicsgames(InternetGameInterface):
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'FicsGames.org', BOARD_CHESS, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the URL
         parsed = urlparse(url)
         if parsed.netloc.lower() not in ['www.ficsgames.org', 'ficsgames.org'] or 'show' not in parsed.path.lower():
@@ -29,7 +30,7 @@ class InternetGameFicsgames(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.id is None:
             return None
@@ -41,7 +42,7 @@ class InternetGameFicsgames(InternetGameInterface):
         else:
             return pgn
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.ficsgames.org/cgi-bin/show.cgi?ID=451813954;action=save', True),      # Normal game
                 ('https://www.ficsgames.org/cgi-bin/show.cgi?ID=qwertz;action=save', False),        # Invalid identifier (not numeric)
                 ('https://www.ficsgames.org/cgi-bin/show.cgi?ID=0#anchor', False),                  # Invalid identifier (null)

@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
 
@@ -17,13 +18,13 @@ class InternetGameChessdb(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'format': re.compile(r'^[0-9\.]+$', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Chess-DB.com', BOARD_CHESS, METHOD_HTML
 
     def is_enabled(self):
         return False  # Server down for a long time
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Verify the URL
         parsed = urlparse(url)
         if parsed.netloc.lower() not in ['www.chess-db.com', 'chess-db.com'] or 'game.jsp' not in parsed.path.lower():
@@ -38,7 +39,7 @@ class InternetGameChessdb(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Download
         if self.id is None:
             return None
@@ -72,7 +73,7 @@ class InternetGameChessdb(InternetGameInterface):
         parser.feed(page)
         return parser.pgn
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://CHESS-DB.COM/public/game.jsp?id=623539.1039784.81308416.30442', True),        # Game
                 ('https://chess-db.com/public/game.jsp?id=623539.2900084.7718912.30537', False),        # Game but website bug with escaping '
                 ('https://chess-db.com/public/game.jsp?id=123456.1234567.1234567.123456789', False),    # Not a game (unknown game)

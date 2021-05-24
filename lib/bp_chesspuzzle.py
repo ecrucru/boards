@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
 
@@ -16,10 +17,10 @@ class InternetGameChesspuzzle(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'url': re.compile(r'^https?:\/\/(\S+\.)?chesspuzzle\.net\/(Puzzle|Solution)\/([0-9]+)[\/\?\#]?', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'ChessPuzzle.net', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         m = self.regexes['url'].match(url)
         if m is not None:
             gid = str(m.group(3))
@@ -28,7 +29,7 @@ class InternetGameChesspuzzle(InternetGameInterface):
                 return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.id is None:
             return None
@@ -62,7 +63,7 @@ class InternetGameChesspuzzle(InternetGameInterface):
         parser.feed(page)
         return parser.pgn
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://chesspuzzle.net/Puzzle/23476', True),                 # Puzzle from the quiz
                 ('https://CHESSPUZZLE.net/Solution/32881', True),               # Puzzle from the solution
                 ('https://chesspuzzle.net/Puzzle', False),                      # Not a puzzle (random link)

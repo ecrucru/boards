@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
 
@@ -13,13 +14,13 @@ from base64 import b64decode
 
 # ChessBomb.com
 class InternetGameChessbomb(InternetGameInterface):
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'ChessBomb.com', BOARD_CHESS, METHOD_HTML
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         return self.reacts_to(url, 'chessbomb.com')
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Download
         if self.id is None:
             return None
@@ -89,6 +90,6 @@ class InternetGameChessbomb(InternetGameInterface):
         # Rebuild the PGN game
         return self.rebuild_pgn(game)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.chessbomb.com/arena/2019-katowice-chess-festival-im/04-Kubicka_Anna-Sliwicka_Alicja', True),          # Game
                 ('https://www.chessbomb.com/arena/2019-bangkok-chess-open', False)]                                                 # Not a game (arena)

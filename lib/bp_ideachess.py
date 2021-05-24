@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_API
 from lib.bp_interface import InternetGameInterface
 
@@ -16,10 +17,10 @@ class InternetGameIdeachess(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'url': re.compile(r'^https?:\/\/(\S+\.)?ideachess\.com\/.*\/.*\/([0-9]+)[\/\?\#]?', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'IdeaChess.com', BOARD_CHESS, METHOD_API
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Game ID
         m = self.regexes['url'].match(url)
         if m is not None:
@@ -39,7 +40,7 @@ class InternetGameIdeachess(InternetGameInterface):
                         return True
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.url_type is None or self.id is None:
             return None
@@ -79,7 +80,7 @@ class InternetGameIdeachess(InternetGameInterface):
             game['Result'] = '*'
         return self.rebuild_pgn(game)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://www.ideachess.com/chess_tactics_puzzles/checkmate_n/37431', True),             # Mate EN
                 ('http://fr.ideachess.com/echecs_tactiques/mat_n/37431', True),                         # Mate FR
                 ('http://it.ideachess.com/scacchi_tattica/scacco_matto_n/37431', True),                 # Mate IT

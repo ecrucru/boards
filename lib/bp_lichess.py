@@ -3,6 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_CHESS, METHOD_DL, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY, TYPE_SWISS, TYPE_TOURNAMENT
 from lib.bp_interface import InternetGameInterface
 
@@ -27,10 +28,10 @@ class InternetGameLichess(InternetGameInterface):
         InternetGameInterface.reset(self)
         self.url_tld = 'org'
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Lichess.org', BOARD_CHESS, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         for name, typ, pid in [('broadcast', TYPE_STUDY, 3),
                                ('practice', TYPE_STUDY, 3),
                                ('puzzle', TYPE_PUZZLE, 3),
@@ -52,7 +53,7 @@ class InternetGameLichess(InternetGameInterface):
         bourne = self.read_data(response)
         return self.json_loads(bourne)
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if None in [self.id, self.url_tld]:
             return None
@@ -188,7 +189,7 @@ class InternetGameLichess(InternetGameInterface):
         else:
             assert(False)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://lichess.org/CA4bR2b8/black/analysis#12', True),                            # Game in advanced position
                 ('https://lichess.org/CA4bR2b8', True),                                             # Canonical address
                 ('CA4bR2b8', False),                                                                # Short ID (possible via the generic function only)

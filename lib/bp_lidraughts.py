@@ -2,6 +2,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
+from typing import Optional, List, Tuple
 from lib.const import BOARD_DRAUGHTS, METHOD_DL, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY
 from lib.bp_interface import InternetGameInterface
 
@@ -17,10 +18,10 @@ class InternetGameLidraughts(InternetGameInterface):
                              'puzzle': re.compile(r'^https?:\/\/lidraughts\.org\/training\/([0-9]+|daily)[\/\?\#]?', re.IGNORECASE),
                              'study': re.compile(r'^https?:\/\/lidraughts\.org\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pdn)?\/?([\S\/]+)?$', re.IGNORECASE)})
 
-    def get_identity(self):
+    def get_identity(self) -> Tuple[str, int, int]:
         return 'Lidraughts.org', BOARD_DRAUGHTS, METHOD_DL
 
-    def assign_game(self, url):
+    def assign_game(self, url: str) -> bool:
         # Retrieve the ID of the broadcast
         m = self.regexes['broadcast'].match(url)
         if m is not None:
@@ -60,7 +61,7 @@ class InternetGameLidraughts(InternetGameInterface):
         # Nothing found
         return False
 
-    def download_game(self):
+    def download_game(self) -> Optional[str]:
         # Check
         if self.id is None:
             return None
@@ -76,7 +77,9 @@ class InternetGameLidraughts(InternetGameInterface):
             return self.download(url, userAgent=True)
 
         # Logic for the puzzles
-        elif self.url_type == TYPE_PUZZLE:
+        else:
+            assert(self.url_type == TYPE_PUZZLE)
+
             # Fetch the puzzle
             page = self.download('https://lidraughts.org/training/%s' % self.id)
             if page is None:
@@ -142,7 +145,7 @@ class InternetGameLidraughts(InternetGameInterface):
             # Rebuild the PDN game with the PGN technique
             return self.rebuild_pgn(game)
 
-    def get_test_links(self):
+    def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://lidraughts.org/broadcast/the-big-christmas-show-round-4/JnWAfmOk', True),     # Broadcast
                 ('https://lidraughts.org/broadcast/unknown/ABCD1234', False),                           # Broadcast (unknown)
                 ('https://LIDRAUGHTS.org/study/3VwAd32E#tag', True),                                    # Study
@@ -153,6 +156,6 @@ class InternetGameLidraughts(InternetGameInterface):
                 ('https://lidraughts.ORG/RicO2oy8?arg', True),                                          # Game (white side)
                 ('https://lidraughts.ORG/RicO2oy8/black', True),                                        # Game (black side)
                 ('https://lidraughts.org/training/3620', True),                                         # Puzzle
-                ('https://lidraughts.org/training/123456789', True),                                    # Puzzle (unknown)
+                ('https://lidraughts.org/training/123456789', False),                                   # Puzzle (unknown)
                 ('https://lidraughts.org/about', False),                                                # Not a game (about page)
                 ('https://lidraughts.org', False)]                                                      # Not a game (homepage)
