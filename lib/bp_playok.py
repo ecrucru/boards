@@ -35,7 +35,7 @@ class InternetGamePlayokInterface(InternetGameInterface):
     def download_game(self) -> Optional[str]:
         if self.id is not None:
             pgn = self.download('https://www.playok.com/p/?g=%s%s.txt' % (self.parameter, self.id))
-            if len(pgn) > 16:
+            if (pgn is not None) and (len(pgn) > 16):
                 return pgn
         return None
 

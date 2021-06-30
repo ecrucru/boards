@@ -39,7 +39,7 @@ class InternetGame2700chess(InternetGameInterface):
         # Download
         if self.id is None:
             return None
-        page = self.download(self.id)
+        page = self.download(self.id, userAgent=True)
         if page is None:
             return None
 
@@ -54,7 +54,7 @@ class InternetGame2700chess(InternetGameInterface):
                         pos2 += 1
                         if line[pos2] == '"' and line[pos2 - 1:pos2 + 1] != '\\"':
                             pgn = line[pos1 + 1:pos2]
-                            return pgn.replace('\\"', '"').replace('\\/', '/').replace('\\n', "\n").strip()
+                            return pgn.replace('\\"', '"').replace('\\/', '/').replace('\\r', '').replace('\\n', "\n").strip()
         return None
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
