@@ -26,7 +26,7 @@ class InternetGameLivechesscloud(InternetGameInterface):
             return False
 
         # Verify the identifier
-        id = parsed.path[1:]
+        id = parsed.path[1:] or parsed.fragment
         if self.regexes['id'].match(id) is not None:
             self.id = id
             return True
@@ -97,4 +97,5 @@ class InternetGameLivechesscloud(InternetGameInterface):
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://view.livechesscloud.com/52bd7b4f-1dd1-4bbb-a930-6417e3043b24', True),  # Games
+                ('http://view.livechesscloud.com/#52bd7b4f-1dd1-4bbb-a930-6417e3043b24', True), # Games, other scheme
                 ('http://view.livechesscloud.com', False)]                                      # Not a game (homepage)
