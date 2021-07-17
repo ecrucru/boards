@@ -48,8 +48,9 @@ class InternetGamePlayokChess(InternetGamePlayokInterface):
         self.parameter = 'ch'
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
-        return [('http://www.playok.com/p/?g=ch484680868', True),       # Game
-                ('https://PLAYOK.com/p/?g=ch484680868.txt', True),      # Game (direct link)
+        return [('http://www.playok.com/p/?g=ch532424172', True),       # Game
+                ('https://PLAYOK.com/p/?g=ch532424172.txt', True),      # Game (direct link)
+                ('http://www.playok.com/p/?g=ch484680868', False),      # Not a game (expired game)
                 ('https://PLAYOK.com/p/?g=ch999999999#tag', False),     # Not a game (wrong ID)
                 ('http://www.playok.com/p/?g=go15733322#165', False),   # Not a game (go)
                 ('http://www.playok.com', False)]                       # Not a game (homepage)
