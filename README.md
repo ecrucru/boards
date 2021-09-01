@@ -5,7 +5,6 @@ This command-line tool downloads board games as PGN (chess), PDN (draughts) or S
 - **Chess**
 	- 2700chess.com
 	- 365chess.com
-	- Chess-Samara.ru
 	- Chess.com
 	- Chess.org
 	- Chess24.com
@@ -16,6 +15,7 @@ This command-line tool downloads board games as PGN (chess), PDN (draughts) or S
 	- ChessPastebin.com
 	- ChessPro.ru
 	- ChessPuzzle.net
+	- Chess-Samara.ru
 	- ChessTempo.com
 	- Europe-Echecs.com
 	- Ficgs.com
