@@ -26,6 +26,7 @@ class InternetGameInterface:
         self.allow_extra = False
         self.user_agent = self.ua.generate(fake=self.allow_extra)
         self.allow_octet_stream = False
+        self.use_sanitization = True
         self.regexes = {'fen': re.compile(r'^[kqbnrp1-8\/]+\s[w|b]\s[kq-]+\s[a-h-][1-8]?(\s[0-9]+)?(\s[0-9]+)?$', re.IGNORECASE),
                         'strip_html': re.compile(r'<\/?[^>]+>', re.IGNORECASE)}
 
@@ -258,15 +259,16 @@ class InternetGameInterface:
                 break
 
         # Game specific rules
-        type = self.get_identity()[1]
-        if type == BOARD_CHESS:
-            data = data.replace('[Variant "Chess"]\n', '')
-        if type in [BOARD_CHESS, BOARD_DRAUGHTS]:
-            if not data.startswith('['):
-                return None
-        if type == BOARD_GO:
-            if not data.startswith('('):
-                return None
+        if self.use_sanitization:
+            type = self.get_identity()[1]
+            if type == BOARD_CHESS:
+                data = data.replace('[Variant "Chess"]\n', '')
+            if type in [BOARD_CHESS, BOARD_DRAUGHTS]:
+                if not data.startswith('['):
+                    return None
+            if type == BOARD_GO:
+                if not data.startswith('('):
+                    return None
 
         # Return the data
         return data

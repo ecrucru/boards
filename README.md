@@ -24,6 +24,7 @@ This command-line tool downloads board games as PGN (chess), PDN (draughts) or S
 	- Iccf.com
 	- IdeaChess.com
 	- Lichess.org
+	- Lishogi.org
 	- LiveChessCloud.com
 	- MskChess.ru
 	- PlayOK.com
