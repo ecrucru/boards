@@ -111,4 +111,5 @@ class InternetGameChess24(InternetGameInterface):
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://chess24.com/en/game/DQhOOrJaQKS31LOiOmrqPg#anchor', True),    # Game with anchor
+                ('https://chess24.com/fr/game/9AlSvtkqTpqY43XBEsit-w', True),           # Game with the sign ½
                 ('https://CHESS24.com', False)]                                         # Not a game (homepage)

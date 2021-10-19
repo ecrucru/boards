@@ -213,14 +213,16 @@ class InternetGameInterface:
         if game is None or game == '' or '_moves' not in game or game['_moves'] == '':
             return None
 
-        # Convert Chess960 to classical chess depending on the start position
-        if 'FEN' in game:
+        # Fix the tags
+        if 'FEN' in game:                                       # Convert Chess960 to classical chess depending on the start position
             if 'Variant' in game:
                 if game['Variant'] == CHESS960 and game['FEN'] == FEN_START_960:
                     del game['Variant'], game['SetUp'], game['FEN']
             else:
                 if game['FEN'] == FEN_START:
                     del game['SetUp'], game['FEN']
+        if 'Result' in game:                                    # Special signs
+            game['Result'] = game['Result'].replace('½', '1/2')
 
         # Header
         pgn = ''
