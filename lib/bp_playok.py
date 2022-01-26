@@ -64,8 +64,8 @@ class InternetGamePlayokGo(InternetGamePlayokInterface):
         self.parameter = 'go'
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
-        return [('http://www.playok.com/p/?g=go15733322#165', True),    # Game
-                ('https://PLAYOK.com/p/?g=go15733322.txt', True),       # Game (direct link)
+        return [('http://www.playok.com/p/?g=go18495831#17', True),     # Game
+                ('https://PLAYOK.com/p/?g=go18495831.txt', True),       # Game (direct link)
                 ('https://PLAYOK.com/p/?g=go999999999#tag', False),     # Not a game (wrong ID)
                 ('http://www.playok.com/p/?g=ch484680868', False),      # Not a game (chess)
                 ('http://www.playok.com', False)]                       # Not a game (homepage)

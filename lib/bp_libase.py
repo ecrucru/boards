@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021 ecrucru
+# Copyright (C) 2021-2022 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -28,7 +28,7 @@ class InternetGameLibase(InternetGameInterface):
         self.regexes.update({'broadcast': re.compile(r'^https?:\/\/(\S+\.)?%s\/broadcast\/[a-z0-9\-]+\/([a-z0-9]{8})[\/\?\#]?' % hreg, re.IGNORECASE),
                              'game': re.compile(r'^https?:\/\/(\S+\.)?%s\/(game\/export\/|embed\/)?([a-z0-9]{8})\/?([\S\/]+)?$' % hreg, re.IGNORECASE),
                              'practice': re.compile(r'^https?:\/\/(\S+\.)?%s\/practice\/[\w\-\/]+\/([a-z0-9]{8}\/[a-z0-9]{8})(\.%s)?\/?([\S\/]+)?$' % (hreg, self._ext), re.IGNORECASE),
-                             'puzzle': re.compile(r'^https?:\/\/(\S+\.)?%s\/training\/([a-z0-9]+)[\/\?\#]?' % hreg, re.IGNORECASE),
+                             'puzzle': re.compile(r'^https?:\/\/(\S+\.)?%s\/training\/([a-z0-9]+\/)?([a-z0-9]+)[\/\?\#]?' % hreg, re.IGNORECASE),
                              'study': re.compile(r'^https?:\/\/(\S+\.)?%s\/study\/([a-z0-9]{8}(\/[a-z0-9]{8})?)(\.%s)?\/?([\S\/]+)?$' % (hreg, self._ext), re.IGNORECASE),
                              'swiss': re.compile(r'^https?:\/\/(\S+\.)?%s\/swiss\/([a-z0-9]{8})[\/\?\#]?' % hreg, re.IGNORECASE),
                              'tournament': re.compile(r'^https?:\/\/(\S+\.)?%s\/tournament\/([a-z0-9]{8})[\/\?\#]?' % hreg, re.IGNORECASE)})
@@ -39,7 +39,7 @@ class InternetGameLibase(InternetGameInterface):
     def assign_game(self, url: str) -> bool:
         for name, typ, pid in [('broadcast', TYPE_STUDY, 2),
                                ('practice', TYPE_STUDY, 2),
-                               ('puzzle', TYPE_PUZZLE, 2),
+                               ('puzzle', TYPE_PUZZLE, 3),
                                ('study', TYPE_STUDY, 2),
                                ('swiss', TYPE_SWISS, 2),
                                ('tournament', TYPE_TOURNAMENT, 2),
@@ -203,7 +203,7 @@ class InternetGameLibase(InternetGameInterface):
                     kmove = chess.Move.from_uci(move)
                     game['_moves'] += board.san(kmove) + ' '
                     board.push(kmove)
-                game['_moves'] += '}'
+                game['_moves'] = game['_moves'].strip() + '}'
 
             # Rebuild the PGN game
             return self.rebuild_pgn(game)

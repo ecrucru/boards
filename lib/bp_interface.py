@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021 ecrucru
+# Copyright (C) 2021-2022 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -11,7 +11,6 @@ from urllib.request import Request, urlopen
 from urllib.parse import urlparse, urlencode
 from http.client import HTTPResponse
 
-from lib.ua import InternetUserAgent
 from lib.const import METHOD_WS, BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, \
     CHESS960, FEN_START, FEN_START_960
 
@@ -22,9 +21,8 @@ class InternetGameInterface:
     def __init__(self):
         ''' Initialize the common data that can be used in ALL the sub-classes. '''
         self.reset()
-        self.ua = InternetUserAgent()
         self.allow_extra = False
-        self.user_agent = self.ua.generate(fake=self.allow_extra)
+        self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'  # Cloudflare Browser Integrity Check
         self.allow_octet_stream = False
         self.use_sanitization = True
         self.regexes = {'fen': re.compile(r'^[kqbnrp1-8\/]+\s[w|b]\s[kq-]+\s[a-h-][1-8]?(\s[0-9]+)?(\s[0-9]+)?$', re.IGNORECASE),
@@ -150,11 +148,10 @@ class InternetGameInterface:
         # Download
         try:
             logging.debug('Downloading game: %s' % url)
+            headers = {}
             if userAgent:
-                req = Request(str(url), headers={'User-Agent': self.user_agent})
-                response = urlopen(req)
-            else:
-                response = urlopen(str(url))
+                headers['User-Agent'] = self.user_agent
+            response = urlopen(Request(str(url), headers=headers))
             return self.read_data(response)
         except Exception as exception:
             logging.debug('Exception raised: %s' % str(exception))
@@ -193,11 +190,10 @@ class InternetGameInterface:
             data = None
         try:
             logging.debug('Calling API: %s' % url)
+            headers = {}
             if userAgent:
-                req = Request(str(url), data, headers={'User-Agent': self.user_agent})
-            else:
-                req = Request(str(url), data)
-            response = urlopen(req)
+                headers['User-Agent'] = self.user_agent
+            response = urlopen(Request(str(url), data, headers=headers))
             return self.read_data(response)
         except Exception as exception:
             logging.debug('Exception raised: %s' % str(exception))
@@ -254,7 +250,7 @@ class InternetGameInterface:
 
         # Reorganize the spaces
         data = str(data).replace('\r', '').strip()
-        while (True):
+        while True:
             lc = len(data)
             data = data.replace("\n\n\n", "\n\n")
             if len(data) == lc:

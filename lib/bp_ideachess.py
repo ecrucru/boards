@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021 ecrucru
+# Copyright (C) 2021-2022 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -9,6 +9,7 @@ from lib.bp_interface import InternetGameInterface
 
 import re
 from base64 import b64decode
+from json import dumps
 
 
 # IdeaChess.com
@@ -47,7 +48,10 @@ class InternetGameIdeachess(InternetGameInterface):
 
         # Fetch the puzzle
         api = 'http://www.ideachess.com/com/ajax2'
-        data = {'message': '{"action":100,"data":{"problemNumber":%s,"kind":"%s"}}' % (self.id, self.url_type)}
+        data = {'message': dumps({'action': 100,
+                                  'data': {'problemNumber': int(self.id),
+                                           'kind': self.url_type}},
+                                 separators=(',', ':'))}
         bourne = self.send_xhr(api, data, userAgent=True)
         chessgame = self.json_loads(bourne)
         if self.json_field(chessgame, 'action') != 200:

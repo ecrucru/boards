@@ -1,4 +1,4 @@
-# Copyright (C) 2021 ecrucru
+# Copyright (C) 2021-2022 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -31,6 +31,8 @@ class InternetGameLichess(InternetGameLibase):
                 ('https://lichess.org/STUDY/hr4H7sOB.pgn', True),                                   # Study of one game
                 ('https://lichess.org/training/daily', True),                                       # Daily puzzle
                 ('https://lichess.org/training/lfSgX', True),                                       # Puzzle
+                ('https://lichess.org/training/mix/fmH0k', True),                                   # Puzzle from a random theme
+                ('https://lichess.org/training/attackingF2F7/9LaN9', True),                         # Puzzle from a given theme
                 ('https://lichess.org/training/84969', False),                                      # Not a puzzle (old ID)
                 ('https://lichess.org/training/1281301832', True),                                  # Puzzle (wrong ID but redirected to a valid puzzle)
                 ('https://lichess.org/broadcast/2019-gct-zagreb-round-4/jQ1dbbX9', True),           # Broadcast

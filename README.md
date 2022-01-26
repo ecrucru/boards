@@ -1,6 +1,6 @@
 # Boards
 
-This command-line tool downloads board games as PGN (chess), PDN (draughts) or SGF (go) files from these online websites:
+This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (draughts) or SGF (go) files from these online websites:
 
 - **Chess**
 	- 2700chess.com
@@ -55,7 +55,7 @@ This command-line tool downloads board games as PGN (chess), PDN (draughts) or S
 
 ```
 Copyright (C) 2019-2020 Pychess
-Copyright (C) 2021 ecrucru
+Copyright (C) 2021-2022 ecrucru
 https://github.com/ecrucru/boards
 GPL version 3
 ```

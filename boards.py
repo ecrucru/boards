@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021 ecrucru
+# Copyright (C) 2021-2022 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -161,6 +161,10 @@ async def main() -> None:
             logging.error('No game found.')
 
     elif parser.command == 'test':
+        try:
+            sys.stdout.reconfigure(encoding='utf-8')
+        except Exception:
+            pass
         logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
         errors = 0
         for bp in board_providers:

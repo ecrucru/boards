@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021 ecrucru
+# Copyright (C) 2021-2022 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -14,7 +14,7 @@ import re
 class InternetGameEuropeechecs(InternetGameInterface):
     def __init__(self):
         InternetGameInterface.__init__(self)
-        self.regexes.update({'widget': re.compile(r".*class=\"cbwidget\"\s+id=\"([0-9a-f]+)_container\".*", re.IGNORECASE)})
+        self.regexes.update({'widget': re.compile(r".*class=\"cbwidget lazy\"\s+id=\"([0-9a-f]+)_container\".*", re.IGNORECASE)})
 
     def get_identity(self) -> Tuple[str, int, int]:
         return 'Europe-Echecs.com', BOARD_CHESS, METHOD_DL
