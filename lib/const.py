@@ -5,7 +5,8 @@
 
 # Constants
 ANNOTATOR = 'ecrucru/boards@github 1.0'
-BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO = range(3)
+BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, BOARD_MILL = range(4)
+BOARDS_DESC = ['Chess', 'Draughts', 'Go', 'Mill']
 TYPE_GAME, TYPE_STUDY, TYPE_PUZZLE, TYPE_SWISS, TYPE_TOURNAMENT, TYPE_EVENT, TYPE_FEN = range(7)
 
 # Strategies

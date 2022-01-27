@@ -1,6 +1,6 @@
 # Boards
 
-This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (draughts) or SGF (go) files from these online websites:
+This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (draughts), SGF (go) or TXT (mill) files from these online websites:
 
 - **Chess**
 	- 2700chess.com
@@ -35,12 +35,15 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- TheChessWorld.com
 - **Draughts**
 	- Lidraughts.org
+	- PlayOK.com
 - **Go**
 	- DragonGoServer.net
 	- GoKGS.com
 	- GoShrine.com
 	- Ingo-web.com
 	- Online-go.com
+	- PlayOK.com
+- **Mill**
 	- PlayOK.com
 
 

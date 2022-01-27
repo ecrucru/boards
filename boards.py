@@ -14,14 +14,14 @@ import re
 from urllib.parse import urlparse
 from random import choice
 
-from lib.const import BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO
+from lib.const import BOARDS_DESC
 from lib.bp_interface import InternetGameInterface
 
 # Popular chess
 from lib.bp_lichess import InternetGameLichess
 from lib.bp_chesscom import InternetGameChessCom
 from lib.bp_chess24 import InternetGameChess24
-# Normal chess
+# Chess
 from lib.bp_2700chess import InternetGame2700chess
 from lib.bp_365chess import InternetGame365chess
 from lib.bp_chessbase import InternetGameChessbase
@@ -51,13 +51,16 @@ from lib.bp_schachspielen import InternetGameSchachspielen
 from lib.bp_thechessworld import InternetGameThechessworld
 # Draughts
 from lib.bp_lidraughts import InternetGameLidraughts
+from lib.bp_playok import InternetGamePlayokDraughts8, InternetGamePlayokDraughts10
 # Go
 from lib.bp_dragongoserver import InternetGameDragongoserver
 from lib.bp_gokgs import InternetGameGokgs
 from lib.bp_goshrine import InternetGameGoshrine
 from lib.bp_ingoweb import InternetGameIngoweb
 from lib.bp_onlinego import InternetGameOnlinego
-from lib.bp_playok import InternetGamePlayokGo
+from lib.bp_playok import InternetGamePlayokGo, InternetGamePlayokGomoku
+# Mill
+from lib.bp_playok import InternetGamePlayokMill
 # Lowest priority
 from lib.bp_generic_chess import InternetGameGenericChess
 
@@ -121,7 +124,7 @@ async def main() -> None:
                 board_providers.append(cls2())
 
     # Command line
-    cmdline = argparse.ArgumentParser(prog='python boards.py', description='Boards is a download helper for the online board games (chess, draughts, go...)')
+    cmdline = argparse.ArgumentParser(prog='python boards.py', description='Boards is a download helper for the online board games (chess, draughts, go, mill)')
     subparser = cmdline.add_subparsers(dest='command')
 
     subparser.add_parser('show', help='Show the supported board providers')
@@ -135,14 +138,11 @@ async def main() -> None:
     # Execute
     parser = cmdline.parse_args()
     if parser.command == 'show':
-        method_desc = {BOARD_CHESS: 'Chess',
-                       BOARD_DRAUGHTS: 'Draughts',
-                       BOARD_GO: 'Go'}
         list = []
         for bp in board_providers:
             if bp.is_enabled():
                 site, board, method = bp.get_identity()
-                list.append('%s - %s' % (method_desc[board], site))
+                list.append('%s - %s' % (BOARDS_DESC[board], site))
         list.sort()
         for bp in list:
             print(bp)

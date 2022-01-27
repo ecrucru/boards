@@ -4,7 +4,7 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, BOARD_GO, METHOD_DL
+from lib.const import BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, BOARD_MILL, METHOD_DL
 from lib.bp_interface import InternetGameInterface
 
 from urllib.parse import urlparse, parse_qs
@@ -67,5 +67,64 @@ class InternetGamePlayokGo(InternetGamePlayokInterface):
         return [('http://www.playok.com/p/?g=go18495831#17', True),     # Game
                 ('https://PLAYOK.com/p/?g=go18495831.txt', True),       # Game (direct link)
                 ('https://PLAYOK.com/p/?g=go999999999#tag', False),     # Not a game (wrong ID)
+                ('http://www.playok.com/p/?g=ch484680868', False),      # Not a game (chess)
+                ('http://www.playok.com', False)]                       # Not a game (homepage)
+
+
+class InternetGamePlayokGomoku(InternetGamePlayokInterface):
+    def __init__(self):
+        InternetGamePlayokInterface.__init__(self)
+        self.boardType = BOARD_GO
+        self.parameter = 'gm'
+        self.use_sanitization = False
+
+    def get_test_links(self) -> List[Tuple[str, bool]]:
+        return [('https://www.playok.com/p/?g=gm148862421#38', True),   # Game
+                ('https://PLAYOK.com/p/?g=gm148862421.txt', True),      # Game (direct link)
+                ('https://PLAYOK.com/p/?g=gm999999999#tag', False),     # Not a game (wrong ID)
+                ('http://www.playok.com/p/?g=ch484680868', False),      # Not a game (chess)
+                ('http://www.playok.com', False)]                       # Not a game (homepage)
+
+
+# PlayOK.com for draughts
+class InternetGamePlayokDraughts8(InternetGamePlayokInterface):
+    def __init__(self):
+        InternetGamePlayokInterface.__init__(self)
+        self.boardType = BOARD_DRAUGHTS
+        self.parameter = 'ck'
+
+    def get_test_links(self) -> List[Tuple[str, bool]]:
+        return [('https://www.playok.com/p/?g=ck299815754', True),      # Game
+                ('https://www.playok.com/p/?g=ck299814720.txt', True),  # Game (direct link)
+                ('https://PLAYOK.com/p/?g=ck999999999#tag', False),     # Not a game (wrong ID)
+                ('http://www.playok.com/p/?g=ch484680868', False),      # Not a game (chess)
+                ('http://www.playok.com', False)]                       # Not a game (homepage)
+
+
+class InternetGamePlayokDraughts10(InternetGamePlayokInterface):
+    def __init__(self):
+        InternetGamePlayokInterface.__init__(self)
+        self.boardType = BOARD_DRAUGHTS
+        self.parameter = 'cp'
+
+    def get_test_links(self) -> List[Tuple[str, bool]]:
+        return [('https://www.playok.com/p/?g=cp36483883#127', True),   # Game
+                ('https://www.playok.com/p/?g=cp36483883.txt', True),   # Game (direct link)
+                ('https://PLAYOK.com/p/?g=cp999999999#tag', False),     # Not a game (wrong ID)
+                ('http://www.playok.com/p/?g=ch484680868', False),      # Not a game (chess)
+                ('http://www.playok.com', False)]                       # Not a game (homepage)
+
+
+# PlayOK.com for mill
+class InternetGamePlayokMill(InternetGamePlayokInterface):
+    def __init__(self):
+        InternetGamePlayokInterface.__init__(self)
+        self.boardType = BOARD_MILL
+        self.parameter = 'ml'
+
+    def get_test_links(self) -> List[Tuple[str, bool]]:
+        return [('https://www.playok.com/p/?g=ml10296405', True),       # Game
+                ('https://www.playok.com/p/?g=ml10296405.txt', True),   # Game (direct link)
+                ('https://PLAYOK.com/p/?g=ml999999999#tag', False),     # Not a game (wrong ID)
                 ('http://www.playok.com/p/?g=ch484680868', False),      # Not a game (chess)
                 ('http://www.playok.com', False)]                       # Not a game (homepage)
