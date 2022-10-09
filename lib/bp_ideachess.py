@@ -52,7 +52,7 @@ class InternetGameIdeachess(InternetGameInterface):
                                   'data': {'problemNumber': int(self.id),
                                            'kind': self.url_type}},
                                  separators=(',', ':'))}
-        bourne = self.send_xhr(api, data, userAgent=True)
+        bourne = self.send_xhr(api, data)
         chessgame = self.json_loads(bourne)
         if self.json_field(chessgame, 'action') != 200:
             return None

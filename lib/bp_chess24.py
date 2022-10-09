@@ -34,7 +34,7 @@ class InternetGameChess24(InternetGameInterface):
         if self.id is None:
             return None
         url = 'https://chess24.com/en/game/%s' % self.id
-        page = self.download(url, userAgent=True)  # Else HTTP 403 Forbidden
+        page = self.download(url)
         if page is None:
             return None
 

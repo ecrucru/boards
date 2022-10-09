@@ -83,7 +83,7 @@ class InternetGameChessCom(InternetGameInterface):
         # Puzzles
         elif self.url_type == 'puzzles':
             url = 'https://www.chess.com/puzzles/problem/%s' % self.id
-            page = self.download(url, userAgent=True)  # Else 403 Forbidden
+            page = self.download(url)
             if page is None:
                 return None
 
@@ -151,7 +151,7 @@ class InternetGameChessCom(InternetGameInterface):
         else:
             # API since October 2020
             url = 'https://www.chess.com/callback/%s/game/%s' % (self.url_type, self.id)
-            bourne = self.send_xhr(url, {}, userAgent=True)
+            bourne = self.send_xhr(url, {})
             if bourne is None:
                 return None
 

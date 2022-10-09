@@ -74,7 +74,7 @@ class InternetGameLidraughts(InternetGameInterface):
         # Logic for the studies
         elif self.url_type == TYPE_STUDY:
             url = 'https://lidraughts.org/study/%s.pdn' % self.id
-            return self.download(url, userAgent=True)
+            return self.download(url)
 
         # Logic for the puzzles
         else:

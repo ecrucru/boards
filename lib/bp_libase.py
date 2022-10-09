@@ -70,7 +70,7 @@ class InternetGameLibase(InternetGameInterface):
 
         # Logic for the studies
         if self.url_type == TYPE_STUDY:
-            return self.download('https://%s/study/%s.%s' % (self._host, self.id, self._ext), userAgent=True)
+            return self.download('https://%s/study/%s.%s' % (self._host, self.id, self._ext))
 
         # Logic for the swiss tournaments
         elif self.url_type == TYPE_SWISS:
@@ -78,7 +78,7 @@ class InternetGameLibase(InternetGameInterface):
 
         # Logic for the tournaments
         elif self.url_type == TYPE_TOURNAMENT:
-            return self.download('https://%s/api/tournament/%s/games' % (self._host, self.id), userAgent=True)
+            return self.download('https://%s/api/tournament/%s/games' % (self._host, self.id))
 
         # Logic for the games
         elif self.url_type == TYPE_GAME:

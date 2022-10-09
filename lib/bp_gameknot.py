@@ -52,7 +52,7 @@ class InternetGameGameknot(InternetGameInterface):
             url = 'https://gameknot.com/analyze-board.pl?bd=%s' % self.id
         elif self.url_type == TYPE_PUZZLE:
             url = 'https://gameknot.com/chess-puzzle.pl?pz=%s' % self.id
-        page = self.download(url, userAgent=True)
+        page = self.download(url)
         if page is None:
             return None
 

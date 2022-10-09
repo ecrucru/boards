@@ -49,7 +49,7 @@ class InternetGameChesstempo(InternetGameInterface):
 
         # Games
         if self.url_type == TYPE_GAME:
-            pgn = self.download('http://old.chesstempo.com/requests/download_game_pgn.php?gameids=%s' % self.id, userAgent=True)  # Else a random game is retrieved
+            pgn = self.download('http://old.chesstempo.com/requests/download_game_pgn.php?gameids=%s' % self.id)
             if pgn is None or len(pgn) <= 128:
                 return None
             else:

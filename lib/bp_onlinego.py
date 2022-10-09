@@ -29,7 +29,7 @@ class InternetGameOnlinego(InternetGameInterface):
 
     def download_game(self) -> Optional[str]:
         if self.id is not None:
-            return self.download('https://online-go.com/api/v1/games/%s/sgf' % self.id, userAgent=True)
+            return self.download('https://online-go.com/api/v1/games/%s/sgf' % self.id)
         else:
             return None
 

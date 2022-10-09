@@ -35,7 +35,7 @@ class InternetGameChesspuzzle(InternetGameInterface):
             return None
 
         # Download the puzzle
-        page = self.download('https://chesspuzzle.net/Solution/%s' % self.id, userAgent=True)  # Else 403 Forbidden
+        page = self.download('https://chesspuzzle.net/Solution/%s' % self.id)
         if page is None:
             return None
 

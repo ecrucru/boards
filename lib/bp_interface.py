@@ -22,7 +22,7 @@ class InternetGameInterface:
         ''' Initialize the common data that can be used in ALL the sub-classes. '''
         self.reset()
         self.allow_extra = False
-        self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'  # Cloudflare Browser Integrity Check
+        self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'  # Cloudflare Browser Integrity Check
         self.allow_octet_stream = False
         self.use_sanitization = True
         self.regexes = {'fen': re.compile(r'^[kqbnrp1-8\/]+\s[w|b]\s[kq-]+\s[a-h-][1-8]?(\s[0-9]+)?(\s[0-9]+)?$', re.IGNORECASE),
@@ -137,7 +137,7 @@ class InternetGameInterface:
             links[i] = link
         return list(dict.fromkeys(links))       # Without duplicate entries
 
-    def download(self, url: Optional[str], userAgent: bool = False) -> Optional[str]:
+    def download(self, url: Optional[str]) -> Optional[str]:
         ''' Download the URL from the Internet.
             The USERAGENT is requested by some websites to make sure that you are not a bot.
             The value None is returned in case of error. '''
@@ -148,9 +148,7 @@ class InternetGameInterface:
         # Download
         try:
             logging.debug('Downloading game: %s' % url)
-            headers = {}
-            if userAgent:
-                headers['User-Agent'] = self.user_agent
+            headers = {'User-Agent': self.user_agent}
             response = urlopen(Request(str(url), headers=headers))
             return self.read_data(response)
         except Exception as exception:

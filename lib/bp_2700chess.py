@@ -39,7 +39,7 @@ class InternetGame2700chess(InternetGameInterface):
         # Download
         if self.id is None:
             return None
-        page = self.download(self.id, userAgent=True)
+        page = self.download(self.id)
         if page is None:
             return None
 
