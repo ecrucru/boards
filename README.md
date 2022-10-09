@@ -9,7 +9,6 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- Chess.org
 	- Chess24.com
 	- ChessBase.com
-	- ChessBomb.com
 	- ChessGames.com
 	- ChessKing.com
 	- ChessPastebin.com
@@ -23,10 +22,10 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- GameKnot.com
 	- Iccf.com
 	- IdeaChess.com
+	- Immortal.game
 	- Lichess.org
 	- Lishogi.org
 	- LiveChessCloud.com
-	- MskChess.ru
 	- PlayOK.com
 	- Pychess.org
 	- RedHotPawn.com

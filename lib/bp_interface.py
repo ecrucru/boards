@@ -75,12 +75,17 @@ class InternetGameInterface:
         except ValueError:
             return None
 
-    def json_field(self, data: Optional[Dict], path: str, default: str = '') -> str:
+    def json_field(self,
+                   data: Optional[Dict],
+                   path: str,
+                   default: str = '',
+                   separator: str = '/',
+                   ) -> str:
         ''' Conveniently read a field from a JSON data. The PATH is a key like "node1/node2/key".
             A blank string is returned in case of error. '''
         if data in [None, '']:
             return ''
-        keys = path.split('/')
+        keys = path.split(separator)
         value: Any = data
         for key in keys:
             if key.startswith('[') and key.endswith(']'):
@@ -89,7 +94,7 @@ class InternetGameInterface:
                 except (ValueError, TypeError, IndexError):
                     return ''
             else:
-                if key in value:
+                if (value is not None) and (key in value):
                     value = value[key]
                 else:
                     return ''
