@@ -158,7 +158,7 @@ class InternetGameLibase(InternetGameInterface):
             game['Annotator'] = self.json_field(chessgame, 'game/author')
             game['X_TimeControl'] = self.json_field(chessgame, 'game/clock')
             game['X_Rating'] = rating
-            fen = self.json_field(chessgame, 'game/fen')
+            fen = self.json_field(chessgame, 'game/fen') or self.json_field(chessgame, 'game/sfen')
             if fen != '':
                 game['Variant'] = self._variant
                 game['FEN'] = fen
