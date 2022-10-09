@@ -139,7 +139,6 @@ class InternetGameInterface:
 
     def download(self, url: Optional[str]) -> Optional[str]:
         ''' Download the URL from the Internet.
-            The USERAGENT is requested by some websites to make sure that you are not a bot.
             The value None is returned in case of error. '''
         # Check
         if url in [None, '']:
@@ -155,15 +154,14 @@ class InternetGameInterface:
             logging.debug('Exception raised: %s' % str(exception))
             return None
 
-    def download_list(self, links: List[str], userAgent: bool = False) -> Optional[str]:
+    def download_list(self, links: List[str]) -> Optional[str]:
         ''' Download and concatenate the URL given in the array LINKS.
-            The USERAGENT is requested by some websites to make sure that you are not a bot.
             The number of downloads is limited to 10.
             The downloads that failed are dropped silently.
             The value None is returned in case of no data or error. '''
         pgn = ''
         for i, link in enumerate(links):
-            data = self.download(link, userAgent)
+            data = self.download(link)
             if data not in [None, '']:
                 pgn += '%s\n\n' % data
             if i >= 10:                             # Anti-flood
@@ -173,9 +171,8 @@ class InternetGameInterface:
         else:
             return pgn
 
-    def send_xhr(self, url: Optional[str], postData: Optional[Dict], userAgent: bool = False) -> Optional[str]:
+    def send_xhr(self, url: Optional[str], postData: Optional[Dict]) -> Optional[str]:
         ''' Call a target URL by submitting the POSTDATA.
-            The USERAGENT is requested by some websites to make sure that you are not a bot.
             The value None is returned in case of error. '''
         # Check
         if url in [None, '']:
@@ -188,9 +185,7 @@ class InternetGameInterface:
             data = None
         try:
             logging.debug('Calling API: %s' % url)
-            headers = {}
-            if userAgent:
-                headers['User-Agent'] = self.user_agent
+            headers = {'User-Agent': self.user_agent}
             response = urlopen(Request(str(url), data, headers=headers))
             return self.read_data(response)
         except Exception as exception:
