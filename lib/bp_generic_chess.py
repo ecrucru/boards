@@ -36,7 +36,7 @@ class InternetGameGenericChess(InternetGameInterface):
             return None
 
         # Chess file
-        if (mime in ['application/x-chess-pgn', 'application/pgn']) or (self.allow_octet_stream and mime == 'application/octet-stream'):
+        if (mime in ['application/x-chess-pgn', 'application/pgn', 'application/vnd.chess-pgn']) or (self.allow_octet_stream and mime == 'application/octet-stream'):
             return data
 
         # Web-page
