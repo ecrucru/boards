@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021 ecrucru
+# Copyright (C) 2021-2023 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -42,9 +42,10 @@ class InternetGamePychess(InternetGameInterface):
                 for i in range(5):
                     async for data in ws.recv():
                         data = self.json_loads(data)
-                    if data['type'] == 'board' and data['gameId'] == self.id:
-                        result = data['pgn'] if data['pgn'] != '' else None
-                        break
+                    if data is not None:
+                        if data['type'] == 'board' and data['gameId'] == self.id:
+                            result = data['pgn'] if data['pgn'] != '' else None
+                            break
             finally:
                 await ws.close()
         return result
