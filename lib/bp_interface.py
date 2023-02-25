@@ -190,7 +190,8 @@ class InternetGameInterface:
             data = None
         try:
             logging.debug('Calling API: %s' % url)
-            headers = {'User-Agent': self.user_agent}
+            headers = {'User-Agent': self.user_agent,
+                       'Accept': 'application/json, text/plain, */*'}
             response = urlopen(Request(str(url), data, headers=headers))
             return self.read_data(response)
         except Exception as exception:
@@ -279,6 +280,11 @@ class InternetGameInterface:
             return self.regexes['fen'].match(fen) is not None
         except TypeError:
             return False
+
+    def seconds2clock(self, seconds: int) -> Tuple[int, int, int]:
+        mm, ss = divmod(seconds, 60)
+        hh, mm = divmod(mm, 60)
+        return (hh, mm, ss)
 
     # External
     def get_identity(self) -> Tuple[str, int, int]:
