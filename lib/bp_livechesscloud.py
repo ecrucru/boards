@@ -1,13 +1,14 @@
-# Copyright (C) 2021 ecrucru
+# Copyright (C) 2021-2023 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_API
+from lib.const import BOARD_CHESS, METHOD_API, CHESS960, CHESS960_CLASSICAL
 from lib.bp_interface import InternetGameInterface
 
 import re
 from urllib.parse import urlparse
+import chess
 
 
 # LiveChessCloud.com
@@ -74,6 +75,7 @@ class InternetGameLivechesscloud(InternetGameInterface):
                     player = pairings[j].get('black', {})
                     game['Black'] = ('%s %s' % (self.json_field(player, 'lname'), self.json_field(player, 'fname'))).strip()
                     game['Result'] = self.json_field(pairings[j], 'result', '*')
+                    game['Round'] = '%d.%d' % (i, j + 1)
 
                     # Fetch the moves
                     game['_moves'] = ''
@@ -81,6 +83,15 @@ class InternetGameLivechesscloud(InternetGameInterface):
                     data2 = self.json_loads(bourne2)
                     if self.json_field(data2, 'result') == 'NOTPLAYED':
                         continue
+                    fischer_id = self.json_field(data2, 'chess960', CHESS960_CLASSICAL)
+                    if fischer_id == CHESS960_CLASSICAL:
+                        for k in ['Variant', 'SetUp', 'FEN']:
+                            if k in game:
+                                del game[k]
+                    else:
+                        game['Variant'] = CHESS960
+                        game['SetUp'] = '1'
+                        game['FEN'] = chess.Board.from_chess960_pos(fischer_id).fen()
                     game['_reason'] = self.json_field(data2, 'comment')
                     moves = self.json_field(data2, 'moves')
                     for move in moves:
@@ -96,6 +107,7 @@ class InternetGameLivechesscloud(InternetGameInterface):
         return pgn
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
-        return [('http://view.livechesscloud.com/52bd7b4f-1dd1-4bbb-a930-6417e3043b24', True),      # Games
-                ('http://view.livechesscloud.com/#52bd7b4f-1dd1-4bbb-a930-6417e3043b24', True),     # Games, other scheme
+        return [('https://view.livechesscloud.com/30d54b79-e852-4788-bb91-403955efd6a3', True),     # Games
+                ('https://view.livechesscloud.com/#30d54b79-e852-4788-bb91-403955efd6a3', True),    # Games, other scheme
+                # No example found for Chess960
                 ('http://view.livechesscloud.com', False)]                                          # Not a game (homepage)

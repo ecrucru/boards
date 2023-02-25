@@ -18,5 +18,6 @@ METHOD_WS = 'Websockets'
 
 # Constants
 CHESS960 = 'Fischerandom'
+CHESS960_CLASSICAL = 518
 FEN_START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 FEN_START_960 = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w HAha - 0 1'
