@@ -43,6 +43,7 @@ from lib.bp_immortal import InternetGameImmortal
 from lib.bp_ideachess import InternetGameIdeachess
 from lib.bp_lishogi import InternetGameLishogi
 from lib.bp_livechess24 import InternetGameLivechess24
+from lib.bp_livechessaunz import InternetGameLivechessAunz
 from lib.bp_livechesscloud import InternetGameLivechesscloud
 from lib.bp_playok import InternetGamePlayokChess
 from lib.bp_pychess import InternetGamePychess
@@ -116,7 +117,6 @@ async def download(url: str) -> Optional[str]:
 # Start of the program
 async def main() -> None:
     # Load the board providers from the imported classes
-    global board_providers
     for cls in InternetGameInterface.__subclasses__():
         if len(cls.__subclasses__()) == 0:
             board_providers.append(cls())
