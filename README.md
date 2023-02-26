@@ -30,6 +30,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- LiveChess.aunz.net
 	- LiveChessCloud.com
 	- PlayOK.com
+	- PlayStrategy.org
 	- Pychess.org
 	- RedHotPawn.com
 	- Schach-Spielen.eu
@@ -38,6 +39,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 - **Draughts**
 	- Lidraughts.org
 	- PlayOK.com
+	- PlayStrategy.org
 - **Go**
 	- DragonGoServer.net
 	- GoKGS.com
@@ -47,6 +49,9 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- PlayOK.com
 - **Mill**
 	- PlayOK.com
+- **Others (othello, Asian boards...)**
+	- PlayStrategy.org
+	- Pychess.org
 
 
 ## Install
