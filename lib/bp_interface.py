@@ -222,6 +222,9 @@ class InternetGameInterface:
         # Header
         pgn = ''
         roster = ['Event', 'Site', 'Date', 'Round', 'White', 'Black', 'Result']
+        if 'Player3' in game:                                   # GreenChess
+            roster.remove('White')
+            roster.remove('Black')
         for tag in roster:
             pgn += '[%s "%s"]\n' % (tag, game.get(tag, '?'))
         for e in game:
