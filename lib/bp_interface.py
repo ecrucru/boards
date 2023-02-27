@@ -154,7 +154,8 @@ class InternetGameInterface:
             logging.debug('Downloading game: %s' % url)
             headers = {'User-Agent': self.user_agent}
             response = urlopen(Request(str(url), headers=headers))
-            return self.read_data(response)
+            data = self.read_data(response)
+            return None if data is None or (len(data) == 0) else data
         except Exception as exception:
             logging.debug('Exception raised: %s' % str(exception))
             return None

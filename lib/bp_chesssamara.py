@@ -23,22 +23,15 @@ class InternetGameChesssamara(InternetGameInterface):
         m = self.regexes['url'].match(url)
         if m is not None:
             gid = str(m.group(2))
-            if gid.isdigit() and gid != '0':
+            if gid.isdigit() and (gid != '0'):
                 self.id = gid
                 return True
         return False
 
     def download_game(self) -> Optional[str]:
-        # Check
-        if self.id is None:
-            return None
-
-        # Download
-        pgn = self.download('https://chess-samara.ru/view/pgn.html?gameid=%s' % self.id)
-        if pgn is None or len(pgn) == 0:
-            return None
-        else:
-            return pgn
+        if self.id is not None:
+            return self.download('https://chess-samara.ru/view/pgn.html?gameid=%s' % self.id)
+        return None
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://chess-SAMARA.ru/68373335-igra-Firudin1888-vs-Pizyk', True),       # Game

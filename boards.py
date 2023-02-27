@@ -52,6 +52,7 @@ from lib.bp_pychess import InternetGamePychess
 from lib.bp_redhotpawn import InternetGameRedhotpawn
 from lib.bp_schacharena import InternetGameSchacharena
 from lib.bp_schachspielen import InternetGameSchachspielen
+from lib.bp_schemingmind import InternetGameSchemingmind
 from lib.bp_thechessworld import InternetGameThechessworld
 # Draughts
 from lib.bp_lidraughts import InternetGameLidraughts
@@ -126,6 +127,12 @@ async def main() -> None:
             for cls2 in cls.__subclasses__():
                 board_providers.append(cls2())
 
+    # General Unicode
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
     # Command line
     cmdline = argparse.ArgumentParser(prog='python boards.py', description='Boards is a download helper for the online board games (chess, draughts, go, mill)')
     subparser = cmdline.add_subparsers(dest='command')
@@ -164,10 +171,6 @@ async def main() -> None:
             logging.error('No game found.')
 
     elif parser.command == 'test':
-        try:
-            sys.stdout.reconfigure(encoding='utf-8')
-        except Exception:
-            pass
         logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
         errors = 0
         for bp in board_providers:

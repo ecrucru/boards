@@ -36,6 +36,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- RedHotPawn.com
 	- Schach-Spielen.eu
 	- SchachArena.de
+	- SchemingMind.com
 	- TheChessWorld.com
 - **Draughts**
 	- Lidraughts.org
