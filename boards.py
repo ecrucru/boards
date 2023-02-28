@@ -38,6 +38,7 @@ from lib.bp_europeechecs import InternetGameEuropeechecs
 from lib.bp_ficgs import InternetGameFicgs
 from lib.bp_ficsgames import InternetGameFicsgames
 from lib.bp_gameknot import InternetGameGameknot
+from lib.bp_gchess import InternetGameGchess
 from lib.bp_greenchess import InternetGameGreenchess
 from lib.bp_iccf import InternetGameIccf
 from lib.bp_immortal import InternetGameImmortal

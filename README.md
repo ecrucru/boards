@@ -21,6 +21,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- Ficgs.com
 	- FicsGames.org
 	- GameKnot.com
+	- GChess.com
 	- GreenChess.net
 	- Iccf.com
 	- IdeaChess.com
