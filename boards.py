@@ -24,6 +24,7 @@ from lib.bp_chess24 import InternetGameChess24
 # Chess
 from lib.bp_2700chess import InternetGame2700chess
 from lib.bp_365chess import InternetGame365chess
+from lib.bp_chessarena import InternetGameChessarena
 from lib.bp_chessbase import InternetGameChessbase
 from lib.bp_chessbomb import InternetGameChessbomb
 from lib.bp_chessgames import InternetGameChessgames
