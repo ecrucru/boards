@@ -14,7 +14,7 @@ import re
 from urllib.parse import urlparse
 from random import choice
 
-from lib.const import BOARDS_DESC
+from lib.const import BOARDS_DESC, METHODS_DESC
 from lib.bp_interface import InternetGameInterface
 
 # Popular chess
@@ -45,6 +45,7 @@ from lib.bp_iccf import InternetGameIccf
 from lib.bp_immortal import InternetGameImmortal
 from lib.bp_ideachess import InternetGameIdeachess
 from lib.bp_lishogi import InternetGameLishogi
+from lib.bp_listudy import InternetGameListudy
 from lib.bp_livechess24 import InternetGameLivechess24
 from lib.bp_livechessaunz import InternetGameLivechessAunz
 from lib.bp_livechesscloud import InternetGameLivechesscloud
@@ -154,7 +155,7 @@ async def main() -> None:
         for bp in board_providers:
             if bp.is_enabled():
                 site, board, method = bp.get_identity()
-                list.append('%s - %s' % (BOARDS_DESC[board], site))
+                list.append('%s - %s [%s]' % (BOARDS_DESC[board], site, METHODS_DESC[method]))
         list.sort()
         for bp in list:
             print(bp)

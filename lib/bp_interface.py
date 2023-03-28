@@ -4,6 +4,7 @@
 # GPL version 3
 
 from typing import Optional, Any, Dict, List, Tuple
+from abc import abstractmethod
 import logging
 import re
 import json
@@ -11,8 +12,7 @@ from urllib.request import Request, urlopen
 from urllib.parse import urlparse, urlencode
 from http.client import HTTPResponse
 
-from lib.const import METHOD_WS, BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, \
-    CHESS960, FEN_START, FEN_START_960
+from lib.const import METHOD_WS, BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, CHESS960, FEN_START, FEN_START_960
 
 
 # Abstract class to download a game from the Internet
@@ -227,10 +227,10 @@ class InternetGameInterface:
             roster.remove('White')
             roster.remove('Black')
         for tag in roster:
-            pgn += '[%s "%s"]\n' % (tag, game.get(tag, '?'))
+            pgn += '[%s "%s"]\n' % (tag, game.get(tag, '?').strip())
         for e in game:
-            if e not in roster and e[:1] != '_' and game[e] not in [None, '']:
-                pgn += '[%s "%s"]\n' % (e, game[e])
+            if (e not in roster) and (e[:1] != '_') and (game[e] not in [None, '']):
+                pgn += '[%s "%s"]\n' % (e, game[e].strip())
         pgn += "\n"
 
         # Body
@@ -291,18 +291,22 @@ class InternetGameInterface:
         return (hh, mm, ss)
 
     # External
+    @abstractmethod
     def get_identity(self) -> Tuple[str, int, int]:
         ''' (Abstract) Name and technique of the board provider. '''
         pass
 
+    @abstractmethod
     def assign_game(self, url: str) -> bool:
         ''' (Abstract) Detect the unique identifier of URL. '''
         pass
 
+    @abstractmethod
     def download_game(self) -> Optional[str]:
         ''' (Abstract) Download the game identified earlier by assign_game(). '''
         pass
 
+    @abstractmethod
     def get_test_links(self) -> List[Tuple[str, bool]]:
         ''' (Abstract) Get the links to verify the effectiveness of the download. '''
         pass

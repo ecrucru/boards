@@ -29,6 +29,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- Immortal.game
 	- Lichess.org
 	- Lishogi.org
+	- Listudy.org
 	- LiveChess24.com
 	- LiveChess.aunz.net
 	- LiveChessCloud.com
@@ -61,7 +62,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 ## Install
 
 - Install Python 3
-- Install the dependencies: `pip install python-chess`
+- Install the dependencies: `pip install chess`
 - Download your games: `python boards.py download https://your-board.tld/game/7E5F59av`
 
 

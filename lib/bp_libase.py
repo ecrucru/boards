@@ -4,7 +4,7 @@
 # GPL version 3
 
 from typing import Optional, Dict, Tuple
-from lib.const import BOARD_CHESS, METHOD_DL, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY, TYPE_SWISS, TYPE_TOURNAMENT
+from lib.const import BOARD_CHESS, METHOD_MISC, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY, TYPE_SWISS, TYPE_TOURNAMENT
 from lib.bp_interface import InternetGameInterface
 
 import re
@@ -34,7 +34,7 @@ class InternetGameLibase(InternetGameInterface):
                              'tournament': re.compile(r'^https?:\/\/(\S+\.)?%s\/tournament\/([a-z0-9]{8})[\/\?\#]?' % hreg, re.IGNORECASE)})
 
     def get_identity(self) -> Tuple[str, int, int]:
-        return self._host.capitalize(), BOARD_CHESS, METHOD_DL
+        return self._host.capitalize(), BOARD_CHESS, METHOD_MISC
 
     def assign_game(self, url: str) -> bool:
         for name, typ, pid in [('broadcast', TYPE_STUDY, 2),

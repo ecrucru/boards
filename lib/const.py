@@ -7,14 +7,9 @@
 ANNOTATOR = 'ecrucru/boards@github 1.0'
 BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, BOARD_MILL = range(4)
 BOARDS_DESC = ['Chess', 'Draughts', 'Go', 'Mill']
+METHOD_DL, METHOD_HTML, METHOD_API, METHOD_MISC, METHOD_WS = range(5)
+METHODS_DESC = ['Download link', 'HTML parsing', 'Application programming interface', 'Various techniques', 'Websockets']
 TYPE_GAME, TYPE_STUDY, TYPE_PUZZLE, TYPE_SWISS, TYPE_TOURNAMENT, TYPE_EVENT, TYPE_FEN = range(7)
-
-# Strategies
-METHOD_DL = 'Download link'
-METHOD_HTML = 'HTML parsing'
-METHOD_API = 'Application programming interface'
-METHOD_MISC = 'Various techniques'
-METHOD_WS = 'Websockets'
 
 # Constants
 CHESS960 = 'Fischerandom'
