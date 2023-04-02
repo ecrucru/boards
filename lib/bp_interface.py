@@ -88,16 +88,17 @@ class InternetGameInterface:
         keys = path.split(separator)
         value: Any = data
         for key in keys:
-            if key.startswith('[') and key.endswith(']'):
+            if key == '*':
+                value = list(value.keys())[0]
+            elif key.startswith('[') and key.endswith(']'):
                 try:
                     value = value[int(key[1:-1])]
                 except (ValueError, TypeError, IndexError):
                     return ''
+            elif (value is not None) and (key in value):
+                value = value[key]
             else:
-                if (value is not None) and (key in value):
-                    value = value[key]
-                else:
-                    return ''
+                return ''
         return default if value in [None, ''] else value
 
     def read_data(self, response: Optional[HTTPResponse]) -> Optional[str]:
@@ -177,7 +178,7 @@ class InternetGameInterface:
         else:
             return pgn
 
-    def send_xhr(self, url: Optional[str], postData: Optional[Dict]) -> Optional[str]:
+    def send_xhr(self, url: Optional[str], postData: Optional[Dict], origin: Optional[str] = None) -> Optional[str]:
         ''' Call a target URL by submitting the POSTDATA.
             The value None is returned in case of error. '''
         # Check
@@ -193,6 +194,8 @@ class InternetGameInterface:
             logging.debug('Calling API: %s' % url)
             headers = {'User-Agent': self.user_agent,
                        'Accept': 'application/json, text/plain, */*'}
+            if origin is not None:
+                headers['Origin'] = origin
             response = urlopen(Request(str(url), data, headers=headers))
             return self.read_data(response)
         except Exception as exception:
@@ -206,7 +209,7 @@ class InternetGameInterface:
             The key "_moves" contains the moves.
             The key "_reason" becomes the last comment. '''
         # Check
-        if game is None or game == '' or '_moves' not in game or game['_moves'] == '':
+        if (game is None) or (game == '') or (game.get('_moves', '') == ''):
             return None
 
         # Fix the tags
