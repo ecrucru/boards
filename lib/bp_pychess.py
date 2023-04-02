@@ -4,11 +4,11 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+import re
+
 from lib.const import BOARD_CHESS, METHOD_WS
 from lib.bp_interface import InternetGameInterface
 from lib.ws import InternetWebsockets
-
-import re
 
 
 # Pychess.org
@@ -34,12 +34,13 @@ class InternetGamePychess(InternetGameInterface):
 
     async def download_game(self) -> Optional[str]:
         result = None
+        data = None
         if self.id is not None:
             # Open a websocket to retrieve the game
             ws = await InternetWebsockets().connect('wss://www.pychess.org/wsr')
             try:
                 await ws.send('{"type":"board","gameId":"%s"}' % self.id)
-                for i in range(5):
+                for _ in range(5):
                     async for data in ws.recv():
                         data = self.json_loads(data)
                     if data is not None:

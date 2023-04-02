@@ -3,11 +3,11 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_API
-from lib.bp_interface import InternetGameInterface
-
 import re
 from urllib.parse import urlparse, parse_qs
+
+from lib.const import BOARD_CHESS, METHOD_API
+from lib.bp_interface import InternetGameInterface
 
 
 # LiveChess.aunz.net
@@ -33,20 +33,20 @@ class InternetGameLivechessAunz(InternetGameInterface):
             page = 'src="%s"' % self.id
 
         # Find the game ID
-        id = None
+        gid = None
         for url in self.regexes['src'].findall(page):
             parsed = urlparse(url)
             if parsed.netloc.lower() == 'livechess.aunz.net':
                 args = parse_qs(parsed.query)
                 if 'tourn' in args:
-                    id = args['tourn'][0]
-                    if id != '':
+                    gid = args['tourn'][0]
+                    if gid != '':
                         break
-        if id in [None, '']:
+        if gid in [None, '']:
             return None
 
         # Fetch the headers of the games
-        api = 'https://livechess.aunz.net/viewer/chess.php?t=%s&getGameList=1&pgnFile=%s.LOCAL_FILE' % (id, id)
+        api = 'https://livechess.aunz.net/viewer/chess.php?t=%s&getGameList=1&pgnFile=%s.LOCAL_FILE' % (gid, gid)
         bourne = self.send_xhr(api, None)
         headers = self.json_loads(bourne)
         if (headers is None) or (len(headers) == 0):
@@ -55,7 +55,7 @@ class InternetGameLivechessAunz(InternetGameInterface):
         # Fetch the games
         buffer = ''
         for i in range(len(headers)):
-            api = 'https://livechess.aunz.net/viewer/chess.php?t=%s&getGameDetails=1&pgnFile=%s.LOCAL_FILE&gameIndex=%d' % (id, id, i)
+            api = 'https://livechess.aunz.net/viewer/chess.php?t=%s&getGameDetails=1&pgnFile=%s.LOCAL_FILE&gameIndex=%d' % (gid, gid, i)
             bourne = self.send_xhr(api, None)
             data = self.json_loads(bourne)
             if data is None:

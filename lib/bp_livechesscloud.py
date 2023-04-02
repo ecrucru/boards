@@ -3,12 +3,12 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_API, CHESS960, CHESS960_CLASSICAL
-from lib.bp_interface import InternetGameInterface
-
 import re
 from urllib.parse import urlparse
 import chess
+
+from lib.const import BOARD_CHESS, METHOD_API, CHESS960, CHESS960_CLASSICAL
+from lib.bp_interface import InternetGameInterface
 
 
 # LiveChessCloud.com
@@ -27,12 +27,11 @@ class InternetGameLivechesscloud(InternetGameInterface):
             return False
 
         # Verify the identifier
-        id = parsed.path[1:] or parsed.fragment
-        if self.regexes['id'].match(id) is not None:
-            self.id = id
+        gid = parsed.path[1:] or parsed.fragment
+        if self.regexes['id'].match(gid) is not None:
+            self.id = gid
             return True
-        else:
-            return False
+        return False
 
     def download_game(self) -> Optional[str]:
         # Check

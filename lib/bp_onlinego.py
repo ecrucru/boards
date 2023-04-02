@@ -3,10 +3,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+import re
+
 from lib.const import BOARD_GO, METHOD_DL
 from lib.bp_interface import InternetGameInterface
-
-import re
 
 
 # Online-go.com
@@ -30,8 +30,7 @@ class InternetGameOnlinego(InternetGameInterface):
     def download_game(self) -> Optional[str]:
         if self.id is not None:
             return self.download('https://online-go.com/api/v1/games/%s/sgf' % self.id)
-        else:
-            return None
+        return None
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://online-go.com/game/30113933#tag', True),               # Game

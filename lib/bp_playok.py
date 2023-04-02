@@ -4,10 +4,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+from urllib.parse import urlparse, parse_qs
+
 from lib.const import BOARD_CHESS, BOARD_DRAUGHTS, BOARD_GO, BOARD_MILL, METHOD_DL
 from lib.bp_interface import InternetGameInterface
-
-from urllib.parse import urlparse, parse_qs
 
 
 # PlayOK.com

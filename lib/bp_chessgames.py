@@ -4,10 +4,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+from urllib.parse import urlparse, parse_qs
+
 from lib.const import BOARD_CHESS, METHOD_DL
 from lib.bp_interface import InternetGameInterface
-
-from urllib.parse import urlparse, parse_qs
 
 
 # ChessGames.com
@@ -54,8 +54,7 @@ class InternetGameChessgames(InternetGameInterface):
             pgn = self.download(url)
             if pgn in [None, ''] or 'NO SUCH GAME' in pgn:
                 return None
-            else:
-                return pgn
+            return pgn
         return None
 
     def get_test_links(self) -> List[Tuple[str, bool]]:

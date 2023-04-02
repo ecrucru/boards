@@ -4,10 +4,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+from urllib.parse import urlparse, parse_qs
+
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
-
-from urllib.parse import urlparse, parse_qs
 
 
 # 2700chess.com
@@ -32,8 +32,7 @@ class InternetGame2700chess(InternetGameInterface):
         if parsed.path.startswith('/games/'):
             self.id = url
             return True
-        else:
-            return False
+        return False
 
     def download_game(self) -> Optional[str]:
         # Download

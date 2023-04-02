@@ -3,11 +3,11 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_HTML
-from lib.bp_interface import InternetGameInterface
-
 import re
 from math import floor
+
+from lib.const import BOARD_CHESS, METHOD_HTML
+from lib.bp_interface import InternetGameInterface
 
 
 # Immortal.game

@@ -3,10 +3,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+from urllib.parse import urlparse
+
 from lib.const import BOARD_CHESS, METHOD_API
 from lib.bp_interface import InternetGameInterface
-
-from urllib.parse import urlparse
 
 
 # ChessBomb.com (merged into Chess.com)
@@ -17,9 +17,9 @@ class InternetGameChessbomb(InternetGameInterface):
     def assign_game(self, url: str) -> bool:
         parsed = urlparse(url)
         if parsed.netloc in ['chess.com', 'www.chess.com', 'nxt.chessbomb.com']:
-            id = parsed.path.replace('/api/game/', '/')
-            if id[:8] == '/events/':
-                self.id = id
+            gid = parsed.path.replace('/api/game/', '/')
+            if gid[:8] == '/events/':
+                self.id = gid
                 return True
         return False
 

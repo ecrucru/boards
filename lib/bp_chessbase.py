@@ -4,10 +4,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+from html.parser import HTMLParser
+
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
-
-from html.parser import HTMLParser
 
 
 # Chessbase
@@ -60,9 +60,8 @@ class InternetGameChessbase(InternetGameInterface):
         parser.feed(page)
         if parser.pgn is not None:
             return parser.pgn
-        else:
-            parser.links = self.expand_links(parser.links, self.id)
-            return self.download_list(parser.links)
+        parser.links = self.expand_links(parser.links, self.id)
+        return self.download_list(parser.links)
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://live.chessbase.com/fr/Games?id=lcc-england-vs-row-2021', True),                               # Games

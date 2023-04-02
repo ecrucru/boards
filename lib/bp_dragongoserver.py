@@ -3,10 +3,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+from urllib.parse import urlparse, parse_qs
+
 from lib.const import BOARD_GO, METHOD_DL
 from lib.bp_interface import InternetGameInterface
-
-from urllib.parse import urlparse, parse_qs
 
 
 # Dragongoserver.net
@@ -30,8 +30,7 @@ class InternetGameDragongoserver(InternetGameInterface):
     def download_game(self) -> Optional[str]:
         if self.id is not None:
             return self.download('https://www.dragongoserver.net/sgf.php?gid=%s' % self.id)
-        else:
-            return None
+        return None
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://www.dragongoserver.net/game.php?gid=1347414#tag', True),       # Game

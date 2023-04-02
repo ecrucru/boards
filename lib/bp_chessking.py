@@ -4,10 +4,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+import re
+
 from lib.const import BOARD_CHESS, METHOD_DL
 from lib.bp_interface import InternetGameInterface
-
-import re
 
 
 # ChessKing.com
@@ -38,10 +38,10 @@ class InternetGameChessking(InternetGameInterface):
             return None
 
         # Download
-        id = self.id
-        while len(id) < 9:
-            id = '0%s' % id
-        url = 'https://c1.chessking.com/pgn/%s/%s/%s/%s%s.pgn' % (self.url_type, id[:3], id[3:6], self.url_type, id)
+        gid = self.id
+        while len(gid) < 9:
+            gid = '0%s' % gid
+        url = 'https://c1.chessking.com/pgn/%s/%s/%s/%s%s.pgn' % (self.url_type, gid[:3], gid[3:6], self.url_type, gid)
         return self.download(url)
 
     def get_test_links(self) -> List[Tuple[str, bool]]:

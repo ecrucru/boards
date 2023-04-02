@@ -4,12 +4,12 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+import re
+from base64 import b64decode
+
 from lib.const import BOARD_CHESS, METHOD_WS, TYPE_GAME, TYPE_PUZZLE
 from lib.bp_interface import InternetGameInterface
 from lib.ws import InternetWebsockets
-
-import re
-from base64 import b64decode
 
 
 # ChessTempo.com
@@ -52,17 +52,17 @@ class InternetGameChesstempo(InternetGameInterface):
             pgn = self.download('http://old.chesstempo.com/requests/download_game_pgn.php?gameids=%s' % self.id)
             if pgn is None or len(pgn) <= 128:
                 return None
-            else:
-                return pgn
+            return pgn
 
         # Puzzles
-        elif self.url_type == TYPE_PUZZLE:
+        if self.url_type == TYPE_PUZZLE:
 
             # Open a websocket to retrieve the puzzle
             data = None
             ws = await InternetWebsockets().connect('wss://chesstempo.com:443/ws', headers=[('User-agent', self.user_agent)])
             try:
                 # Check the welcome message
+                buffer = None
                 async for buffer in ws.recv():
                     buffer = self.json_loads(buffer)
                 if (buffer['eventName'] == 'connectionStarted') and (buffer['data'] == 'started'):
@@ -72,7 +72,7 @@ class InternetGameChesstempo(InternetGameInterface):
                     await ws.send('{"eventName":"set-problem-difficulty","data":{"difficulty":"","problemSetId":1}}')
                     await ws.send('{"eventName":"get-tactic","data":{"problemId":%s,"vo":false}}' % self.id)
 
-                    for i in range(3):
+                    for _ in range(3):
                         async for buffer in ws.recv():
                             buffer = self.json_loads(buffer)
                         if buffer['eventName'] == 'get-tactic-result':

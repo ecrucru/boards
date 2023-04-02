@@ -4,14 +4,14 @@
 # GPL version 3
 
 from typing import Optional, Any, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_MISC, CHESS960, TYPE_FEN
-from lib.bp_interface import InternetGameInterface
-
 import re
 from urllib.parse import urlparse, parse_qs
 from html.parser import HTMLParser
 import chess
 from chess.variant import CrazyhouseBoard
+
+from lib.const import BOARD_CHESS, METHOD_MISC, CHESS960, TYPE_FEN
+from lib.bp_interface import InternetGameInterface
 
 
 # Chess.com
@@ -54,21 +54,21 @@ class InternetGameChessCom(InternetGameInterface):
 
     def decode_move(self, move):
         # Mapping
-        map = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?{~}(^)[_]@#$,./&-*++='
+        mapping = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?{~}(^)[_]@#$,./&-*++='
         pieces = 'qnrbkp'
 
         # Analyze the move
         sFrom = sTo = sPromo = sDrop = ''
-        posFrom = map.index(move[:1])
-        posTo = map.index(move[1:])
+        posFrom = mapping.index(move[:1])
+        posTo = mapping.index(move[1:])
         if posTo > 63:
             sPromo = pieces[(posTo - 64) // 3]
             posTo = posFrom + (-8 if posFrom < 16 else 8) + (posTo - 1) % 3 - 1
         if posFrom > 75:
             sDrop = pieces[posFrom - 79].upper() + '@'
         else:
-            sFrom = map[posFrom % 8] + str((posFrom // 8 + 1))
-        sTo = map[posTo % 8] + str((posTo // 8 + 1))
+            sFrom = mapping[posFrom % 8] + str((posFrom // 8 + 1))
+        sTo = mapping[posTo % 8] + str((posTo // 8 + 1))
         return '%s%s%s%s' % (sDrop, sFrom, sTo, sPromo)
 
     def download_game(self) -> Optional[str]:
@@ -81,7 +81,7 @@ class InternetGameChessCom(InternetGameInterface):
             return '[Site "chess.com"]\n[White "%s"]\n[Black "%s"]\n[SetUp "1"]\n[FEN "%s"]\n\n*' % ('White', 'Black', self.id)
 
         # Puzzles
-        elif self.url_type == 'puzzles':
+        if self.url_type == 'puzzles':
             url = 'https://www.chess.com/puzzles/problem/%s' % self.id
             page = self.download(url)
             if page is None:

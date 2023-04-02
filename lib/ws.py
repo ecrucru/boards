@@ -3,8 +3,8 @@
 # GPL version 3
 
 from typing import Optional, Dict, AsyncIterator
-import aiohttp
 import logging
+import aiohttp
 
 
 # Class to handle the websockets as a client via aiohttp following a syntax near to websockets
@@ -38,7 +38,7 @@ class InternetWebsockets():
 
     async def connect(self, url: Optional[str], headers: Optional[Dict] = None) -> 'InternetWebsockets':
         if url is not None:
-            logging.debug('Websocket connecting to %s' % url)
+            logging.debug('Websocket connecting to %s', url)
             self.acs = aiohttp.ClientSession()
             self.ws = await self.acs.ws_connect(url, headers=headers, heartbeat=None)
         return self

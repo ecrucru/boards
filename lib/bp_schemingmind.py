@@ -3,10 +3,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+from urllib.parse import urlparse, parse_qs
+
 from lib.const import BOARD_CHESS, METHOD_DL
 from lib.bp_interface import InternetGameInterface
-
-from urllib.parse import urlparse, parse_qs
 
 
 # SchemingMind.com
@@ -24,9 +24,9 @@ class InternetGameSchemingmind(InternetGameInterface):
         if 'game.aspx' in parsed.path:
             args = parse_qs(parsed.query)
             if 'game_id' in args:
-                id = args['game_id'][0]
-                if id.isdigit() and (id != '0'):
-                    self.id = id
+                gid = args['game_id'][0]
+                if gid.isdigit() and (gid != '0'):
+                    self.id = gid
                     return True
         return False
 

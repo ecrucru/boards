@@ -3,11 +3,11 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_API
-from lib.bp_interface import InternetGameInterface
-
 import re
 from urllib.parse import urlparse, parse_qs
+
+from lib.const import BOARD_CHESS, METHOD_API
+from lib.bp_interface import InternetGameInterface
 
 
 # GChess.com
@@ -24,9 +24,9 @@ class InternetGameGchess(InternetGameInterface):
         # Read the identifier
         args = parse_qs(parsed.query)
         if 'game' in args:
-            id = args['game'][0].replace('top-games-', '')
-            if id.isdigit() and id != '0':
-                self.id = id
+            gid = args['game'][0].replace('top-games-', '')
+            if gid.isdigit() and gid != '0':
+                self.id = gid
                 return True
         return False
 

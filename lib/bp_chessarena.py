@@ -3,11 +3,11 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_DL
-from lib.bp_interface import InternetGameInterface
-
 import re
 from urllib.parse import urlparse
+
+from lib.const import BOARD_CHESS, METHOD_DL
+from lib.bp_interface import InternetGameInterface
 
 
 # ChessArena.com
@@ -30,14 +30,12 @@ class InternetGameChessarena(InternetGameInterface):
         if m is not None:
             self.id = m.group(1)
             return True
-        else:
-            return False
+        return False
 
     def download_game(self) -> Optional[str]:
         if self.id is not None:
             return self.download('https://api.worldchess.com/api/online/gaming/%s/pgn/' % self.id)
-        else:
-            return None
+        return None
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://chessarena.com/v2/tournament_game/17fb7e7f-24e0-4b71-8d7a-8a0fc7b7fa6c', True),   # Game

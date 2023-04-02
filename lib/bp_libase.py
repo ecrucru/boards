@@ -4,13 +4,13 @@
 # GPL version 3
 
 from typing import Optional, Dict, Tuple
-from lib.const import BOARD_CHESS, METHOD_MISC, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY, TYPE_SWISS, TYPE_TOURNAMENT
-from lib.bp_interface import InternetGameInterface
-
 import re
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 import chess
+
+from lib.const import BOARD_CHESS, METHOD_MISC, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY, TYPE_SWISS, TYPE_TOURNAMENT
+from lib.bp_interface import InternetGameInterface
 
 
 # Base for the clones of Lichess
@@ -57,8 +57,10 @@ class InternetGameLibase(InternetGameInterface):
         if not self._use_api:
             return None
         try:
-            response = urlopen(Request('https://%s%s' % (self._host, path), headers={'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/vnd.lichess.v4+json'}))
-            bourne = self.read_data(response)
+            with urlopen(Request('https://%s%s' % (self._host, path),
+                                 headers={'X-Requested-With': 'XMLHttpRequest',
+                                          'Accept': 'application/vnd.lichess.v4+json'})) as response:
+                bourne = self.read_data(response)
             return self.json_loads(bourne)
         except HTTPError:
             return None
@@ -73,24 +75,23 @@ class InternetGameLibase(InternetGameInterface):
             return self.download('https://%s/study/%s.%s' % (self._host, self.id, self._ext))
 
         # Logic for the swiss tournaments
-        elif self.url_type == TYPE_SWISS:
+        if self.url_type == TYPE_SWISS:
             return self.download('https://%s/api/swiss/%s/games' % (self._host, self.id))
 
         # Logic for the tournaments
-        elif self.url_type == TYPE_TOURNAMENT:
+        if self.url_type == TYPE_TOURNAMENT:
             return self.download('https://%s/api/tournament/%s/games' % (self._host, self.id))
 
         # Logic for the games
-        elif self.url_type == TYPE_GAME:
+        if self.url_type == TYPE_GAME:
             # Download the finished game
             api = self.query_api('/import/master/%s/white' % self.id)
             game = self.json_field(api, 'game')
             if (api is None) or ('winner' in game):
                 url = 'https://%s/game/export/%s?literate=1' % (self._host, self.id)
                 return self.download(url)
-            else:
-                if not self.allow_extra and game['rated']:
-                    return None
+            if not self.allow_extra and game['rated']:
+                return None
 
             # Rebuild the PGN file
             game = {}
@@ -115,7 +116,7 @@ class InternetGameLibase(InternetGameInterface):
             return self.rebuild_pgn(game)
 
         # Logic for the puzzles
-        elif self.url_type == TYPE_PUZZLE:
+        if self.url_type == TYPE_PUZZLE:
             # Fetch the puzzle
             url = 'https://%s/training/%s' % (self._host, self.id)
             page = self.download(url)
@@ -208,5 +209,4 @@ class InternetGameLibase(InternetGameInterface):
             # Rebuild the PGN game
             return self.rebuild_pgn(game)
 
-        else:
-            assert(False)
+        assert False

@@ -92,7 +92,7 @@ async def download(url: str) -> Optional[str]:
     p = urlparse(url.strip())
     if '' in [p.scheme, p.netloc]:
         return None
-    logging.debug('URL to retrieve: %s' % url)
+    logging.debug('URL to retrieve: %s', url)
 
     # Call the board providers
     for bp in board_providers:
@@ -101,7 +101,7 @@ async def download(url: str) -> Optional[str]:
         bp.reset()
         if bp.assign_game(url):
             # Download
-            logging.debug('Responding board provider: %s' % bp.get_description())
+            logging.debug('Responding board provider: %s', bp.get_description())
             try:
                 if bp.is_async():
                     pgn = await bp.download_game()
@@ -152,13 +152,13 @@ async def main() -> None:
     # Execute
     parser = cmdline.parse_args()
     if parser.command == 'show':
-        list = []
+        plist = []
         for bp in board_providers:
             if bp.is_enabled():
                 site, board, method = bp.get_identity()
-                list.append('%s - %s [%s]' % (BOARDS_DESC[board], site, METHODS_DESC[method]))
-        list.sort()
-        for bp in list:
+                plist.append('%s - %s [%s]' % (BOARDS_DESC[board], site, METHODS_DESC[method]))
+        plist.sort()
+        for bp in plist:
             print(bp)
 
     elif parser.command == 'download':
@@ -182,7 +182,7 @@ async def main() -> None:
             if bp is None:
                 continue
             logging.info('================')
-            logging.info('Site: %s' % bp.get_description())
+            logging.info('Site: %s', bp.get_description())
             links = bp.get_test_links()
             if len(links) == 0:
                 logging.info('No available test link')
@@ -193,8 +193,8 @@ async def main() -> None:
 
             # Pick one link only to not overload the remote server
             url, expected = choice(links)
-            logging.info('Target link: %s' % url)
-            logging.info('Expecting data: %s' % expected)
+            logging.info('Target link: %s', url)
+            logging.info('Expecting data: %s', expected)
 
             # Download link
             bp.reset()
@@ -213,7 +213,7 @@ async def main() -> None:
 
             # Result
             ok = data is not None
-            logging.info('Fetched data: %s' % ok)
+            logging.info('Fetched data: %s', ok)
             if ok:
                 logging.info(data)
             if ok != expected:
@@ -221,7 +221,7 @@ async def main() -> None:
                 errors += 1
 
         if errors > 0:
-            logging.error('The unit test failed %d times' % errors)
+            logging.error('The unit test failed %d times', errors)
         else:
             logging.info('The unit test is successful')
 

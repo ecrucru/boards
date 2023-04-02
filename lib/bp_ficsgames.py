@@ -4,10 +4,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+from urllib.parse import urlparse, parse_qs
+
 from lib.const import BOARD_CHESS, METHOD_DL
 from lib.bp_interface import InternetGameInterface
-
-from urllib.parse import urlparse, parse_qs
 
 
 # FicsGames.org
@@ -39,8 +39,7 @@ class InternetGameFicsgames(InternetGameInterface):
         pgn = self.download('http://ficsgames.org/cgi-bin/show.cgi?ID=%s;action=save' % self.id)
         if pgn in [None, ''] or 'not found in GGbID' in pgn:
             return None
-        else:
-            return pgn
+        return pgn
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.ficsgames.org/cgi-bin/show.cgi?ID=451813954;action=save', True),      # Normal game

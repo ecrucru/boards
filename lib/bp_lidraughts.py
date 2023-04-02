@@ -3,10 +3,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+import re
+
 from lib.const import BOARD_DRAUGHTS, METHOD_DL, TYPE_GAME, TYPE_PUZZLE, TYPE_STUDY
 from lib.bp_interface import InternetGameInterface
-
-import re
 
 
 # Lidraughts.org
@@ -72,14 +72,12 @@ class InternetGameLidraughts(InternetGameInterface):
             return self.download(url)
 
         # Logic for the studies
-        elif self.url_type == TYPE_STUDY:
+        if self.url_type == TYPE_STUDY:
             url = 'https://lidraughts.org/study/%s.pdn' % self.id
             return self.download(url)
 
         # Logic for the puzzles
-        else:
-            assert(self.url_type == TYPE_PUZZLE)
-
+        if self.url_type == TYPE_PUZZLE:
             # Fetch the puzzle
             page = self.download('https://lidraughts.org/training/%s' % self.id)
             if page is None:
@@ -144,6 +142,8 @@ class InternetGameLidraughts(InternetGameInterface):
 
             # Rebuild the PDN game with the PGN technique
             return self.rebuild_pgn(game)
+
+        assert False
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://lidraughts.org/broadcast/the-big-christmas-show-round-4/JnWAfmOk', True),     # Broadcast

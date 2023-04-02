@@ -107,18 +107,18 @@ class InternetGameInterface:
         # Check
         if response is None:
             return None
-        bytes = response.read()
+        bdata = response.read()
 
         # Decode
         cs = response.info().get_content_charset()
         try:
             if cs is not None:
-                data = bytes.decode(cs)
+                data = bdata.decode(cs)
             else:
-                data = bytes.decode('utf-8')
+                data = bdata.decode('utf-8')
         except Exception:
             try:
-                data = bytes.decode('latin-1')
+                data = bdata.decode('latin-1')
             except Exception:
                 logging.error('Error in the decoding of the data')
                 return None
@@ -127,8 +127,7 @@ class InternetGameInterface:
         data = data.replace("\ufeff", '').replace("\r", '').strip()
         if data == '':
             return None
-        else:
-            return data
+        return data
 
     def expand_links(self, links: List[str], url: str) -> List[str]:
         ''' Convert relative paths into full paths. '''
@@ -152,13 +151,13 @@ class InternetGameInterface:
 
         # Download
         try:
-            logging.debug('Downloading game: %s' % url)
+            logging.debug('Downloading game: %s', url)
             headers = {'User-Agent': self.user_agent}
-            response = urlopen(Request(str(url), headers=headers))
-            data = self.read_data(response)
+            with urlopen(Request(str(url), headers=headers)) as response:
+                data = self.read_data(response)
             return None if data is None or (len(data) == 0) else data
         except Exception as exception:
-            logging.debug('Exception raised: %s' % str(exception))
+            logging.debug('Exception raised: %s', str(exception))
             return None
 
     def download_list(self, links: List[str]) -> Optional[str]:
@@ -175,8 +174,7 @@ class InternetGameInterface:
                 break
         if pgn == '':
             return None
-        else:
-            return pgn
+        return pgn
 
     def send_xhr(self, url: Optional[str], postData: Optional[Dict], origin: Optional[str] = None) -> Optional[str]:
         ''' Call a target URL by submitting the POSTDATA.
@@ -191,15 +189,16 @@ class InternetGameInterface:
         else:
             data = None
         try:
-            logging.debug('Calling API: %s' % url)
+            logging.debug('Calling API: %s', url)
             headers = {'User-Agent': self.user_agent,
                        'Accept': 'application/json, text/plain, */*'}
             if origin is not None:
                 headers['Origin'] = origin
-            response = urlopen(Request(str(url), data, headers=headers))
-            return self.read_data(response)
+            with urlopen(Request(str(url), data, headers=headers)) as response:
+                respdata = self.read_data(response)
+            return respdata
         except Exception as exception:
-            logging.debug('Exception raised: %s' % str(exception))
+            logging.debug('Exception raised: %s', str(exception))
             return None
 
     def rebuild_pgn(self, game: Optional[Dict]) -> Optional[str]:
@@ -264,22 +263,22 @@ class InternetGameInterface:
 
         # Game specific rules
         if self.use_sanitization:
-            type = self.get_identity()[1]
-            if type == BOARD_CHESS:
+            bptype = self.get_identity()[1]
+            if bptype == BOARD_CHESS:
                 data = data.replace('[Variant "Chess"]\n', '')
-            if type in [BOARD_CHESS, BOARD_DRAUGHTS]:
+            if bptype in [BOARD_CHESS, BOARD_DRAUGHTS]:
                 if not data.startswith('['):
                     return None
-            if type == BOARD_GO:
+            if bptype == BOARD_GO:
                 if not data.startswith('('):
                     return None
 
         # Return the data
         return data
 
-    def strip_html(self, input: str) -> str:
+    def strip_html(self, html_input: str) -> str:
         ''' Remove any HTML mark from the input parameter. '''
-        return self.regexes['strip_html'].sub('', input)
+        return self.regexes['strip_html'].sub('', html_input)
 
     def is_fen(self, fen: Optional[str]) -> bool:
         ''' Test if the argument is a FEN position. '''
@@ -297,19 +296,15 @@ class InternetGameInterface:
     @abstractmethod
     def get_identity(self) -> Tuple[str, int, int]:
         ''' (Abstract) Name and technique of the board provider. '''
-        pass
 
     @abstractmethod
     def assign_game(self, url: str) -> bool:
         ''' (Abstract) Detect the unique identifier of URL. '''
-        pass
 
     @abstractmethod
     def download_game(self) -> Optional[str]:
         ''' (Abstract) Download the game identified earlier by assign_game(). '''
-        pass
 
     @abstractmethod
     def get_test_links(self) -> List[Tuple[str, bool]]:
         ''' (Abstract) Get the links to verify the effectiveness of the download. '''
-        pass

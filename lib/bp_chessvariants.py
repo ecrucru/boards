@@ -3,11 +3,11 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_API
-from lib.bp_interface import InternetGameInterface
-
 import re
 from urllib.parse import urlparse
+
+from lib.const import BOARD_CHESS, METHOD_API
+from lib.bp_interface import InternetGameInterface
 
 
 # ChessVariants.training
@@ -57,7 +57,7 @@ class InternetGameChessvariants(InternetGameInterface):
         session = self.json_field(data, 'trainingSessionId')
 
         # Fetch the solution from random moves
-        for i in range(8):
+        for _ in range(8):
             cfrom = self.json_field(data, 'dests/*')
             cto = self.json_field(data, 'dests/%s/[0]' % cfrom)
             data = {'id': self.id,

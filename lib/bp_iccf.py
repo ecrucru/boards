@@ -4,10 +4,10 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
+from urllib.parse import urlparse, parse_qs
+
 from lib.const import BOARD_CHESS, METHOD_DL, TYPE_EVENT, TYPE_GAME
 from lib.bp_interface import InternetGameInterface
-
-from urllib.parse import urlparse, parse_qs
 
 
 # Iccf.com
@@ -53,8 +53,7 @@ class InternetGameIccf(InternetGameInterface):
         pgn = self.download(url % self.id)
         if pgn in [None, ''] or 'does not exist.' in pgn or 'Invalid event' in pgn:
             return None
-        else:
-            return pgn
+        return pgn
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('https://www.iccf.COM/game?id=154976&param=foobar', True),     # Game

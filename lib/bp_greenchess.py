@@ -3,11 +3,11 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_HTML
-from lib.bp_interface import InternetGameInterface
-
 from html import unescape
 from urllib.parse import urlparse, parse_qs
+
+from lib.const import BOARD_CHESS, METHOD_HTML
+from lib.bp_interface import InternetGameInterface
 
 
 # GreenChess.net
@@ -24,9 +24,9 @@ class InternetGameGreenchess(InternetGameInterface):
         # Read the identifier
         args = parse_qs(parsed.query)
         if 'id' in args:
-            id = args['id'][0]
-            if id.isdigit() and id != '0':
-                self.id = id
+            gid = args['id'][0]
+            if gid.isdigit() and gid != '0':
+                self.id = gid
                 return True
         return False
 
@@ -106,8 +106,8 @@ class InternetGameGreenchess(InternetGameInterface):
             game['White'] = names[0]
             game['Black'] = names[1]
         else:
-            for i in range(len(names)):
-                game['Player%d' % (i + 1)] = names[i]
+            for i, name in enumerate(names):
+                game['Player%d' % (i + 1)] = name
         # ... score
         if len(names) == 2:
             if page.find("'draw'") != -1:

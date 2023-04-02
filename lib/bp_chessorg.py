@@ -4,14 +4,14 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_WS, CHESS960
-from lib.bp_interface import InternetGameInterface
-from lib.ws import InternetWebsockets
-
 import re
 import string
 from random import choice, randint
 import chess
+
+from lib.const import BOARD_CHESS, METHOD_WS, CHESS960
+from lib.bp_interface import InternetGameInterface
+from lib.ws import InternetWebsockets
 
 
 # Chess.org
@@ -26,17 +26,17 @@ class InternetGameChessOrg(InternetGameInterface):
     def assign_game(self, url: str) -> bool:
         m = self.regexes['url'].match(url)
         if m is not None:
-            id = str(m.group(1))
-            if len(id) == 36:
-                self.id = id
+            gid = str(m.group(1))
+            if len(gid) == 36:
+                self.id = gid
                 return True
         return False
 
     def fix_fen(self, fen):
-        list = fen.split(' ')
-        t = list[2]
-        list[2] = t[0] + t[2] + t[1] + t[3]
-        return ' '.join(list)
+        flist = fen.split(' ')
+        t = flist[2]
+        flist[2] = t[0] + t[2] + t[1] + t[3]
+        return ' '.join(flist)
 
     async def download_game(self) -> Optional[str]:
         # Check

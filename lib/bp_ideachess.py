@@ -4,12 +4,12 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_API
-from lib.bp_interface import InternetGameInterface
-
 import re
 from base64 import b64decode
 from json import dumps
+
+from lib.const import BOARD_CHESS, METHOD_API
+from lib.bp_interface import InternetGameInterface
 
 
 # IdeaChess.com
@@ -64,22 +64,22 @@ class InternetGameIdeachess(InternetGameInterface):
         elif self.url_type == 't':
             game['_url'] = 'http://www.ideachess.com/chess_tactics_puzzles/tactics_n/%s' % self.id
         else:
-            assert(False)
+            assert False
         game['FEN'] = b64decode(self.json_field(chessgame, 'data/FEN')).decode().strip()
         game['SetUp'] = '1'
         game['_moves'] = self.json_field(chessgame, 'data/PGN')
         v = self.json_field(chessgame, 'data/requiredMoves')
         if v > 0:
             game['Site'] = '%d moves to find' % v
-        list = self.json_field(chessgame, 'data/extraInfo').split('|')
-        if len(list) == 4:
-            game['Event'] = list[0][list[0].find(' ') + 1:].strip()
-            game['Date'] = list[1].strip()
-            l2 = list[2].split(' - ')
+        elist = self.json_field(chessgame, 'data/extraInfo').split('|')
+        if len(elist) == 4:
+            game['Event'] = elist[0][elist[0].find(' ') + 1:].strip()
+            game['Date'] = elist[1].strip()
+            l2 = elist[2].split(' - ')
             if len(l2) == 2:
                 game['White'] = l2[0].strip()
                 game['Black'] = l2[1].strip()
-            game['Result'] = list[3].strip()
+            game['Result'] = elist[3].strip()
         else:
             game['Result'] = '*'
         return self.rebuild_pgn(game)

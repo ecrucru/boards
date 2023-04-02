@@ -4,11 +4,11 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_HTML, TYPE_GAME, TYPE_PUZZLE
-from lib.bp_interface import InternetGameInterface
-
 from urllib.parse import urlparse, parse_qs, unquote
 import chess
+
+from lib.const import BOARD_CHESS, METHOD_HTML, TYPE_GAME, TYPE_PUZZLE
+from lib.bp_interface import InternetGameInterface
 
 
 # GameKnot.com
@@ -59,27 +59,27 @@ class InternetGameGameknot(InternetGameInterface):
         # Library
         def extract_variables(page, structure):
             game = {}
-            for var, type, tag in structure:
+            for var, vtype, tag in structure:
                 game[tag] = ''
             lines = page.split(';')
             for line in lines:
-                for var, type, tag in structure:
+                for var, vtype, tag in structure:
                     pos1 = line.find(var)
                     if pos1 == -1:
                         continue
-                    if type == 's':
+                    if vtype == 's':
                         pos1 = line.find("'", pos1 + 1)
                         pos2 = line.find("'", pos1 + 1)
                         if pos2 > pos1:
                             game[tag] = line[pos1 + 1:pos2]
-                    elif type == 'i':
+                    elif vtype == 'i':
                         pos1 = line.find('=', pos1 + 1)
                         if pos1 != -1:
                             txt = line[pos1 + 1:].strip()
                             if txt not in ['', '0']:
                                 game[tag] = txt
                     else:
-                        assert(False)
+                        assert False
             return game
 
         # Logic for the puzzles
@@ -95,10 +95,10 @@ class InternetGameGameknot(InternetGameInterface):
             if game['FEN'] != '':
                 game['SetUp'] = '1'
             if game['_solution'] != '':
-                list = game['_solution'].split('|')
+                slist = game['_solution'].split('|')
                 game['_moves'] = ' {Solution:'
                 nextid = '0'
-                for item in list:
+                for item in slist:
                     item = item.split(',')
                     # 0 = identifier of the move
                     # 1 = player

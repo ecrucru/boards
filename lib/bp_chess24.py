@@ -4,11 +4,11 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_HTML, CHESS960
-from lib.bp_interface import InternetGameInterface
-
 import re
 import chess
+
+from lib.const import BOARD_CHESS, METHOD_HTML, CHESS960
+from lib.bp_interface import InternetGameInterface
 
 
 # Chess24.com

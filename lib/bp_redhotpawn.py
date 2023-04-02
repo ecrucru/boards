@@ -4,11 +4,11 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from lib.const import BOARD_CHESS, METHOD_HTML, TYPE_GAME, TYPE_PUZZLE
-from lib.bp_interface import InternetGameInterface
-
 from urllib.parse import urlparse, parse_qs
 from html.parser import HTMLParser
+
+from lib.const import BOARD_CHESS, METHOD_HTML, TYPE_GAME, TYPE_PUZZLE
+from lib.bp_interface import InternetGameInterface
 
 
 # RedHotPawn.com
@@ -33,8 +33,7 @@ class InternetGameRedhotpawn(InternetGameInterface):
                 self.url_type = ttype
                 self.id = url
                 return True
-            else:
-                key = 'puzzleid'
+            key = 'puzzleid'
         else:
             return False
 
@@ -90,7 +89,7 @@ class InternetGameRedhotpawn(InternetGameInterface):
             return parser.pgn.strip()
 
         # Logic for the puzzles
-        elif self.url_type == TYPE_PUZZLE:
+        if self.url_type == TYPE_PUZZLE:
             pos1 = page.find('var g_startFenStr')
             if pos1 != -1:
                 pos1 = page.find("'", pos1)

@@ -29,9 +29,9 @@ class InternetGameGenericChess(InternetGameInterface):
 
         # Download
         req = Request(self.id, headers={'User-Agent': self.user_agent})
-        response = urlopen(req)
-        mime = response.info().get_content_type().lower()
-        data = self.read_data(response)
+        with urlopen(req) as response:
+            mime = response.info().get_content_type().lower()
+            data = self.read_data(response)
         if data is None:
             return None
 
