@@ -64,8 +64,8 @@ class InternetGameChessbase(InternetGameInterface):
         return self.download_list(parser.links)
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
-        return [('https://live.chessbase.com/fr/Games?id=lcc-england-vs-row-2021', True),                               # Games
-                ('https://live.chessbase.com/fr/Replay?id=lcc-england-vs-row-2021&rnd=3&anno=False', True),             # Games with parameters
-                ('https://live.chessbase.com/fr/Watch?id=lcc-england-vs-row-2021', False),                              # Not a game (old link)
+        return [('https://live.chessbase.com/fr/Games?id=reykjavik-open-2023', True),                                   # Games
+                ('https://live.chessbase.com/fr/Replay?id=reykjavik-open-2023&rnd=3&anno=False', True),                 # Games with parameters
+                ('https://live.chessbase.com/fr/Watch?id=reykjavik-open-2023', False),                                  # Not a game (old link)
                 ('https://liveserver.chessbase.com:6009/pgn/5th-eka-iifl-investment-2019/all.pgn#fake-tag', False),     # Not a game (direct PGN link)
                 ('https://live.chessbase.com', False)]                                                                  # Not a game (homepage)

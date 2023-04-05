@@ -47,41 +47,41 @@ class InternetGameImmortal(InternetGameInterface):
         if -1 in [pos1, pos2]:
             return None
         bourne = self.json_loads(page[pos1 + 24:pos2 + 1].replace("'", '"').replace(':undefined', ':null'))
-        chessgame = self.json_field(bourne, 'routeData|routes/games/$gameId', separator='|')
+        chessgame = self.json_field(bourne, 'state/loaderData')
+        chessgame = self.json_field(chessgame, 'routes/__app/games/$gameId', separator='|')
 
         # Rebuild the PGN game
         game = {}
         game['_url'] = url
-        variant = self.json_field(chessgame, 'variant')
+        variant = self.json_field(chessgame, 'meta/variant')
         game['Event'] = 'Immortal game' if variant == 'immortal' else 'Standard game'
-        speed = self.json_field(chessgame, 'gameSpeed')
-        game['White'] = self.json_field(chessgame, 'players/white/username')
-        elo = self._str2int(self.json_field(chessgame, 'players/white/perfs/%s/%s/glicko/rating' % (variant, speed)))
-        if elo > 0:
-            game['WhiteElo'] = str(elo)
-        game['Black'] = self.json_field(chessgame, 'players/black/username')
-        elo = self._str2int(self.json_field(chessgame, 'players/black/perfs/%s/%s/glicko/rating' % (variant, speed)))
-        if elo > 0:
-            game['BlackElo'] = str(elo)
-        tc = self.json_field(chessgame, 'playAgainConfig/speed').split('+')
-        game['TimeControl'] = '%d+%s' % (int(tc[0]) * 60, tc[1])
-        winner = self.json_field(chessgame, 'initialWinner/username')
-        if winner == game['White']:
-            game['Result'] = '1-0'
-        elif winner == game['Black']:
-            game['Result'] = '0-1'
+        game['Date'] = self.json_field(chessgame, 'state/updated/created_at')[:10]
+        game['White'] = self.json_field(chessgame, 'meta/w/user/username')
+        game['WhiteElo'] = self.json_field(chessgame, 'meta/w/user/elo')
+        game['Black'] = self.json_field(chessgame, 'meta/b/user/username')
+        game['BlackElo'] = self.json_field(chessgame, 'meta/b/user/elo')
+        game['TimeControl'] = '%d+%d' % (self.json_field(chessgame, 'meta/limit'),
+                                         self.json_field(chessgame, 'meta/increment'))
+        if not self.json_field(chessgame, 'state/updated/is_finished'):
+            game['Result'] = '*'
         else:
-            game['Result'] = '1/2-1/2'
+            winner = self.json_field(chessgame, 'state/updated/winner_color')
+            if winner == 'w':
+                game['Result'] = '1-0'
+            elif winner == game['Black']:
+                game['Result'] = '0-1'
+            else:
+                game['Result'] = '1/2-1/2'
 
         # Moves and clock
         game['_moves'] = ''
-        moves = self.json_field(chessgame, 'initialHistory')
+        moves = self.json_field(chessgame, 'state/updated/moves')
         if len(moves) == 0:
             game['_moves'] = ' '
         else:
+            game['PlyCount'] = len(moves)
             for move in moves:
                 game['_moves'] += ' ' + move['san']
-                game['PlyCount'] = move['ply']
 
                 # Clock
                 clock = move['clock'][move['color']] / 1000.

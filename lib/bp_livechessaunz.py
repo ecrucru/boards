@@ -34,7 +34,7 @@ class InternetGameLivechessAunz(InternetGameInterface):
 
         # Find the game ID
         gid = None
-        for url in self.regexes['src'].findall(page):
+        for url in [self.id] + self.regexes['src'].findall(page):
             parsed = urlparse(url)
             if parsed.netloc.lower() == 'livechess.aunz.net':
                 args = parse_qs(parsed.query)

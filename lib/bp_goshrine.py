@@ -15,6 +15,10 @@ class InternetGameGoshrine(InternetGameInterface):
         InternetGameInterface.__init__(self)
         self.regexes.update({'url': re.compile(r'^https?:\/\/goshrine\.com\/g\/([a-z0-9]{8})[\/\?\#]?', re.IGNORECASE)})
 
+    def is_enabled(self) -> bool:
+        # TODO TBC
+        return False
+
     def get_identity(self) -> Tuple[str, int, int]:
         return 'GoShrine.com', BOARD_GO, METHOD_DL
 

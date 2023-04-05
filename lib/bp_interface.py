@@ -229,17 +229,17 @@ class InternetGameInterface:
             roster.remove('White')
             roster.remove('Black')
         for tag in roster:
-            pgn += '[%s "%s"]\n' % (tag, game.get(tag, '?').strip())
+            pgn += '[%s "%s"]\n' % (tag, str(game.get(tag, '?')).strip())
         for e in game:
             if (e not in roster) and (e[:1] != '_') and (game[e] not in [None, '']):
-                pgn += '[%s "%s"]\n' % (e, game[e].strip())
+                pgn += '[%s "%s"]\n' % (e, str(game[e]).strip())
         pgn += "\n"
 
         # Body
         def _inline_tag(key, mask):
             nonlocal pgn
-            if key in game and (game[key].strip() != ''):
-                pgn += mask % game[key].strip()
+            if key in game and (str(game[key]).strip() != ''):
+                pgn += mask % str(game[key]).strip()
 
         _inline_tag('_url', "{%s}\n")
         _inline_tag('_moves', '%s ')

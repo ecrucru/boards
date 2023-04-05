@@ -27,6 +27,7 @@ from lib.bp_365chess import InternetGame365chess
 from lib.bp_chessarena import InternetGameChessarena
 from lib.bp_chessbase import InternetGameChessbase
 from lib.bp_chessbomb import InternetGameChessbomb
+# TODO ChessDuo.com
 from lib.bp_chessgames import InternetGameChessgames
 from lib.bp_chessking import InternetGameChessking
 from lib.bp_chessorg import InternetGameChessOrg

@@ -64,8 +64,8 @@ class InternetGameChesspuzzle(InternetGameInterface):
         return parser.pgn
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
-        return [('https://chesspuzzle.net/Puzzle/23476', True),                 # Puzzle from the quiz
-                ('https://CHESSPUZZLE.net/Solution/32881', True),               # Puzzle from the solution
+        return [('https://chesspuzzle.net/Puzzle/883485', True),                # Puzzle from the quiz
+                ('https://CHESSPUZZLE.net/Solution/883485', True),              # Puzzle from the solution
                 ('https://chesspuzzle.net/Puzzle', False),                      # Not a puzzle (random link)
                 ('https://chesspuzzle.net/Puzzle/123456789', False),            # Not a puzzle (wrong ID)
                 ('https://chesspuzzle.net', False)]                             # Not a puzzle (homepage)
