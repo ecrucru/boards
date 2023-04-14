@@ -52,14 +52,14 @@ class InternetGamePychess(InternetGameInterface):
         return result
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
-        return [('http://pychess.org/DGN5Ps2k#tag', True),                  # Crazyhouse
-                ('http://pychess-variants.herokuapp.com/uWbgRNfw', True),   # Chess
-                ('http://PYCHESS.org/4XTiOuKB', True),                      # Chess960
-                ('http://pychess.ORG/b8aZwvoJ', True),                      # Placement
-                ('https://pychess.org/drtDbEhd#tag', True),                 # Shogi
-                ('https://pychess.ORG/tALxtipo', True),                     # Makruk
-                ('https://pychess.org/2CKjayxv?param', True),               # Cambodian
-                ('https://PYCHESS.ORG/4x0kQ8kY', True),                     # Sittuyin
-                ('https://pychess.org/7cqV5j2N', True),                     # Seirawan
+        return [('http://pychess.org/LDSVAvL2#tag', True),                  # Crazyhouse
+                ('http://pychess-variants.herokuapp.com/oTpvrREY', True),   # Chess
+                ('http://PYCHESS.org/RVm1ih5b', True),                      # Chess960
+                ('http://pychess.ORG/sLVB7vqg', True),                      # Placement
+                ('https://pychess.org/mQ5Zznpo#tag', True),                 # Shogi
+                ('https://pychess.ORG/Wa6MbxYN', True),                     # Makruk
+                ('https://PYCHESS.ORG/ZJKHrGk8', True),                     # Sittuyin
+                ('https://www.pychess.org/54aLulH7', True),                 # Seirawan
+                # ('https://pychess.org/7cqV5j2N', False),                  # Not a game (expired Seirawan)
                 ('https://pychess.org/bEh4x0XT', False),                    # Not a game (invalid identifier)
                 ('http://pychess.org', False)]                              # Not a game (homepage)

@@ -79,7 +79,7 @@ class InternetGameImmortal(InternetGameInterface):
         if len(moves) == 0:
             game['_moves'] = ' '
         else:
-            game['PlyCount'] = len(moves)
+            game['PlyCount'] = str(len(moves))
             for move in moves:
                 game['_moves'] += ' ' + move['san']
 
