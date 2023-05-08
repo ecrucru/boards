@@ -65,7 +65,6 @@ from lib.bp_playok import InternetGamePlayokDraughts8, InternetGamePlayokDraught
 # Go
 from lib.bp_dragongoserver import InternetGameDragongoserver
 from lib.bp_gokgs import InternetGameGokgs
-from lib.bp_goshrine import InternetGameGoshrine
 from lib.bp_ingoweb import InternetGameIngoweb
 from lib.bp_onlinego import InternetGameOnlinego
 from lib.bp_playok import InternetGamePlayokGo, InternetGamePlayokGomoku

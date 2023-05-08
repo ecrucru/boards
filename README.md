@@ -49,7 +49,6 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 - **Go**
 	- DragonGoServer.net
 	- GoKGS.com
-	- GoShrine.com
 	- Ingo-web.com
 	- Online-go.com
 	- PlayOK.com
