@@ -125,6 +125,6 @@ class InternetGameGreenchess(InternetGameInterface):
                 ('https://greenchess.net/game.php?id=8733', True),      # Game (draw)
                 ('https://greenchess.net/game.php?id=1001', True),      # Game (fairy piece)
                 ('https://greenchess.net/game.php?id=88352', True),     # Game (3 players)
-                ('https://greenchess.net/game.php?id=abc123', True),    # Not a game (wrong id)
+                ('https://greenchess.net/game.php?id=abc123', False),   # Not a game (wrong id)
                 ('https://greenchess.net', False),                      # Not a game (homepage)
                 ]

@@ -5,6 +5,7 @@
 from typing import Optional, List, Tuple
 import re
 from math import floor
+import chess
 
 from lib.const import BOARD_CHESS, METHOD_HTML
 from lib.bp_interface import InternetGameInterface
@@ -68,7 +69,7 @@ class InternetGameImmortal(InternetGameInterface):
             winner = self.json_field(chessgame, 'state/updated/winner_color')
             if winner == 'w':
                 game['Result'] = '1-0'
-            elif winner == game['Black']:
+            elif winner == 'b':
                 game['Result'] = '0-1'
             else:
                 game['Result'] = '1/2-1/2'
@@ -79,12 +80,18 @@ class InternetGameImmortal(InternetGameInterface):
         if len(moves) == 0:
             game['_moves'] = ' '
         else:
+            board = chess.Board()
             game['PlyCount'] = str(len(moves))
             for move in moves:
-                game['_moves'] += ' ' + move['san']
+                try:
+                    kmove = chess.Move.from_uci(move['from'] + move['to'] + move.get('promotion', ''))
+                    game['_moves'] += ' ' + board.san(kmove)
+                    board.push(kmove)
+                except Exception:
+                    return None
 
                 # Clock
-                clock = move['clock'][move['color']] / 1000.
+                clock = move['clock']['w' if board.turn == chess.BLACK else 'b'] / 1000.
                 hour = clock // 3600
                 clock -= hour * 3600
                 minute = clock // 60
@@ -94,11 +101,8 @@ class InternetGameImmortal(InternetGameInterface):
         return self.rebuild_pgn(game)
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
-        return [('https://immortal.game/games/fd73b68c-a3d0-4dd7-9530-8e74d1bb52ea', True),     # Game with mate
-                ('https://immortal.game/games/18c2c3a0-e24f-4c2a-aaab-1a7ef12b8968', True),     # Game with timeout
-                ('https://immortal.game/games/244e891b-4a37-46f9-9474-f4f17e741b40', True),     # Game without move
-                ('https://immortal.game/games/6c3af1d6-61f0-45c8-a93f-b0d74be48aeb', True),     # Immortal game
-                ('https://immortal.game/games/a4c23fb2-7b4b-4a71-bdbf-63578dff0bba', True),     # Immortal game with cyrillic name
-                ('https://immortal.game/games/4e135f9a-7f57-43e5-bc32-03564e04a218', True),     # Immortal game with draw
+        return [('https://immortal.game/games/6299850f-ecb6-42dc-8d73-c3ed9b167332', True),     # Game with mate and promotion
+                ('https://immortal.game/games/bc94f8bd-73eb-4681-b16b-eda56094fd31', True),     # Immortal game with timeout
+                ('https://immortal.game/games/12345678-1234-1234-1234-123456789012', False),    # Not a game (wrong id)
                 ('https://immortal.game', False),                                               # Not a game (home page)
                 ]
