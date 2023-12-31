@@ -228,17 +228,20 @@ class InternetGameInterface:
         if 'Player3' in game:                                   # GreenChess
             roster.remove('White')
             roster.remove('Black')
+        for e in list(game.keys()):
+            if game[e] in [None, '']:
+                del game[e]
         for tag in roster:
-            pgn += '[%s "%s"]\n' % (tag, str(game.get(tag, '?')).strip())
+            pgn += '[%s "%s"]\n' % (tag, str(game.get(tag, '????.??.??' if tag == 'Date' else '?')).strip())
         for e in game:
-            if (e not in roster) and (e[:1] != '_') and (game[e] not in [None, '']):
+            if (e not in roster) and (e[:1] != '_'):
                 pgn += '[%s "%s"]\n' % (e, str(game[e]).strip())
         pgn += "\n"
 
         # Body
         def _inline_tag(key, mask):
             nonlocal pgn
-            if key in game and (str(game[key]).strip() != ''):
+            if (key in game) and (str(game[key]).strip() != ''):
                 pgn += mask % str(game[key]).strip()
 
         _inline_tag('_url', "{%s}\n")
@@ -275,6 +278,12 @@ class InternetGameInterface:
 
         # Return the data
         return data
+
+    def safe_int(self, value: Any) -> int:
+        try:
+            return int(value)
+        except Exception:
+            return 0
 
     def strip_html(self, html_input: str) -> str:
         ''' Remove any HTML mark from the input parameter. '''

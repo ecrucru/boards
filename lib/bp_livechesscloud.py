@@ -6,6 +6,7 @@ from typing import Optional, List, Tuple
 import re
 from urllib.parse import urlparse
 import chess
+from datetime import datetime
 
 from lib.const import BOARD_CHESS, METHOD_API, CHESS960, CHESS960_CLASSICAL
 from lib.bp_interface import InternetGameInterface
@@ -63,16 +64,16 @@ class InternetGameLivechesscloud(InternetGameInterface):
         for i in range(1, nb_rounds + 1):
             bourne = self.send_xhr('http://%s/get/%s/round-%d/index.json' % (host, self.id, i), None)
             data = self.json_loads(bourne)
-            game['Date'] = self.json_field(data, 'date')
+            game_date = self.json_field(data, 'date')
             pairings = self.json_field(data, 'pairings', [])
             nb_pairings = len(pairings)
             if nb_pairings > 0:
                 for j in range(nb_pairings):
                     # Players and result
                     player = pairings[j].get('white', {})
-                    game['White'] = ('%s %s' % (self.json_field(player, 'lname'), self.json_field(player, 'fname'))).strip()
+                    game['White'] = ('%s, %s' % (self.json_field(player, 'lname'), self.json_field(player, 'fname'))).strip()
                     player = pairings[j].get('black', {})
-                    game['Black'] = ('%s %s' % (self.json_field(player, 'lname'), self.json_field(player, 'fname'))).strip()
+                    game['Black'] = ('%s, %s' % (self.json_field(player, 'lname'), self.json_field(player, 'fname'))).strip()
                     game['Result'] = self.json_field(pairings[j], 'result', '*')
                     game['Round'] = '%d.%d' % (i, j + 1)
 
@@ -82,6 +83,8 @@ class InternetGameLivechesscloud(InternetGameInterface):
                     data2 = self.json_loads(bourne2)
                     if self.json_field(data2, 'result') == 'NOTPLAYED':
                         continue
+                    tstamp = self.safe_int(self.json_field(data2, 'firstMove'))
+                    game['Date'] = datetime.fromtimestamp(tstamp // 1000).strftime('%Y.%m.%d') if tstamp > 0 else game_date
                     fischer_id = self.json_field(data2, 'chess960', CHESS960_CLASSICAL)
                     if fischer_id == CHESS960_CLASSICAL:
                         for k in ['Variant', 'SetUp', 'FEN']:
@@ -93,8 +96,10 @@ class InternetGameLivechesscloud(InternetGameInterface):
                         game['FEN'] = chess.Board.from_chess960_pos(fischer_id).fen()
                     game['_reason'] = self.json_field(data2, 'comment')
                     moves = self.json_field(data2, 'moves')
-                    for move in moves:
+                    for move_number, move in enumerate(moves):
                         move = move.split(' ')[0]
+                        if move_number % 2 == 0:
+                            game['_moves'] += str(move_number // 2 + 1) + '. '
                         game['_moves'] += '%s ' % move
 
                     # Game
