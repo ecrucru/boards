@@ -71,7 +71,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 
 ```
 Copyright (C) 2019-2020 Pychess
-Copyright (C) 2021-2023 ecrucru
+Copyright (C) 2021-2024 ecrucru
 https://github.com/ecrucru/boards
 GPL version 3
 ```

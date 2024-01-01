@@ -1,4 +1,4 @@
-# Copyright (C) 2022 ecrucru
+# Copyright (C) 2022-2024 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -54,19 +54,18 @@ class InternetGameImmortal(InternetGameInterface):
         # Rebuild the PGN game
         game = {}
         game['_url'] = url
-        variant = self.json_field(chessgame, 'meta/variant')
+        variant = self.json_field(chessgame, 'game/variant')
         game['Event'] = 'Immortal game' if variant == 'immortal' else 'Standard game'
-        game['Date'] = self.json_field(chessgame, 'state/updated/created_at')[:10]
-        game['White'] = self.json_field(chessgame, 'meta/w/user/username')
-        game['WhiteElo'] = self.json_field(chessgame, 'meta/w/user/elo')
-        game['Black'] = self.json_field(chessgame, 'meta/b/user/username')
-        game['BlackElo'] = self.json_field(chessgame, 'meta/b/user/elo')
-        game['TimeControl'] = '%d+%d' % (self.json_field(chessgame, 'meta/limit'),
-                                         self.json_field(chessgame, 'meta/increment'))
-        if not self.json_field(chessgame, 'state/updated/is_finished'):
+        game['Date'] = self.json_field(chessgame, 'game/createdAt')[:10].replace('-', '.')
+        game['White'] = self.json_field(chessgame, 'game/w/username')
+        game['WhiteElo'] = self.json_field(chessgame, 'game/w/rating')
+        game['Black'] = self.json_field(chessgame, 'game/b/username')
+        game['BlackElo'] = self.json_field(chessgame, 'game/b/rating')
+        game['TimeControl'] = self.json_field(chessgame, 'game/timeControl')
+        if not self.json_field(chessgame, 'game/isFinished'):
             game['Result'] = '*'
         else:
-            winner = self.json_field(chessgame, 'state/updated/winner_color')
+            winner = self.json_field(chessgame, 'game/winnerColor')
             if winner == 'w':
                 game['Result'] = '1-0'
             elif winner == 'b':
@@ -76,7 +75,7 @@ class InternetGameImmortal(InternetGameInterface):
 
         # Moves and clock
         game['_moves'] = ''
-        moves = self.json_field(chessgame, 'state/updated/moves')
+        moves = self.json_field(chessgame, 'game/moves')
         if len(moves) == 0:
             game['_moves'] = ' '
         else:

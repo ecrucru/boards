@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021 ecrucru
+# Copyright (C) 2021-2024 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -43,17 +43,10 @@ class InternetGame2700chess(InternetGameInterface):
             return None
 
         # Extract the PGN
-        lines = page.split(';')
-        for line in lines:
-            if 'analysis.setPgn(' in line:
-                pos1 = line.find('"')
-                if pos1 != -1:
-                    pos2 = pos1
-                    while pos2 < len(line):
-                        pos2 += 1
-                        if line[pos2] == '"' and line[pos2 - 1:pos2 + 1] != '\\"':
-                            pgn = line[pos1 + 1:pos2]
-                            return pgn.replace('\\"', '"').replace('\\/', '/').replace('\\r', '').replace('\\n', "\n").strip()
+        p1 = page.find('pgn: `')
+        p2 = page.find('`,', p1)
+        if -1 < p1 < p2:
+            return page[p1 + 6:p2].strip()
         return None
 
     def get_test_links(self) -> List[Tuple[str, bool]]:

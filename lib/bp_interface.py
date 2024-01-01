@@ -22,7 +22,7 @@ class InternetGameInterface:
         ''' Initialize the common data that can be used in ALL the sub-classes. '''
         self.reset()
         self.allow_extra = False
-        self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'  # Cloudflare Browser Integrity Check
+        self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'  # Cloudflare Browser Integrity Check
         self.allow_octet_stream = False
         self.use_sanitization = True
         self.regexes = {'fen': re.compile(r'^[kqbnrp1-8\/]+\s[w|b]\s[kq-]+\s[a-h-][1-8]?(\s[0-9]+)?(\s[0-9]+)?$', re.IGNORECASE),
