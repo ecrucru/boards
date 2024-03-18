@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021-2022 ecrucru
+# Copyright (C) 2021-2024 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -20,7 +20,6 @@ from lib.bp_interface import InternetGameInterface
 # Popular chess
 from lib.bp_lichess import InternetGameLichess
 from lib.bp_chesscom import InternetGameChessCom
-from lib.bp_chess24 import InternetGameChess24
 # Chess
 from lib.bp_2700chess import InternetGame2700chess
 from lib.bp_365chess import InternetGame365chess
@@ -49,7 +48,6 @@ from lib.bp_immortal import InternetGameImmortal
 from lib.bp_ideachess import InternetGameIdeachess
 from lib.bp_lishogi import InternetGameLishogi
 from lib.bp_listudy import InternetGameListudy
-from lib.bp_livechess24 import InternetGameLivechess24
 from lib.bp_livechessaunz import InternetGameLivechessAunz
 from lib.bp_livechesscloud import InternetGameLivechesscloud
 from lib.bp_playok import InternetGamePlayokChess
