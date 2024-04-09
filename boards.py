@@ -36,6 +36,7 @@ from lib.bp_chesspuzzle import InternetGameChesspuzzle
 from lib.bp_chesssamara import InternetGameChesssamara
 from lib.bp_chesstempo import InternetGameChesstempo
 from lib.bp_chessvariants import InternetGameChessvariants
+from lib.bp_chessvsgpt import InternetGameChessvsgpt
 from lib.bp_echecsonline import InternetGameEchecsonline
 from lib.bp_europeechecs import InternetGameEuropeechecs
 from lib.bp_ficgs import InternetGameFicgs
