@@ -62,7 +62,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 ## Install
 
 - Install Python 3
-- Install the dependencies: `pip install chess`
+- Install the dependencies: `pip install chess aiohttp`
 - Download your games: `python boards.py download https://your-board.tld/game/7E5F59av`
 
 
@@ -70,7 +70,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 
 ```
 Copyright (C) 2019-2020 Pychess
-Copyright (C) 2021-2024 ecrucru
+Copyright (C) 2021-2025 ecrucru
 https://github.com/ecrucru/boards
 GPL version 3
 ```

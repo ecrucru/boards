@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2023 ecrucru
+# Copyright (C) 2021-2025 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -40,7 +40,7 @@ class InternetGameLivechesscloud(InternetGameInterface):
             return None
 
         # Fetch the host
-        bourne = self.send_xhr('http://lookup.livechesscloud.com/meta/' + self.id, None)
+        bourne = self.send_xhr('https://lookup.livechesscloud.com/meta/' + self.id, None)
         data = self.json_loads(bourne)
         host = self.json_field(data, 'host')
         if host == '' or (self.json_field(data, 'format') != '1'):
@@ -48,7 +48,7 @@ class InternetGameLivechesscloud(InternetGameInterface):
 
         # Fetch the tournament
         pgn = ''
-        bourne = self.send_xhr('http://%s/get/%s/tournament.json' % (host, self.id), None)
+        bourne = self.send_xhr('https://%s/get/%s/tournament.json' % (host, self.id), None)
         data = self.json_loads(bourne)
         game = {'TimeControl': self.json_field(data, 'timecontrol').replace('"', '').replace("'", ''),
                 'Event': self.json_field(data, 'name'),
@@ -62,7 +62,7 @@ class InternetGameLivechesscloud(InternetGameInterface):
 
         # Fetch the rounds
         for i in range(1, nb_rounds + 1):
-            bourne = self.send_xhr('http://%s/get/%s/round-%d/index.json' % (host, self.id, i), None)
+            bourne = self.send_xhr('https://%s/get/%s/round-%d/index.json' % (host, self.id, i), None)
             data = self.json_loads(bourne)
             game_date = self.json_field(data, 'date')
             pairings = self.json_field(data, 'pairings', [])
@@ -79,9 +79,9 @@ class InternetGameLivechesscloud(InternetGameInterface):
 
                     # Fetch the moves
                     game['_moves'] = ''
-                    bourne2 = self.send_xhr('http://%s/get/%s/round-%d/game-%d.json?poll=' % (host, self.id, i, j + 1), None)
+                    bourne2 = self.send_xhr('https://%s/get/%s/round-%d/game-%d.json?poll=' % (host, self.id, i, j + 1), None)
                     data2 = self.json_loads(bourne2)
-                    if self.json_field(data2, 'result') == 'NOTPLAYED':
+                    if self.json_field(data2, 'result') in ['', 'NOTPLAYED']:
                         continue
                     tstamp = self.safe_int(self.json_field(data2, 'firstMove'))
                     game['Date'] = datetime.fromtimestamp(tstamp // 1000).strftime('%Y.%m.%d') if tstamp > 0 else game_date
