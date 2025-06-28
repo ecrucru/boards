@@ -176,7 +176,7 @@ class InternetGameInterface:
             return None
         return pgn
 
-    def send_xhr(self, url: Optional[str], postData: Optional[Dict], origin: Optional[str] = None) -> Optional[str]:
+    def send_xhr(self, url: Optional[str], postData: Optional[Dict], headers: Optional[Dict[str, str]] = None) -> Optional[str]:
         ''' Call a target URL by submitting the POSTDATA.
             The value None is returned in case of error. '''
         # Check
@@ -190,11 +190,11 @@ class InternetGameInterface:
             data = None
         try:
             logging.debug('Calling API: %s', url)
-            headers = {'User-Agent': self.user_agent,
-                       'Accept': 'application/json, text/plain, */*'}
-            if origin is not None:
-                headers['Origin'] = origin
-            with urlopen(Request(str(url), data, headers=headers)) as response:
+            hdrs = {'User-Agent': self.user_agent,
+                    'Accept': 'application/json, text/plain, */*'}
+            if headers is not None:
+                hdrs.update(headers)
+            with urlopen(Request(str(url), data, headers=hdrs)) as response:
                 respdata = self.read_data(response)
             return respdata
         except Exception as exception:

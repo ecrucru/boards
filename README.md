@@ -15,6 +15,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- ChessPastebin.com
 	- ChessPro.ru
 	- ChessPuzzle.net
+	- Chess-Results.com
 	- Chess-Samara.ru
 	- ChessTempo.com
 	- ChessVariants.training

@@ -33,6 +33,7 @@ from lib.bp_chessorg import InternetGameChessOrg
 from lib.bp_chesspastebin import InternetGameChesspastebin
 from lib.bp_chesspro import InternetGameChesspro
 from lib.bp_chesspuzzle import InternetGameChesspuzzle
+from lib.bp_chessresults import InternetGameChessresults
 from lib.bp_chesssamara import InternetGameChesssamara
 from lib.bp_chesstempo import InternetGameChesstempo
 from lib.bp_chessvariants import InternetGameChessvariants

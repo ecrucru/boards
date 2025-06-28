@@ -40,7 +40,8 @@ class InternetGameChessvariants(InternetGameInterface):
         # Fetch the puzzle
         data = {'id': self.id}
         bourne = self.send_xhr('https://chessvariants.training/Puzzle/Train/Setup',
-                               data, origin='https://chessvariants.training')
+                               data,
+                               {'Origin': 'https://chessvariants.training'})
         data = self.json_loads(bourne)
         if self.json_field(data, 'success') is False:
             return None
@@ -65,7 +66,8 @@ class InternetGameChessvariants(InternetGameInterface):
                     'origin': cfrom,
                     'destination': cto}
             bourne = self.send_xhr('https://chessvariants.training/Puzzle/Train/SubmitMove',
-                                   data, origin='https://chessvariants.training')
+                                   data,
+                                   {'Origin': 'https://chessvariants.training'})
             data = self.json_loads(bourne)
             if 'replayMoves' in data:
                 break
