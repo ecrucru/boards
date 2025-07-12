@@ -35,6 +35,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- Listudy.org
 	- LiveChess.aunz.net
 	- LiveChessCloud.com
+	- MskChess.ru
 	- PlayOK.com
 	- PlayStrategy.org
 	- Pychess.org

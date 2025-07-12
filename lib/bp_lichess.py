@@ -11,7 +11,7 @@ from lib.bp_libase import InternetGameLibase
 class InternetGameLichess(InternetGameLibase):
     def __init__(self):
         InternetGameLibase.__init__(self)
-        self.set_options_li('lichess.org', '', True, 'pgn', 'LichessPuzzle(')
+        self.set_options_li('lichess.org', '', True, 'pgn', 'id="page-init-data"')
 
     def get_test_links(self) -> List[Tuple[str, bool]]:
         return [('http://lichess.org/CA4bR2b8/black/analysis#12', True),                            # Game in advanced position
@@ -31,6 +31,7 @@ class InternetGameLichess(InternetGameLibase):
                 ('https://lichess.org/STUDY/hr4H7sOB.pgn', True),                                   # Study of one game
                 ('https://lichess.org/training/daily', True),                                       # Daily puzzle
                 ('https://lichess.org/training/lfSgX', True),                                       # Puzzle
+                ('https://lichess.org/fr/training/lfSgX', True),                                    # Puzzle with language
                 ('https://lichess.org/training/mix/fmH0k', True),                                   # Puzzle from a random theme
                 ('https://lichess.org/training/attackingF2F7/9LaN9', True),                         # Puzzle from a given theme
                 ('https://lichess.org/training/84969', False),                                      # Not a puzzle (old ID)

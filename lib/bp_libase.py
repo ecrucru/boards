@@ -25,10 +25,10 @@ class InternetGameLibase(InternetGameInterface):
 
         # Initialization
         hreg = self._host.replace('.', '\\.')
-        self.regexes.update({'broadcast': re.compile(r'^https?:\/\/(\S+\.)?%s\/broadcast\/[a-z0-9\-]+\/([a-z0-9]{8})[\/\?\#]?' % hreg, re.IGNORECASE),
+        self.regexes.update({'broadcast': re.compile(r'^https?:\/\/(\S+\.)?%s\/broadcast\/[a-z0-9\-]+\/(round-\d+\/)?([a-z0-9]{8})[\/\?\#]?' % hreg, re.IGNORECASE),
                              'game': re.compile(r'^https?:\/\/(\S+\.)?%s\/(game\/export\/|embed\/)?([a-z0-9]{8})\/?([\S\/]+)?$' % hreg, re.IGNORECASE),
                              'practice': re.compile(r'^https?:\/\/(\S+\.)?%s\/practice\/[\w\-\/]+\/([a-z0-9]{8}\/[a-z0-9]{8})(\.%s)?\/?([\S\/]+)?$' % (hreg, self._ext), re.IGNORECASE),
-                             'puzzle': re.compile(r'^https?:\/\/(\S+\.)?%s\/training\/([a-z0-9]+\/)?([a-z0-9]+)[\/\?\#]?' % hreg, re.IGNORECASE),
+                             'puzzle': re.compile(r'^https?:\/\/(\S+\.)?%s\/([a-z]{2}/)?training\/([a-z0-9]+\/)?([a-z0-9]+)[\/\?\#]?' % hreg, re.IGNORECASE),
                              'study': re.compile(r'^https?:\/\/(\S+\.)?%s\/study\/([a-z0-9]{8}(\/[a-z0-9]{8})?)(\.%s)?\/?([\S\/]+)?$' % (hreg, self._ext), re.IGNORECASE),
                              'swiss': re.compile(r'^https?:\/\/(\S+\.)?%s\/swiss\/([a-z0-9]{8})[\/\?\#]?' % hreg, re.IGNORECASE),
                              'tournament': re.compile(r'^https?:\/\/(\S+\.)?%s\/tournament\/([a-z0-9]{8})[\/\?\#]?' % hreg, re.IGNORECASE)})
@@ -37,9 +37,9 @@ class InternetGameLibase(InternetGameInterface):
         return self._host.capitalize(), BOARD_CHESS, METHOD_MISC
 
     def assign_game(self, url: str) -> bool:
-        for name, typ, pid in [('broadcast', TYPE_STUDY, 2),
+        for name, typ, pid in [('broadcast', TYPE_STUDY, 3),
                                ('practice', TYPE_STUDY, 2),
-                               ('puzzle', TYPE_PUZZLE, 3),
+                               ('puzzle', TYPE_PUZZLE, 4),
                                ('study', TYPE_STUDY, 2),
                                ('swiss', TYPE_SWISS, 2),
                                ('tournament', TYPE_TOURNAMENT, 2),

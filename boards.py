@@ -52,6 +52,7 @@ from lib.bp_lishogi import InternetGameLishogi
 from lib.bp_listudy import InternetGameListudy
 from lib.bp_livechessaunz import InternetGameLivechessAunz
 from lib.bp_livechesscloud import InternetGameLivechesscloud
+from lib.bp_mskchess import InternetGameMskchess
 from lib.bp_playok import InternetGamePlayokChess
 from lib.bp_playstrategy import InternetGamePlaystrategy
 from lib.bp_pychess import InternetGamePychess
