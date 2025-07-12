@@ -3,7 +3,7 @@
 # https://github.com/ecrucru/boards
 # GPL version 3
 
-from typing import Optional, Any, Dict, List, Tuple
+from typing import Optional, Any, Dict, List, Tuple, Union
 from abc import abstractmethod
 import logging
 import re
@@ -296,8 +296,8 @@ class InternetGameInterface:
         except TypeError:
             return False
 
-    def seconds2clock(self, seconds: int) -> Tuple[int, int, int]:
-        mm, ss = divmod(seconds, 60)
+    def seconds2clock(self, seconds: Union[str, int]) -> Tuple[int, int, int]:
+        mm, ss = divmod(self.safe_int(seconds), 60)
         hh, mm = divmod(mm, 60)
         return (hh, mm, ss)
 

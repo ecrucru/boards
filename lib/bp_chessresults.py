@@ -3,8 +3,7 @@
 # GPL version 3
 
 from typing import Optional, List, Tuple
-from urllib.request import Request, urlopen
-from urllib.parse import urlencode, urlparse
+from urllib.parse import urlparse
 import re
 
 from lib.const import BOARD_CHESS, METHOD_HTML

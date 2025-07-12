@@ -97,10 +97,16 @@ class InternetGameLivechesscloud(InternetGameInterface):
                     game['_reason'] = self.json_field(data2, 'comment')
                     moves = self.json_field(data2, 'moves')
                     for move_number, move in enumerate(moves):
-                        move = move.split(' ')[0]
+                        if ' ' in move:
+                            move, clock = move.split(' ', 1)
+                        else:
+                            clock = ''
                         if move_number % 2 == 0:
                             game['_moves'] += str(move_number // 2 + 1) + '. '
                         game['_moves'] += '%s ' % move
+                        clock = clock.split('+', 1)[0]
+                        if (clock != '') and (clock[0] not in ['+', '~']):
+                            game['_moves'] += '{[%%clk %02d:%02d:%02d]} ' % self.seconds2clock(clock)
 
                     # Game
                     candidate = self.rebuild_pgn(game)
