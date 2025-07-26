@@ -159,7 +159,7 @@ class InternetGameLibase(InternetGameInterface):
             game['Annotator'] = self.json_field(chessgame, 'game/author')
             game['X_TimeControl'] = self.json_field(chessgame, 'game/clock')
             game['X_Rating'] = rating
-            fen = self.json_field(chessgame, 'game/fen') or self.json_field(chessgame, 'game/sfen')
+            fen = self.json_field(chessgame, 'puzzle/initialSfen') or self.json_field(chessgame, 'game/sfen')  or self.json_field(chessgame, 'game/fen')
             if fen != '':
                 game['Variant'] = self._variant
                 game['FEN'] = fen
@@ -169,9 +169,9 @@ class InternetGameLibase(InternetGameInterface):
             players = self.json_field(chessgame, 'game/players')
             if isinstance(players, list):
                 for p in players:
-                    if p['color'] == 'white':
+                    if p['color'] in ['white', 'sente']:
                         t = 'White'
-                    elif p['color'] == 'black':
+                    elif p['color'] in ['black', 'gote']:
                         t = 'Black'
                     else:
                         return None
