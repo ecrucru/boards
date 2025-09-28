@@ -18,7 +18,7 @@ from lib.bp_interface import InternetGameInterface
 class InternetGameChessCom(InternetGameInterface):
     def __init__(self):
         InternetGameInterface.__init__(self)
-        self.regexes.update({'game': re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(live|daily)\/([a-z\/]+)?([0-9]+)[\/\?\#]?', re.IGNORECASE),
+        self.regexes.update({'game': re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(live|daily|computer)\/([a-z\/]+)?([0-9]+)[\/\?\#]?', re.IGNORECASE),
                              'puzzle': re.compile(r'^https?:\/\/(\S+\.)?chess\.com\/([a-z\/]+)?(puzzles)\/problem\/([0-9]+)[\/\?\#]?', re.IGNORECASE)})
 
     def get_identity(self) -> Tuple[str, int, int]:
@@ -44,7 +44,7 @@ class InternetGameChessCom(InternetGameInterface):
             return True
 
         # Games
-        url = url.replace('/live#g=', '/live/game/').replace('/daily#g=', '/daily/game/')
+        url = url.replace('/live#g=', '/live/game/').replace('/daily#g=', '/daily/game/').replace('/computer#g=', '/computer/game/')
         m = self.regexes['game'].match(url)
         if m is not None:
             self.url_type = m.group(3).lower()
@@ -151,6 +151,7 @@ class InternetGameChessCom(InternetGameInterface):
         else:
             # API since October 2020
             url = 'https://www.chess.com/callback/%s/game/%s' % (self.url_type, self.id)
+            url = url.replace('callback/computer', 'computer/callback')
             bourne = self.send_xhr(url, {})
             if bourne is None:
                 return None
@@ -210,6 +211,8 @@ class InternetGameChessCom(InternetGameInterface):
                 ('https://www.chess.com/daily/game/225006782', True),                      # Daily game Chess960
                 ('https://www.chess.com/daily/GAME/205389002', True),                      # Daily game Chess960
                 ('https://chess.com/live/game/13029832074287114', False),                  # Not a game (wrong ID)
+                ('https://www.chess.com/game/computer/412513709', True),                   # Computer match
+                ('https://www.chess.com/game/computer/12345678', False),                   # Computer match (wrong ID)
                 ('https://www.chess.com', False),                                          # Not a game (homepage)
                 ('https://www.chess.com/puzzles/problem/41839', True),                     # Puzzle
                 ('https://www.chess.com/analysis?fen=invalidfen', False),                  # Position to analyze (no FEN)
