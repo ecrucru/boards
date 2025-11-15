@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021 ecrucru
+# Copyright (C) 2021-2025 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -87,30 +87,17 @@ class InternetGameChessCom(InternetGameInterface):
             if page is None:
                 return None
 
-            # Definition of the parser
-            class chesscomparser(HTMLParser):
-                def __init__(self):
-                    HTMLParser.__init__(self)
-                    self.pgn = None
-
-                def handle_starttag(self, tag, attrs):
-                    if tag.lower() == 'div':
-                        for k, v in attrs:
-                            if k.lower() == 'data-puzzle':
-                                self.pgn = v.replace('&quote;', '"').replace('\\/', '/')
-
-            # Parse the page
-            parser = chesscomparser()
-            parser.feed(page)
-            if parser.pgn is None:
-                return None
-
             # Load the JSON
-            puzzle = self.json_loads(parser.pgn)
+            p1 = page.find('puzzle: {')
+            p2 = page.find('\n', p1)
+            if -1 in [p1, p2]:
+                return None
+            page = page[p1 + 8:p2].strip()[:-1]
+            puzzle = self.json_loads(page)
             if puzzle in [None, '']:
                 return None
 
-            # Get the game directly if available
+            # Get the game directly if available (logged user)
             pgn = self.json_field(puzzle, 'pgn')
             if pgn != '':
                 pgn = pgn.replace('\\n', '\n')
@@ -138,14 +125,9 @@ class InternetGameChessCom(InternetGameInterface):
             game['TimeControl'] = '%d+0' % self.json_field(puzzle, 'averageSeconds')
             game['FEN'] = self.json_field(puzzle, 'initialFen')
             game['SetUp'] = '1'
-            game['X_ID'] = self.json_field(puzzle, 'id')
-            game['X_Rating'] = rating
             game['X_Attempts'] = self.json_field(puzzle, 'attemptCount')
             game['X_PassRate'] = self.json_field(puzzle, 'passRate')
-            buffer = '{%s}' % self.json_field(puzzle, 'internalNote').strip()
-            if buffer == '{}':
-                buffer = '{The first move is not provided}'
-            game['_moves'] = buffer
+            game['_moves'] = '{%s}' % self.json_field(puzzle, 'internalNote', 'First move not available').strip()
 
         # Games
         else:

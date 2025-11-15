@@ -18,7 +18,7 @@ from lib.ws import InternetWebsockets
 class InternetGameChessOrg(InternetGameInterface):
     def __init__(self):
         InternetGameInterface.__init__(self)
-        self.regexes.update({'url': re.compile(r'^https?:\/\/chess\.org\/play\/([a-f0-9\-]+)[\/\?\#]?', re.IGNORECASE)})
+        self.regexes.update({'url': re.compile(r'^https?:\/\/chess\.org\/play\/([0-9a-f\-]{36})[\/\?\#]?', re.IGNORECASE)})
 
     def get_identity(self) -> Tuple[str, int, int]:
         return 'Chess.org', BOARD_CHESS, METHOD_WS
@@ -26,10 +26,8 @@ class InternetGameChessOrg(InternetGameInterface):
     def assign_game(self, url: str) -> bool:
         m = self.regexes['url'].match(url)
         if m is not None:
-            gid = str(m.group(1))
-            if len(gid) == 36:
-                self.id = gid
-                return True
+            self.id = str(m.group(1))
+            return True
         return False
 
     def fix_fen(self, fen):
