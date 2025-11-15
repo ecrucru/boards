@@ -61,6 +61,7 @@ from lib.bp_schacharena import InternetGameSchacharena
 from lib.bp_schachspielen import InternetGameSchachspielen
 from lib.bp_schemingmind import InternetGameSchemingmind
 from lib.bp_thechessworld import InternetGameThechessworld
+from lib.bp_worldchess import InternetGameWorldchess
 # Draughts
 from lib.bp_lidraughts import InternetGameLidraughts
 from lib.bp_playok import InternetGamePlayokDraughts8, InternetGamePlayokDraughts10
