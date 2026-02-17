@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021-2025 ecrucru
+# Copyright (C) 2021-2026 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -122,11 +122,12 @@ class InternetGameChessCom(InternetGameInterface):
             game['White'] = 'White'
             game['Black'] = 'Black'
             game['Result'] = '*'
-            game['TimeControl'] = '%d+0' % self.json_field(puzzle, 'averageSeconds')
+            game['TimeControl'] = '%d+0' % self.json_field(puzzle, 'targetSeconds')
             game['FEN'] = self.json_field(puzzle, 'initialFen')
             game['SetUp'] = '1'
             game['X_Attempts'] = self.json_field(puzzle, 'attemptCount')
             game['X_PassRate'] = self.json_field(puzzle, 'passRate')
+            game['X_AverageTime'] = self.json_field(puzzle, 'averageSeconds')
             game['_moves'] = '{%s}' % self.json_field(puzzle, 'internalNote', 'First move not available').strip()
 
         # Games
@@ -154,7 +155,7 @@ class InternetGameChessCom(InternetGameInterface):
                 game = headers
             if 'Variant' in game and game['Variant'] == 'Chess960':
                 game['Variant'] = CHESS960
-            game['_url'] = url.replace('/callback/', '/')
+            game['_url'] = 'https://www.chess.com/game/%s/%s' % (self.url_type, self.id)
 
             # Body
             moves = self.json_field(chessgame, 'moveList')

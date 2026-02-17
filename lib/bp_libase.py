@@ -1,5 +1,5 @@
 # Copyright (C) 2019-2020 Pychess
-# Copyright (C) 2021-2022 ecrucru
+# Copyright (C) 2021-2026 ecrucru
 # https://github.com/ecrucru/boards
 # GPL version 3
 
@@ -95,18 +95,28 @@ class InternetGameLibase(InternetGameInterface):
 
             # Rebuild the PGN file
             game = {}
-            game['_url'] = 'https://%s%s' % (self._host, self.json_field(api, 'url/round'))
+            game['_url'] = 'https://%s%s' % (self._host, self.json_field(api, 'url/round', '/' + self.id))
             game['Variant'] = self.json_field(api, 'game/variant/name')
             game['FEN'] = self.json_field(api, 'game/initialFen')
             game['SetUp'] = '1'
-            game['White'] = self.json_field(api, 'player/name', self.json_field(api, 'player/user/username', 'Anonymous'))
-            game['WhiteElo'] = self.json_field(api, 'player/rating')
-            game['Black'] = self.json_field(api, 'opponent/name', self.json_field(api, 'opponent/user/username', 'Anonymous'))
-            game['BlackElo'] = self.json_field(api, 'opponent/rating')
+            side = self.json_field(api, 'player/color').capitalize()
+            ai = self.json_field(api, 'player/ai', 0)
+            if ai > 0:
+                game[side] = 'Stockfish Level %d' % ai
+            else:
+                game[side] = self.json_field(api, 'player/name', self.json_field(api, 'player/user/username', 'Anonymous'))
+                game[side + 'Elo'] = self.json_field(api, 'player/rating')
+            side = self.json_field(api, 'opponent/color').capitalize()
+            ai = self.json_field(api, 'opponent/ai', 0)
+            if ai > 0:
+                game[side] = 'Stockfish Level %d' % ai
+            else:
+                game[side] = self.json_field(api, 'opponent/name', self.json_field(api, 'opponent/user/username', 'Anonymous'))
+                game[side + 'Elo'] = self.json_field(api, 'opponent/rating')
             if self.json_field(api, 'clock') != '':
                 game['TimeControl'] = '%d+%d' % (self.json_field(api, 'clock/initial'), self.json_field(api, 'clock/increment'))
             else:
-                game['TimeControl'] = '%dd' % (self.json_field(api, 'correspondence/increment') // 86400)
+                game['TimeControl'] = '%dd' % (self.json_field(api, 'correspondence/increment', 0) // 86400)
             game['Result'] = '*'
             game['_moves'] = ''
             moves = self.json_field(api, 'steps')
