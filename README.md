@@ -21,6 +21,7 @@ This command-line tool downloads board games as PGN (chess), KIF (shogi), PDN (d
 	- ChessVariants.training
 	- ChessVsGPT.com
 	- Echecs-Online.eu
+	- Endgame.ai
 	- Europe-Echecs.com
 	- Ficgs.com
 	- FicsGames.org

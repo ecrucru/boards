@@ -26,7 +26,6 @@ from lib.bp_365chess import InternetGame365chess
 from lib.bp_chessarena import InternetGameChessarena
 from lib.bp_chessbase import InternetGameChessbase
 from lib.bp_chessbomb import InternetGameChessbomb
-# TODO ChessDuo.com
 from lib.bp_chessgames import InternetGameChessgames
 from lib.bp_chessking import InternetGameChessking
 from lib.bp_chessorg import InternetGameChessOrg
@@ -39,6 +38,7 @@ from lib.bp_chesstempo import InternetGameChesstempo
 from lib.bp_chessvariants import InternetGameChessvariants
 from lib.bp_chessvsgpt import InternetGameChessvsgpt
 from lib.bp_echecsonline import InternetGameEchecsonline
+from lib.bp_endgame import InternetGameEndgame
 from lib.bp_europeechecs import InternetGameEuropeechecs
 from lib.bp_ficgs import InternetGameFicgs
 from lib.bp_ficsgames import InternetGameFicsgames
